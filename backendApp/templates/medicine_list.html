@@ -1,0 +1,43 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine List</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/medicine_list.css' %}">
+</head>
+<body>
+    <h1>藥品總數清單</h1>
+    <table class="medicine-table">
+        <thead>
+            <tr>
+                <th>藥品 ID</th>
+                <th>藥品名稱</th>
+                <th>功效</th>
+                <th>副作用</th>
+                <th>庫存</th>
+                <th>刪除</th> <!-- Add action column for delete button -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for medicine in medicines %}
+            <tr>
+                <td>{{ medicine.medicine_id }}</td>
+                <td>{{ medicine.medicine_name }}</td>
+                <td>{{ medicine.efficacy }}</td>
+                <td>{{ medicine.side_effects }}</td>
+                <td>{{ medicine.stock_level }}</td>
+                <td><a href="{% url 'delete_medicine' medicine.medicine_id %}">Delete</a></td> <!-- Link to delete view -->
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
+{% endblock %}
