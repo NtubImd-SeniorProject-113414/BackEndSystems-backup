@@ -1,0 +1,42 @@
+{% extends 'index.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/warehouse.css' %}">
+
+<h1>藥倉管理</h1>
+<h2>藥品庫存明細</h2>
+<table class="warehouse-table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>藥品名稱</th>
+            <th>創建日期</th>
+            <th>是否激活</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for warehouse in warehouses %}
+        <tr>
+            <td>{{ warehouse.warehouse_id }}</td>
+            <td>{{ warehouse.medicine.medicine_name }}</td>
+            <td>{{ warehouse.creation_date }}</td>
+            <td class="status-{{ warehouse.status }}">
+                {% if warehouse.is_active %}是{% else %}否{% endif %}
+            </td>
+            <td>
+                <button class="toggle-status-btn" data-warehouse-id="{{ warehouse.id }}">
+                    {% if warehouse.is_active %}
+                        停用
+                    {% else %}
+                        啟用
+                    {% endif %}
+                </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script src="{% static 'js/warehouse.js' %}"></script>
+{% endblock %}

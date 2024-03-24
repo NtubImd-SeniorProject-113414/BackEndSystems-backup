@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>無人藥師後台管理</title>
+    <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}">
+    <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+
+</head>
+
+<body>
+    <nav class="sidebar">
+        <div style="text-align: center;">
+            <img src="{% static 'img/logo.png' %}" height="110" width="110"/>
+        </div>
+        <div class="user">歡迎 {{ username }}</div>
+        <div class="text">管理選單</div>
+        <ul>
+            <li><a href="{% url 'add_medicine' %}">新增藥品</a></li>
+            <li><a href="{% url 'medicine_list' %}">藥品庫存管理</a></li>
+            <li><a href="{% url 'warehouse_list' %}">藥櫃管理</a></li>
+            <li><a href="{% url 'show_stock' %}">庫存管理</a></li>
+
+        </ul>
+    </nav>
+    <script src="{% static 'js/base.js' %}"></script>
+    <div class="content">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+</body>
+
+</html>

@@ -16,7 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from backendApp.views import index, add_medicine, medicine_list, show_stock, warehouse_list, toggle_warehouse_status, delete_medicine
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls),  # Import admin module from django.contrib
+    path('', index, name='index'),
+    path('add_medicine/', add_medicine, name='add_medicine'),
+    path('medicine_list/', medicine_list, name='medicine_list'), 
+    path('warehouse/', warehouse_list, name='warehouse_list'),
+    path('toggle-warehouse-status/<int:warehouse_id>/', toggle_warehouse_status, name='toggle_warehouse_status'),
+    path('delete_medicine/<int:medicine_id>/', delete_medicine, name='delete_medicine'),
+    path('show_stock/', show_stock, name='show_stock'),
+
 ]
