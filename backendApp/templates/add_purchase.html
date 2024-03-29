@@ -1,0 +1,117 @@
+{% extends 'index.html' %}
+{% load static %}
+
+{% block content %}
+<html>
+<link rel="stylesheet" type="text/css" href="{% static 'css/add_purchase.css' %}">
+
+<div class="add-medicine-container">
+    <h1>進貨填寫單</h1>
+    {% if messages %}
+    <div class="alert alert-success" role="alert">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="medicine">藥品名稱:</label>
+            <select id="medicine" name="medicine" class="form-control">
+                {% for medicine in medicines %}
+                <option value="{{ medicine.medicine_id }}">{{ medicine.medicine_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="purchase_date">進貨日期:</label>
+            <input type="date" id="purchase_date" name="purchase_date" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="purchase_q">進貨數量:</label>
+            <input type="number" id="purchase_q" name="purchase_q" class="form-control" min="1">
+        </div>
+        <div class="form-group">
+            <label for="purchase_unit_price">進貨單價:</label>
+            <input type="number" id="purchase_unit_price" name="purchase_unit_price" class="form-control" min="1">
+        </div>
+        <button type="submit" class="btn btn-primary">提交</button>
+    </form>
+
+    <!-- Purchase 表格 -->
+    <th><a href="?sort=purchase_date">進貨日期遞增</a></th>
+    <th><a href="?sort=date_desc">進貨日期遞減</a></th>
+
+    <table class="table">
+        
+        <thead>
+            <tr>
+                <th>訂單編號</th>
+                <th>藥品名稱</th>
+                <th>進貨日期</th>
+                <th>進貨數量</th>
+                <th>進貨單價</th>
+                <th>刪除資料</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in page_obj %}
+            <tr>
+                <td>{{ purchase.order_id }}</td>
+                <td>{{ purchase.medicine.medicine_name }}</td>
+                <td>{{ purchase.purchase_date }}</td>
+                <td>{{ purchase.purchase_q }}</td>
+                <td>{{ purchase.purchase_unit_price }}</td>
+                <td>
+                    <!-- Delete button -->
+                    <form action="{% url 'delete_purchase' purchase.order_id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">刪除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+            
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+            
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+</div>
+<script>
+    var addMedicineUrl = "{% url 'add_purchase' %}"; 
+</script>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/base.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('nav a');
+
+        navLinks.forEach(link => {
+            link.parentNode.classList.remove('active');
+        });
+
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'add_purchase' %}"]');
+        if (addMedicineLink) {
+            addMedicineLink.parentNode.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}
