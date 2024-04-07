@@ -2,70 +2,59 @@
 {% load static %}
 
 {% block content %}
+<html>
+<link rel="stylesheet" type="text/css" href="{% static 'css/add_medicine.css' %}">
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Medicine</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/add_medicine.css' %}">
-</head>
-<body>
-    <div class="add-medicine-container">
-        <h1>新增藥品</h1>
-        {% if messages %}
-            <div class="alert alert-success" role="alert">
-                {% for message in messages %}
-                    {{ message }}
-                {% endfor %}
-            </div>
-        {% endif %}
-        
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="medicine_selection">Select Medicine:</label>
-                <select id="medicine_selection" name="medicine_selection">
-                    <option value="">Select Medicine</option>
-                    {% for medicine in medicines %}
-                        <option value="{{ medicine.medicine_id }}" data-stock="{{ medicine.stock_level }}">{{ medicine.medicine_name }}</option>
-                    {% endfor %}
-                    <option value="new">Add New Medicine</option> <!-- 新增药品选项 -->
-                </select>
-            </div>
-            <div id="new_medicine_fields" style="display: none;"> <!-- 新药品字段，初始隐藏 -->
-                <div class="form-group">
-                    <label for="new_medicine_name">Medicine Name:</label>
-                    <input type="text" id="new_medicine_name" name="new_medicine_name">
-                </div>
-                <div class="form-group">
-                    <label for="new_efficacy">Efficacy:</label>
-                    <textarea id="new_efficacy" name="new_efficacy"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="new_side_effects">Side Effects:</label>
-                    <textarea id="new_side_effects" name="new_side_effects"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="new_stock_level">Stock Level:</label>
-                    <input type="number" id="new_stock_level" name="new_stock_level">
-                </div>
-            </div>
-            <input type="hidden" id="selected_medicine_id" name="selected_medicine_id"> <!-- 隐藏的输入字段 -->
-            <div id="stock_level_field" style="display: none;"> <!-- 药品库存和购买数量字段，初始隐藏 -->
-                <label for="stock_level">Stock Level:</label>
-                <span id="stock_level"></span>
-                <div class="form-group">
-                    <label for="purchase_quantity">Purchase Quantity:</label>
-                    <input type="number" id="purchase_quantity" name="purchase_quantity" min="1">
-                </div>
-            </div>
-            <button type="submit">Submit</button>
-        </form>
+<div class="add-medicine-container">
+    <h1>新增藥品</h1>
+    {% if messages %}
+    <div class="alert alert-success" role="alert">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
     </div>
-</body>
-</html>
+    {% endif %}
 
-<script src="{% static 'js/add_medicine.js' %}"></script>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="new_medicine_name">藥品名稱:</label>
+            <input type="text" id="new_medicine_name" name="medicine_name" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="new_efficacy">功效:</label>
+            <textarea id="new_efficacy" name="efficacy" class="form-control text-area-custom"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="new_side_effects">副作用:</label>
+            <textarea id="new_side_effects" name="side_effects" class="form-control text-area-custom"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="new_stock_level">最小庫存量:</label>
+            <input type="number" id="new_stock_level" name="min_stock_level" class="form-control" min="1">
+        </div>
+        <button type="submit" class="btn btn-primary">提交</button>
+    </form>
+</div>
+<script>
+    var addMedicineUrl = "{% url 'add_medicine' %}"; 
+</script>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/base.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('nav a');
+
+        navLinks.forEach(link => {
+            link.parentNode.classList.remove('active');
+        });
+
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'add_medicine' %}"]');
+        if (addMedicineLink) {
+            addMedicineLink.parentNode.classList.add('active');
+        }
+    });
+</script>
 {% endblock %}
