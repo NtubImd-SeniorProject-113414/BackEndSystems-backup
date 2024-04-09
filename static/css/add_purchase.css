@@ -1,0 +1,301 @@
+/* Button Styles */
+button, .btn {
+    background-color: #007bff;
+    color: white;
+    padding:5px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: none;
+}
+
+button:hover, .btn:hover {
+    background-color: #0056b3;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.content-container {
+    padding-top: 70px; /* 根据 header 的高度调整此值 */
+    padding-bottom: 70px;
+}
+
+/* 或者如果你使用的是其他类名或直接使用 body 也可以这样设置 */
+body {
+    padding-top: 70px; /* 确保这个值至少和 header 的高度一致 */
+}
+
+
+.pagination {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.pagination .step-links a {
+    padding: 5px 10px;
+    margin: 0 5px;
+    border: 1px solid #ddd;
+    color: #333;
+    text-decoration: none;
+}
+
+.pagination .step-links a:hover {
+    background-color: #f4f4f4;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse; /* 減少表格間的間隔 */
+    margin-top: 20px;
+    background-color: #ffffff; /* 設置背景顏色 */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* 添加陰影效果 */
+}
+
+.table th,
+.table td {
+    padding: 12px 15px; /* 增加填充 */
+    border: 1px solid #ddd; /* 添加邊框 */
+    text-align: left; /* 文字左對齊 */
+    font-size: 14px; /* 調整字體大小 */
+}
+
+.table th {
+    background-color: #4CAF50; /* 標題背景顏色 */
+    color: white; /* 標題字體顏色 */
+}
+
+.table tr:nth-child(even) {
+    background-color: #f2f2f2; /* 每隔一行變更背景顏色 */
+}
+
+.table tr:hover {
+    background-color: #ddd; /* 滑過時的背景顏色 */
+}
+
+.table td:first-child {
+    font-weight: bold; /* 第一列字體加粗 */
+}
+
+
+.form-horizontal .form-group {
+    display: flex;
+    align-items: center; /* 確保標籤和輸入框垂直居中 */
+    margin-bottom: 10px;
+}
+
+.form-horizontal label {
+    flex: 0 0 120px; /* 固定標籤寬度 */
+    text-align: right; /* 標籤靠右對齊 */
+    margin-right: 10px; /* 標籤和輸入框之間的間隔 */
+}
+
+.form-horizontal .form-control {
+    flex: 1; /* 輸入框填充剩餘空間 */
+}
+
+.table {
+    width: 100%;
+    margin-top: 20px; /* 表格和表單之間的間隔 */
+}
+
+
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.form-group input[type="date"],
+.form-group input[type="number"],
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    box-sizing: border-box;
+}
+
+.form-group input[type="date"]:focus,
+.form-group input[type="number"]:focus,
+.form-group select:focus {
+    border-color: #0062cc;
+    outline: none;
+}
+
+button.btn-primary {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.table {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.pagination a:hover {
+    text-decoration: underline;
+}
+
+.pagination .current {
+    margin: 0 5px;
+    font-weight: bold;
+}
+
+
+/* 專用於新增藥品頁面的基本風格設定，避免與 base.css 衝突 */
+.add-medicine-body {
+    background-color: #f4f4f4;
+    /* 設定專用背景色 */
+    padding: 20px;
+}
+
+/* 容器風格，增加前綴以保持樣式獨立 */
+.add-medicine-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.add-medicine-container h1 {
+    color: #333;
+    text-align: center;
+}
+
+
+.add-medicine-container .text-area-custom {
+    height: 60px; /* 指定高度 */
+    resize: none; /* 禁止調整大小 */
+    overflow: auto; /* 超過高度時顯示滾動條 */
+}
+
+/* 標題風格 */
+.add-medicine-container h1 {
+    color: #0056b3;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* 表單和元素風格 */
+.add-medicine-container form {
+
+    margin-top: 10px;
+    position: relative;
+    flex-direction: column;
+    display: flex;
+}
+
+.add-medicine-container .form-group {
+    margin: 20px 20px 15px;
+    /* 明確指定上、右/左、下邊距 */
+
+}
+
+.add-medicine-container label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.add-medicine-container input[type="text"],
+.add-medicine-container input[type="number"],
+.add-medicine-container textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border 0.3s ease;
+    resize: none; /* 禁止調整大小 */
+    overflow: auto; /* 設定滾動條在需要時顯示 */
+    
+}
+
+.add-medicine-container input[type="text"]:focus,
+.add-medicine-container input[type="number"]:focus,
+.add-medicine-container textarea:focus {
+    border-color: #0056b3;
+    box-shadow: inset 0 1px 3px rgba(0, 86, 179, 0.1);
+}
+
+/* 按鈕風格 */
+.add-medicine-container button {
+
+    color: #fff;
+    background-color: #0056b3;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    width: auto;
+    cursor: pointer;
+    display: block;
+    transition: background-color 0.3s ease;
+    margin: 10px auto;
+}
+
+.add-medicine-container button:hover {
+    background-color: #003d7a;
+}
+
+/* 警告訊息風格 */
+.add-medicine-container .alert {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .add-medicine-container {
+        margin-top: 60px;
+        padding: 20px;
+    }
+
+    .add-medicine-container button {
+        width: 100%;
+        margin: 10px 0;
+    }
+}

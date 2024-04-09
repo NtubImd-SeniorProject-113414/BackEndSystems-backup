@@ -1,38 +1,59 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html lang="zh-Hant">
 
 <head>
-    <meta charset="utf-8">
-    <title>無人藥師後台管理</title>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>無人智慧藥師後臺系統</title>
     <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}">
     <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
 
+
+    {% block extra_head %}{% endblock %} 
 </head>
 
 <body>
-    <nav class="sidebar">
-        <div style="text-align: center;">
-            <img src="{% static 'img/logo.png' %}" height="110" width="110"/>
+    <header>
+        <a href="{% url 'index' %}" class="logo">
+            <img src="{% static 'img/logo.png' %}" alt="公司LOGO">
+            <h2>無人智慧藥師後臺系統</h2>
+        </a>
+        <div class="account">
+            <a href="#"><i class="fas fa-user-circle"></i> {{ request.user.username }}</a>
+            <div class="account-dropdown" id="account-dropdown">
+                <a href="#">帳戶資訊</a>
+                <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> 登出</a>
+            </div>
         </div>
-        <div class="user">歡迎 {{ username }}</div>
-        <div class="text">管理選單</div>
-        <ul>
-            <li><a href="{% url 'add_medicine' %}">新增藥品</a></li>
-            <li><a href="{% url 'medicine_list' %}">藥品庫存管理</a></li>
-            <li><a href="{% url 'warehouse_list' %}">藥櫃管理</a></li>
-            <li><a href="{% url 'show_stock' %}">庫存管理</a></li>
+    </header>
 
+    <nav id="sidebar">
+        <ul>
+            <li class="active"><a href="{% url 'index' %}"><i class="fas fa-home"></i> 首頁</a></li>
+            <li><a href="{% url 'add_medicine' %}"><i class="fa-solid fa-plus"></i> 新增藥品</a></li>
+            <li><a href="{% url 'medicine_list' %}"><i class="fa-solid fa-square-poll-vertical"></i></i> 藥品管理</a></li>
+            <li><a href="{% url 'add_purchase' %}"><i class="fa-solid fa-cart-flatbed"></i> 進貨表單</a></li> <!--在後台將所進貨之藥品輸入至此-->
+            <li><a href="#"><i class="fa-solid fa-clipboard-list"></i> 處方管理</a></li> <!--記錄掃多少的處方 不為後台輸入-->
+            <li><a href="{% url 'warehouse' %}"><i class="fa-solid fa-car"></i> 倉儲與運行管理</a></li>
         </ul>
     </nav>
-    <script src="{% static 'js/base.js' %}"></script>
-    <div class="content">
-        {% block content %}
 
-        {% endblock %}
-    </div>
+
+    <main>
+
+    
+        {% block content %}{% endblock %}
+    </main>
+
+    {% block extra_scripts %}
+    <script src="{% static 'js/base.js' %}"></script>
+    
+    {% endblock %}
 </body>
 
 </html>

@@ -1,18 +1,43 @@
 {% extends 'index.html' %}
 {% load static %}
+
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'css/warehouse.css' %}">
 
-<h1>藥倉管理</h1>
-<h2>藥品庫存明細</h2>
-<table class="warehouse-table">
+<!-- 1. 新增倉庫表單 -->
+<h3>新增倉庫</h3>
+<form method="post" class="creation-form mb-3">
+    {% csrf_token %}
+    {{ creation_form.as_p }}
+    <button type="submit" class="btn btn-primary">新增倉庫</button>
+</form>
+
+<!-- 庫存數量警示 -->
+<div class="alert alert-{{ alert_color }}">
+    <strong>庫存狀況：</strong>{{ alert_message }}
+    {% if low_stock_medicines %}
+        {% for medicine in low_stock_medicines %}
+            <p>{{ medicine.medicine_name }} 的庫存低於最低水平 (剩餘 {{ medicine.get_current_stock }} 件)。</p>
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+<h3>倉儲運行列表</h3>
+<form method="get" class="filter-form mb-3">
+    {{ filter_form.as_p }}
+    <button type="submit" class="btn btn-info">篩選</button>
+</form>
+<table class="table table-hover">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>倉庫編號</th>
             <th>藥品名稱</th>
             <th>創建日期</th>
-            <th>是否激活</th>
-            <th>操作</th>
+            <th>是否啟用</th>
+            <th>目前庫存</th>
+            <th>最低庫存量</th>
+            <th>刪除資料</th>
         </tr>
     </thead>
     <tbody>
@@ -21,22 +46,44 @@
             <td>{{ warehouse.warehouse_id }}</td>
             <td>{{ warehouse.medicine.medicine_name }}</td>
             <td>{{ warehouse.creation_date }}</td>
-            <td class="status-{{ warehouse.status }}">
-                {% if warehouse.is_active %}是{% else %}否{% endif %}
-            </td>
             <td>
-                <button class="toggle-status-btn" data-warehouse-id="{{ warehouse.id }}">
-                    {% if warehouse.is_active %}
-                        停用
-                    {% else %}
-                        啟用
-                    {% endif %}
-                </button>
+                <label class="toggle-switch">
+                    <form action="{% url 'toggle_active' warehouse.warehouse_id %}" method="post" class="form-check form-switch">
+                        {% csrf_token %}
+                        <input class="form-check-input" type="checkbox" name="is_active" onchange="this.form.submit()" {% if warehouse.is_active %} checked {% endif %}>
+                        <span class="slider"></span>
+                    </form>
+                </label>
+            </td>
+            <td>{{ warehouse.medicine.get_current_stock }}</td>
+            <td>{{ warehouse.min_stock_level }}</td>
+            <td>
+                <!-- Delete button -->
+                <form action="{% url 'delete_warehouse' warehouse.warehouse_id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">刪除</button>
+                </form>
             </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
+{% endblock %}
 
-<script src="{% static 'js/warehouse.js' %}"></script>
+{% block extra_scripts %}
+<script src="{% static 'js/base.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('nav a');
+
+        navLinks.forEach(link => {
+            link.parentNode.classList.remove('active');
+        });
+
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'warehouse' %}"]');
+        if (addMedicineLink) {
+            addMedicineLink.parentNode.classList.add('active');
+        }
+    });
+</script>
 {% endblock %}
