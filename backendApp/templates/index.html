@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<h1>歡迎，{{ user.username }}！</h1>
+
+{% if user.is_superuser %}
+<p>您是<strong>超級使用者</strong>。</p>
+{% else %}
+<p>您的目前的身分為： {% for group in user.groups.all %}{{ group.name }}{% endfor %}</p>
+
+{% endif %}
+{% endblock %}

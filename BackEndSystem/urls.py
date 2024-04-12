@@ -14,9 +14,31 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+from django.conf.urls.static import static
+from django.conf import settings
 from django.urls import path
+from django.contrib import admin
+from backendApp.views import delete_warehouse, index, add_medicine, medicine_list,delete_medicine,modify_medicine,add_purchase,warehouse_view,toggle_active,delete_purchase
+from backendApp.login import login_view,logout_view
+from backendApp.account import register
+from caresystem.views import caregiver_manager
+
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-]
+    path('', index, name='index'),
+    path('admin', admin.site.urls),
+    path('login', login_view, name='login'),
+    path('logout', logout_view, name='logout'),
+    path('add_purchase/', add_purchase, name='add_purchase'),
+    path('add_medicine/', add_medicine, name='add_medicine'),
+    path('medicine_list/', medicine_list, name='medicine_list'), 
+    path('modify_medicine/<int:medicine_id>/', modify_medicine, name='modify_medicine'),
+    path('delete_medicine/<int:medicine_id>/', delete_medicine, name='delete_medicine'),
+    path('warehouse/', warehouse_view, name='warehouse'),
+    path('warehouses/toggle/<int:warehouse_id>/', toggle_active, name='toggle_active'),
+    path('warehouse/delete/<int:warehouse_id>/', delete_warehouse, name='delete_warehouse'),
+    path('purchase/delete/<int:order_id>/', delete_purchase, name='delete_purchase'),
+    path('creat_account/', register, name='creat_account'),
+    path('caregiver_manager/',caregiver_manager, name='caregiver_manager'),
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

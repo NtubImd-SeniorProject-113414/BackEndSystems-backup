@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<html>
+<link rel="stylesheet" type="text/css" href="{% static 'css/add_medicine.css' %}">
+
+<div class="add-medicine-container">
+    <h1>新增藥品</h1>
+    {% if messages %}
+    <div class="alert alert-success" role="alert">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="new_medicine_name">藥品名稱:</label>
+            <input type="text" id="new_medicine_name" name="medicine_name" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="new_efficacy">功效:</label>
+            <textarea id="new_efficacy" name="efficacy" class="form-control text-area-custom"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="new_side_effects">副作用:</label>
+            <textarea id="new_side_effects" name="side_effects" class="form-control text-area-custom"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="new_stock_level">最小庫存量:</label>
+            <input type="number" id="new_stock_level" name="min_stock_level" class="form-control" min="1">
+        </div>
+        <button type="submit" class="btn btn-primary">提交</button>
+    </form>
+</div>
+<script>
+    var addMedicineUrl = "{% url 'add_medicine' %}"; 
+</script>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/base.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('nav a');
+
+        navLinks.forEach(link => {
+            link.parentNode.classList.remove('active');
+        });
+
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'add_medicine' %}"]');
+        if (addMedicineLink) {
+            addMedicineLink.parentNode.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}
