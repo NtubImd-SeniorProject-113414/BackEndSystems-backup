@@ -21,3 +21,4 @@ def group_required(*group_names):
                 return render(request, 'deny.html')
         return _wrapped_view
     return decorator
+

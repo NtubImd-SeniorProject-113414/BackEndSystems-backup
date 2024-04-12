@@ -19,7 +19,7 @@ from django.views.decorators.http import require_POST
 
 
 #主頁
-@group_required('pharmacy_admin')
+@group_required('caregiver','admin')
 @login_required
 def index(request):
     username = request.user.username if request.user.is_authenticated else "Guest"

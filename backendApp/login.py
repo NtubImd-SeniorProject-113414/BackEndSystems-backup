@@ -6,15 +6,13 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import timedelta
 
-
-
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            if hasattr(user, 'last_login') and (timezone.now() - user.last_login) < timedelta(seconds=60):
+            if hasattr(user, 'last_login') and (timezone.now() - user.last_login) < timedelta(seconds=20):
                 return render(request, 'login.html', {'error': '登入嘗試過於頻繁，請稍後再試。'})
             request.session.flush()
             login(request, user)

@@ -20,6 +20,9 @@ from django.urls import path
 from django.contrib import admin
 from backendApp.views import delete_warehouse, index, add_medicine, medicine_list,delete_medicine,modify_medicine,add_purchase,warehouse_view,toggle_active,delete_purchase
 from backendApp.login import login_view,logout_view
+from backendApp.account import register
+from caresystem.views import caregiver_manager
+
 
 urlpatterns = [
     path('', index, name='index'),
@@ -35,5 +38,7 @@ urlpatterns = [
     path('warehouses/toggle/<int:warehouse_id>/', toggle_active, name='toggle_active'),
     path('warehouse/delete/<int:warehouse_id>/', delete_warehouse, name='delete_warehouse'),
     path('purchase/delete/<int:order_id>/', delete_purchase, name='delete_purchase'),
+    path('creat_account/', register, name='creat_account'),
+    path('caregiver_manager/',caregiver_manager, name='caregiver_manager'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
