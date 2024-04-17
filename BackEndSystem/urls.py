@@ -20,10 +20,12 @@ from django.urls import path
 from django.contrib import admin
 from backendApp.views import delete_warehouse, index, add_medicine, medicine_list,delete_medicine,modify_medicine,add_purchase,warehouse_view,toggle_active,delete_purchase
 from backendApp.login import login_view,logout_view
+from lineIntegrations.views import linebot
 
 urlpatterns = [
     path('', index, name='index'),
     path('admin', admin.site.urls),
+    path('linebot', linebot.line_bot_webhook),
     path('login', login_view, name='login'),
     path('logout', logout_view, name='logout'),
     path('add_purchase/', add_purchase, name='add_purchase'),
