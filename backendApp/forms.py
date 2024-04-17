@@ -1,6 +1,9 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from .models import Medicine,Purchase, Warehouse
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User,Group
+
 
 class NewMedicineForm(forms.ModelForm):
     class Meta:
@@ -80,3 +83,33 @@ class WarehouseFilterForm(forms.Form):
         empty_label='--- 不篩選 ---'  # 添加空選項
     )
     is_active = forms.BooleanField(label='是否啟用', required=False)
+
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True, help_text='必填。請輸入有效的郵件地址。')
+    first_name = forms.CharField(max_length=30, required=False, help_text='選填。')
+    last_name = forms.CharField(max_length=30, required=False, help_text='選填。')
+    is_active = forms.BooleanField(required=False, help_text='選擇是否啟用帳戶。')
+    is_superuser = forms.BooleanField(required=False, help_text='選擇是否設為超級用戶。')
+    groups = forms.ModelMultipleChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        help_text='選擇用戶所屬的群組。'
+    )
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'is_active', 'is_superuser', 'groups')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.is_active = self.cleaned_data['is_active']
+        user.is_superuser = self.cleaned_data['is_superuser']
+        user.is_staff = self.cleaned_data['is_superuser']  # 通常 superuser 也需要是 staff
+        if commit:
+            user.save()
+            user.groups.set(self.cleaned_data['groups'])
+        return user
