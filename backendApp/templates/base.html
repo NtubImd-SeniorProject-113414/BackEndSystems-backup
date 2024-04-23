@@ -8,11 +8,16 @@
     {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% if request.user|has_group:"pharmacy_admin" %}
-    <title>無人智慧藥師後臺系統</title>
-    {% endif %}
-    {% if request.user|has_group:"caregiver" %}
-    <title>智慧照護後臺系統</title>
+
+    {% if request.user.is_superuser %}
+        <title>後臺系統</title>
+    {% else %}
+        {% if request.user|has_group:"pharmacy_admin" %}
+        <title>無人智慧藥師後臺系統</title>
+        {% endif %}
+        {% if request.user|has_group:"caregiver" %}
+        <title>智慧照護後臺系統</title>
+        {% endif %}
     {% endif %}
 
     <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
@@ -28,19 +33,30 @@
     <header>
         <a href="{% url 'index' %}" class="logo">
             <img src="{% static 'img/logo.png' %}" alt="公司LOGO">
-            {% if request.user|has_group:"pharmacy_admin" %}
-            <h2>無人智慧藥師後臺系統</h2>
-            {% endif %}
+            {% if request.user.is_superuser %}
+            <h2>後臺系統</h2>
 
-            {% if request.user|has_group:"caregiver" %}
-            <h2>智慧照護後臺系統</h2>
+            {% else %}
+            
+                {% if request.user|has_group:"pharmacy_admin" %}
+                <h2>無人智慧藥師後臺系統</h2>
+                {% endif %}
+
+                {% if request.user|has_group:"admin" %}
+                <h2>智慧照護後臺系統</h2>
+                {% endif %}
+
+                {% if request.user|has_group:"caregiver" %}
+                <h2>智慧照護後臺系統</h2>
+                {% endif %}
+
             {% endif %}
 
         </a>
         <div class="account">
             <a href="#"><i class="fas fa-user-circle"></i> {{ request.user.username }}</a>
             <div class="account-dropdown" id="account-dropdown">
-                <a href="#">帳戶資訊</a>
+                <a href="{% url 'edit_profile' %}">修改資訊</a>
                 <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> 登出</a>
             </div>
         </div>
@@ -52,7 +68,8 @@
 
             {% if request.user.is_superuser %}
             <li><a href="{% url 'caregiver_manager' %}"><i class="fa-solid fa-user-nurse"></i> 照護者管理</a></li>
-            <li><a href="{% url 'medicine_list' %}"><i class="fa-solid fa-hospital-user"></i> 被照護者管理</a></li>
+            <li><a href="{% url 'patient_manager' %}"><i class="fa-solid fa-hospital-user"></i> 被照護者管理</a></li>
+            <li><a href="{% url 'patient_manager' %}"><i class="fa-solid fa-bed"></i> 床位管理</a></li>
             <li><a href="{% url 'add_medicine' %}"><i class="fa-solid fa-plus"></i> 新增藥品</a></li>
             <li><a href="{% url 'medicine_list' %}"><i class="fa-solid fa-square-poll-vertical"></i></i> 藥品管理</a></li>
             <li><a href="{% url 'add_purchase' %}"><i class="fa-solid fa-cart-flatbed"></i> 藥品進貨管理</a></li>
@@ -63,7 +80,8 @@
             <li><a href="{% url 'warehouse' %}"><i class="fa-solid fa-chart-pie"></i>數據統計</a></li>
             {% else %}
                 {% if request.user|has_group:"caregiver" %}
-                <li><a href="{% url 'medicine_list' %}"><i class="fa-solid fa-hospital-user"></i> 被照護者管理</a></li>
+                <li><a href="{% url 'patient_manager' %}"><i class="fa-solid fa-hospital-user"></i> 被照護者管理</a></li>
+                <li><a href="{% url 'patient_manager' %}"><i class="fa-solid fa-bed"></i> 床位管理</a></li>
 
                 {% endif %}
 
@@ -78,7 +96,8 @@
 
                 {% if request.user|has_group:"admin" %}
                 <li><a href="{% url 'caregiver_manager' %}"><i class="fa-solid fa-user-nurse"></i> 照護者管理</a></li>
-                <li><a href="{% url 'medicine_list' %}"><i class="fa-solid fa-hospital-user"></i> 被照護者管理</a></li>
+                <li><a href="{% url 'patient_manager' %}"><i class="fa-solid fa-hospital-user"></i> 被照護者管理</a></li>
+                <li><a href="{% url 'patient_manager' %}"><i class="fa-solid fa-bed"></i> 床位管理</a></li>
                 <li><a href="{% url 'add_purchase' %}"><i class="fa-solid fa-cart-flatbed"></i> 配料進貨管理</a></li>
                 <li><a href="{% url 'warehouse' %}"><i class="fa-solid fa-city"></i>供應商管理</a></li>
                 <li><a href="{% url 'warehouse' %}"><i class="fa-solid fa-box-open"></i>存貨管理</a></li>
