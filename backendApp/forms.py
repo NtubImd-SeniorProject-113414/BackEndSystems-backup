@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Medicine,Purchase, Warehouse
+from .models import Medicine, Patient,Purchase, Warehouse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,Group
 
@@ -25,7 +25,7 @@ class NewMedicineForm(forms.ModelForm):
     def clean_min_stock_level(self):
         min_stock_level = self.cleaned_data.get('min_stock_level')
         if min_stock_level is not None and min_stock_level <= 0:
-            raise ValidationError('最低库存量不可为0')
+            raise ValidationError('最低庫存量不可為0')
         return min_stock_level
 
 
@@ -80,16 +80,16 @@ class WarehouseFilterForm(forms.Form):
         queryset=Medicine.objects.all(),
         label='藥品名稱',
         required=False,
-        empty_label='--- 不篩選 ---'  # 添加空選項
+        empty_label='--- 不篩選 ---'  
     )
     is_active = forms.BooleanField(label='是否啟用', required=False)
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True, help_text='必填。請輸入有效的郵件地址。')
-    first_name = forms.CharField(max_length=30, required=False, help_text='選填。')
-    last_name = forms.CharField(max_length=30, required=False, help_text='選填。')
-    is_active = forms.BooleanField(required=False, help_text='選擇是否啟用帳戶。')
-    is_superuser = forms.BooleanField(required=False, help_text='選擇是否設為超級用戶。')
+    email = forms.EmailField(required=True, help_text='必填，請輸入有效的郵件地址。')
+    first_name = forms.CharField(max_length=30, required=True, help_text='必填')
+    last_name = forms.CharField(max_length=30, required=True, help_text='必填')
+    is_active = forms.BooleanField(required=False, help_text='選擇是否啟用帳戶')
+    is_superuser = forms.BooleanField(required=False, help_text='選擇是否設為超級用戶')
     groups = forms.ModelMultipleChoiceField(
         queryset=Group.objects.all(),
         required=False,
@@ -101,6 +101,16 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'is_active', 'is_superuser', 'groups')
 
+    def clean_prdfilo(self):
+        email = self.email
+        first_name = self.first_name
+        last_name = self.last_name
+        if not first_name and last_name:
+            raise forms.ValidationError("姓名是必填項")
+        elif not email:
+            raise forms.ValidationError("電子郵件是必填項")
+        return email + first_name + last_name
+
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
@@ -108,8 +118,22 @@ class CustomUserCreationForm(UserCreationForm):
         user.last_name = self.cleaned_data['last_name']
         user.is_active = self.cleaned_data['is_active']
         user.is_superuser = self.cleaned_data['is_superuser']
-        user.is_staff = self.cleaned_data['is_superuser']  # 通常 superuser 也需要是 staff
+        user.is_staff = self.cleaned_data['is_superuser'] 
         if commit:
             user.save()
             user.groups.set(self.cleaned_data['groups'])
         return user
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
+
+
+class PatientForm(forms.ModelForm):
+    class Meta:
+        model = Patient
+        fields = ['patient_name', 'patient_birth', 'patient_number', 'line_notify', 'line_id']
+        widgets = {
+            'patient_birth': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
+        }

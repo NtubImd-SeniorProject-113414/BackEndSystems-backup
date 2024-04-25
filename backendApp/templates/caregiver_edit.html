@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>編輯照顧者</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">儲存更改</button>
+    <a href="{% url 'caregiver_manager' %}" class="btn btn-secondary">取消更改</a>
+  </form>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'js/base.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('nav a');
+
+        navLinks.forEach(link => {
+            link.parentNode.classList.remove('active');
+        });
+
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'caregiver_manager' %}"]');
+        if (addMedicineLink) {
+            addMedicineLink.parentNode.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}

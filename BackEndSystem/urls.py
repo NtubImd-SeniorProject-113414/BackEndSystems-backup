@@ -18,9 +18,14 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path
 from django.contrib import admin
-from backendApp.views import delete_warehouse, index, add_medicine, medicine_list,delete_medicine,modify_medicine,add_purchase,warehouse_view,toggle_active,delete_purchase
+from backendApp.views import delete_warehouse, index, add_medicine, medicine_list,delete_medicine,modify_medicine,add_purchase,\
+    warehouse_view,toggle_active,delete_purchase,edit_profile
 from backendApp.login import login_view,logout_view
 from backendApp.account import register
+
+from backendApp.caresystem_views import add_patient, caregiver_manager, delete_patient,edit_caregiver, edit_patient, patient_manager
+from django.contrib.auth import views as auth_views
+
 from caresystem.views import caregiver_manager
 from lineIntegrations.views import linebot
 
@@ -41,5 +46,15 @@ urlpatterns = [
     path('purchase/delete/<int:order_id>/', delete_purchase, name='delete_purchase'),
     path('creat_account/', register, name='creat_account'),
     path('caregiver_manager/',caregiver_manager, name='caregiver_manager'),
+    path('caregivers/edit/<int:caregiver_id>/', edit_caregiver, name='edit_caregiver'), 
+    path('edit_profile/', edit_profile, name='edit_profile'),
+    path('patient_manager/', patient_manager, name='patient_manager'),
+    path('add_patient/', add_patient, name='add_patient'),
+    path('edit_patient/<int:patient_id>/', edit_patient, name='edit_patient'),
+    path('delete_patient/<int:patient_id>/', delete_patient, name='delete_patient'),
+    # path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    # path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    # path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    # path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
