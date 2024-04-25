@@ -22,14 +22,17 @@ from backendApp.views import delete_warehouse, index, add_medicine, medicine_lis
     warehouse_view,toggle_active,delete_purchase,edit_profile
 from backendApp.login import login_view,logout_view
 from backendApp.account import register
+
 from backendApp.caresystem_views import add_patient, caregiver_manager, delete_patient,edit_caregiver, edit_patient, patient_manager
 from django.contrib.auth import views as auth_views
 
-
+from caresystem.views import caregiver_manager
+from lineIntegrations.views import linebot
 
 urlpatterns = [
     path('', index, name='index'),
     path('admin', admin.site.urls),
+    path('linebot', linebot.line_bot_webhook),
     path('login', login_view, name='login'),
     path('logout', logout_view, name='logout'),
     path('add_purchase/', add_purchase, name='add_purchase'),
