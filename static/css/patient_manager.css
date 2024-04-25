@@ -1,0 +1,120 @@
+/* 設置整個頁面的基本樣式 */
+#patient-manager .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background-color: #fff; /* 添加背景色以增強對比 */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* 添加陰影效果 */
+    border-radius: 8px; /* 圓角邊框 */
+}
+
+#patient-manager h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333; /* 標題顏色 */
+    font-size: 2em; /* 標題大小 */
+    font-weight: bold; /* 字體加粗 */
+}
+
+#patient-manager .input-group {
+    margin-bottom: 1rem;
+}
+
+#patient-manager .form-control {
+    border: 2px solid #ddd; /* 更明顯的邊框 */
+    border-radius: 4px;
+    padding: 10px 15px;
+}
+
+#patient-manager table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+#patient-manager th, #patient-manager td {
+    text-align: left;
+    padding: 15px; /* 調整為更大的內邊距以提供更好的閱讀體驗 */
+    border-bottom: 1px solid #ddd; /* 每行下方添加分隔線 */
+    vertical-align: middle; /* 垂直居中對齊 */
+}
+
+#patient-manager thead {
+    background-color: #0056b3; /* 深藍色表頭背景 */
+    color: white;
+}
+
+#patient-manager tbody tr:nth-child(odd) {
+    background-color: #f9f9f9; /* 更淺的間隔行背景色 */
+}
+
+#patient-manager tbody tr:hover {
+    background-color: #e1f5fe; /* 滑鼠經過時的背景色 */
+}
+
+#patient-manager .btn {
+    margin-right: 8px;
+    padding: 10px 15px; /* 調整按鈕大小 */
+    border: none; /* 移除邊框 */
+    border-radius: 4px; /* 圓角按鈕 */
+    color: white; /* 按鈕文字顏色 */
+    cursor: pointer; /* 滑鼠指標為手形 */
+    transition: background-color 0.3s, transform 0.2s; /* 過渡效果 */
+}
+
+#patient-manager .btn-primary {
+    background-color: #007bff;
+}
+
+#patient-manager .btn-primary:hover {
+    background-color: #0056b3; /* 按鈕懸停效果 */
+}
+
+#patient-manager .btn-danger {
+    background-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333; /* 按鈕懸停效果 */
+}
+
+/* Pagination styling */
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.pagination a:hover {
+    background-color: #388e3c;
+}
+
+ .pagination .current {
+    margin: 0 5px;
+    padding: 5px 10px;
+    background-color: #ddd;
+    
+    color: black;
+}
+
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    #patient-manager .container {
+        width: 95%;
+        margin: auto;
+        padding: 10px;
+    }
+
+    #patient-manager h2 {
+        font-size: 1.5em;
+    }
+}
