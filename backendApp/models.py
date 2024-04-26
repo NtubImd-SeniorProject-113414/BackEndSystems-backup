@@ -1,5 +1,6 @@
 import datetime
 import secrets
+from django.utils import timezone
 import uuid
 from MySQLdb import IntegrityError
 from django.db import models
@@ -16,32 +17,6 @@ class Medicine(models.Model):
     def __str__(self):
         return self.medicine_name
 
-    @staticmethod
-    def deleteMedicine(medicine_id):
-        try:
-            medicine_to_delete = Medicine.objects.get(medicine_id=medicine_id)
-            medicine_to_delete.delete()
-            return "刪除成功"
-        except Medicine.DoesNotExist:
-            return "藥品不存在"
-        except Exception as e:
-            return f"刪除失敗: {e}"
-
-    @classmethod
-    def add_new_medicine(cls, name, efficacy, side_effects, min_stock_level):
-        try:
-            new_medicine = cls(name=name, efficacy=efficacy, side_effects=side_effects, min_stock_level=min_stock_level)
-            new_medicine.save()
-        except IntegrityError:
-            raise IntegrityError("Failed to add medicine.")
-
-    @property
-    def stock_status(self):
-        if self.min_stock_level > 0:
-            return "庫存充足"
-        else:
-            return "庫存不足"
-        
     def get_current_stock(self):
         total_purchased = self.purchase_set.aggregate(total=Sum('purchase_q')).get('total') or 0
         total_dispensed = self.prescriptiondetails_set.aggregate(total=Sum('dispensing_q')).get('total') or 0
@@ -95,9 +70,9 @@ class Patient(models.Model):
     patient_name = models.CharField(max_length=45)
     patient_birth  = models.DateField()
     patient_number = models.CharField(max_length=10)
-    line_notify = models.CharField(max_length=45, blank=True, null=True)
-    line_id = models.CharField(max_length=45, blank=True, null=True)
-    created_time = models.DateTimeField(auto_now_add=True)
+    line_notify = models.CharField(max_length=45, blank=True, null=True, unique=True)
+    line_id = models.CharField(max_length=45, blank=True, null=True, unique=True)
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     def __str__(self):
         return self.patient_name
@@ -108,7 +83,8 @@ class MainCourse(models.Model):
     course_name = models.CharField(max_length=45)
     course_price = models.IntegerField()
     course_stock = models.IntegerField()
-    created_time = models.DateTimeField(auto_now_add=True)
+    course_image = models.ImageField(upload_to='course_images/', blank=True, null=True)  # 圖片欄位
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     def __str__(self):
         return self.course_name
@@ -125,21 +101,21 @@ class Order(models.Model):
 class CourseSides(models.Model):
     sides_id = models.AutoField(primary_key=True)
     course = models.ForeignKey(MainCourse, related_name='course_sides', on_delete=models.CASCADE, db_column='course_id')
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 
 #床位
 class Bed(models.Model):
     bed_id = models.AutoField(primary_key=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, db_column='patient_id')
-    bed_number = models.CharField(max_length=5)  # Optional: Add a bed number or other attributes
-    created_time = models.DateTimeField(auto_now_add=True)
+    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, blank=True, null=True)
+    bed_number = models.CharField(max_length=5,unique=True,null=True ,blank=True)  # 移除預設值
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #配菜
 class Sides(models.Model):
     sides_id = models.AutoField(primary_key=True)
     sides_name = models.CharField(max_length=45)
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     def __str__(self):
         return self.sides_name
@@ -148,7 +124,7 @@ class Sides(models.Model):
 class Stocking(models.Model):
     stocking_id = models.AutoField(primary_key=True)
     supplier = models.ForeignKey('Supplier', on_delete=models.CASCADE, db_column='supplier_id')
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 
 #進貨明細
@@ -158,7 +134,7 @@ class StockingDetail(models.Model):
     sides = models.ForeignKey(Sides, on_delete=models.CASCADE, db_column='sides_id')
     stocking_quantity = models.IntegerField()
     stocking_date = models.DateTimeField(auto_now_add=True)
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #供應商
 class Supplier(models.Model):
@@ -166,7 +142,7 @@ class Supplier(models.Model):
     supplier_name = models.CharField(max_length=45)
     supplier_number = models.CharField(max_length=10, blank=True, null=True)
     line_notify = models.CharField(max_length=45, blank=True, null=True)
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     def __str__(self):
         return self.supplier_name
@@ -177,4 +153,4 @@ class Delivery(models.Model):
     bed = models.ForeignKey(Bed, on_delete=models.CASCADE, db_column='bed_id')
     order = models.ForeignKey(Order, on_delete=models.CASCADE, db_column='order_id')
     status = models.SmallIntegerField(default=0)
-    created_time = models.DateTimeField(auto_now_add=True)
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)

@@ -22,7 +22,7 @@ from backendApp.views import delete_warehouse, index, add_medicine, medicine_lis
     warehouse_view,toggle_active,delete_purchase,edit_profile
 from backendApp.login import login_view,logout_view
 from backendApp.account import register
-from backendApp.caresystem_views import add_patient, caregiver_manager, delete_patient,edit_caregiver, edit_patient, patient_manager
+from backendApp.caresystem_views import add_bed, add_patient, bed_manager, caregiver_manager, delete_bed, delete_patient, edit_bed,edit_caregiver, edit_patient, patient_manager
 from django.contrib.auth import views as auth_views
 
 
@@ -49,6 +49,10 @@ urlpatterns = [
     path('add_patient/', add_patient, name='add_patient'),
     path('edit_patient/<int:patient_id>/', edit_patient, name='edit_patient'),
     path('delete_patient/<int:patient_id>/', delete_patient, name='delete_patient'),
+    path('beds/', bed_manager, name='bed_manager'),
+    path('beds/add/', add_bed, name='add_bed'),
+    path('beds/edit/<int:bed_id>/', edit_bed, name='edit_bed'),
+    path('beds/delete/<int:bed_id>/', delete_bed, name='delete_bed'),
     # path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     # path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     # path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),

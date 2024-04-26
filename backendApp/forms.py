@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Medicine, Patient,Purchase, Warehouse
+from .models import Medicine, Patient,Purchase, Warehouse,Bed
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,Group
 
@@ -137,3 +137,9 @@ class PatientForm(forms.ModelForm):
         widgets = {
             'patient_birth': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
         }
+
+
+class BedForm(forms.ModelForm):
+    class Meta:
+        model = Bed
+        fields = ['bed_number' ,'patient']
