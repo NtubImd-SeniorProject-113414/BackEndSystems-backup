@@ -26,13 +26,11 @@ from backendApp.account import register
 from backendApp.caresystem_views import add_patient, caregiver_manager, delete_patient,edit_caregiver, edit_patient, patient_manager
 from django.contrib.auth import views as auth_views
 
-from caresystem.views import caregiver_manager
-from lineIntegrations.views import linebot
+from lineIntegrations.views import linebot, verify
 
 urlpatterns = [
     path('', index, name='index'),
     path('admin', admin.site.urls),
-    path('linebot', linebot.line_bot_webhook),
     path('login', login_view, name='login'),
     path('logout', logout_view, name='logout'),
     path('add_purchase/', add_purchase, name='add_purchase'),
@@ -56,5 +54,9 @@ urlpatterns = [
     # path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     # path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     # path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    
+
+    path('linebot', linebot.line_bot_webhook),
+    path('linebot/verify', verify.getWebPage)
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

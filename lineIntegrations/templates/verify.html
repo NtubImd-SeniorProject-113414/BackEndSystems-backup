@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>身分驗證</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-4">請輸入您的資料，以方便驗證您的身分！</h5>
+                        <form action="/linebot/verify" method="POST">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">中文姓名</label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="輸入您的名字" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="patient_number" class="form-label">身份證號碼</label>
+                                <input type="text" class="form-control" id="patient_number" name="patient_number" placeholder="輸入您的身份證號碼" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">電話號碼</label>
+                                <input type="text" class="form-control" id="phone" name="phone" placeholder="+886" required>
+                            </div>
+                            <div class="mb-3" style="display: none;">
+                                <input type="text" class="form-control" id="lineUid" name="lineUid">
+                            </div>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">送出</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script src="{% static 'lineIntegrations/js/line.js' %}"></script>
+
+
+<script>
+    function sendLine(){
+    liff.init({ liffId: '2005031361-7zzGb4xR', withLoginOnExternalBrowser: true})
+    .then(async () => {
+        if (liff.isLoggedIn()) {
+            liff.sendMessages([
+                {
+                    type: "text",
+                    text: "@完成註冊",
+                },
+                ]).then(() => {
+                    liff.closeWindow();
+                }).catch((err) => {
+                    alert("發生錯誤，請重新操作");
+                    alert(err)
+                    liff.closeWindow();
+                });
+        } else {
+            liff.login();
+        }
+    })
+    .catch((err) => {
+        console.log(err);
+    })
+}
+    $(document).ready(function () {
+        getLineInfo();
+    });
+</script>
+
+{% if msg %}
+    <script>
+        alert("{{ msg }}");
+    </script>
+    {% if status == True %}
+        <script>
+            sendLine();
+        </script>
+    {% endif %}
+{% endif %}

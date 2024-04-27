@@ -99,6 +99,23 @@ class Patient(models.Model):
     line_id = models.CharField(max_length=45, blank=True, null=True)
     created_time = models.DateTimeField(auto_now_add=True)
 
+    @staticmethod
+    def checkLineRegister(lineUid):
+        matching_patients = Patient.objects.filter(line_id=lineUid)
+        return matching_patients.exists()
+    
+    @staticmethod
+    def createLineAccount(name, patient_number, phone, lineUid):
+        if Patient.checkLineRegister(lineUid):
+            return {"status": True, "msg":"此LINE帳戶已經驗證"}
+        try:
+            patient = Patient.objects.get(patient_name=name, patient_number=patient_number)
+            patient.line_id = lineUid
+            patient.save()
+            return {"status": True, "msg":"驗證成功!"}
+            
+        except Patient.DoesNotExist:
+            return {"status": False, "msg":"資料填寫錯誤"}
     def __str__(self):
         return self.patient_name
 
