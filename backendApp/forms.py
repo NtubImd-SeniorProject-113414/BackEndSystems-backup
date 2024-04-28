@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Medicine, Patient,Purchase, Warehouse,Bed
+from .models import CourseSides, MainCourse, Medicine, Patient,Purchase, Sides, Stocking, StockingDetail, Supplier, Warehouse,Bed
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,Group
 
@@ -133,13 +133,58 @@ class UserProfileForm(forms.ModelForm):
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ['patient_name', 'patient_birth', 'patient_number', 'line_notify', 'line_id']
+        fields = ['patient_name', 'patient_birth', 'patient_number','patient_idcard']
         widgets = {
             'patient_birth': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
         }
 
-
 class BedForm(forms.ModelForm):
     class Meta:
         model = Bed
-        fields = ['bed_number' ,'patient']
+        fields = ['bed_number', 'patient']
+
+
+class SupplierForm(forms.ModelForm):
+    class Meta:
+        model = Supplier
+        fields = ['supplier_name', 'supplier_number']
+
+
+class MainCourseForm(forms.ModelForm):
+    class Meta:
+        model = MainCourse
+        fields = ['course_name', 'course_price', 'course_stock', 'course_image']
+
+class CourseSidesForm(forms.ModelForm):
+    class Meta:
+        model = CourseSides
+        fields = ['course', 'sides', 'quantity']
+
+class StockingForm(forms.ModelForm):
+    class Meta:
+        model = Stocking
+        fields = ['supplier']
+
+class StockingDetailForm(forms.ModelForm):
+    new_sides_name = forms.CharField(max_length=100, required=False, help_text='輸入新的配菜名稱')
+    supplier = forms.ModelChoiceField(queryset=Supplier.objects.all(), required=True, help_text='選擇供應商')
+    # 日期選擇器用於進貨日期
+    stocking_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), help_text='選擇進貨日期')
+
+    class Meta:
+        model = StockingDetail
+        fields = ['stocking_quantity', 'stocking_date']
+
+    def save(self, commit=True):
+        # 根據新的配菜名稱創建或找到現有的 Sides 實例
+        new_sides_name = self.cleaned_data.get('new_sides_name')
+        if new_sides_name:
+            sides, created = Sides.objects.get_or_create(sides_name=new_sides_name)
+            self.instance.sides = sides  # 正確的是 'sides' 不是 'side'
+        
+        # 根據選擇的供應商創建或找到現有的 Stocking 實例
+        supplier = self.cleaned_data.get('supplier')
+        stocking, created = Stocking.objects.get_or_create(supplier=supplier)
+        self.instance.stocking = stocking
+        
+        return super().save(commit=commit)
