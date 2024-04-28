@@ -202,7 +202,6 @@ media
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
-
 # File-based project format
 *.iws
 
@@ -234,7 +233,7 @@ wheels/
 .installed.cfg 
 *.egg 
 *.manifest 
-*.spec 
+*.spec
 
 # Installer logs 
 pip-log.txt 
@@ -303,3 +302,6 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+
+*.pyc
+__pycache__/
