@@ -1,0 +1,7 @@
+<!-- bom_results.html -->
+<h1>{{ course.course_name }}所需的配菜數量</h1>
+<ul>
+{% for side_name, quantity in bom_results.items %}
+    <li>{{ side_name }}: 需要 {{ quantity }}，當前庫存：{{ sides.get(side_name).get_current_stock() }}</li>
+{% endfor %}
+</ul>

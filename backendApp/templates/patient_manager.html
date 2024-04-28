@@ -29,6 +29,7 @@
           <th>姓名</th>
           <th>出生日期</th>
           <th>電話</th>
+          <th>身分證字號</th>
           <th>創建時間</th>
           <th>操作</th>
           <th>刪除</th>
@@ -40,6 +41,7 @@
           <td>{{ patient.patient_name }}</td>
           <td>{{ patient.patient_birth }}</td>
           <td>{{ patient.patient_number }}</td>
+          <td>{{ patient.patient_idcard }}</td>
           <td>{{ patient.created_time }}</td>
           <td>
             <a href="{% url 'edit_patient' patient.patient_id %}" class="btn btn-primary">修改</a>

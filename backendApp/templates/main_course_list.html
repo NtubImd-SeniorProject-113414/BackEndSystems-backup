@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<div class="container">
+    <h2>主菜管理</h2>
+
+    <!-- 查询表单 -->
+    <form method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="query" class="form-control" placeholder="搜索主菜" value="{{ query }}">
+            <button class="btn btn-outline-secondary" type="submit">搜索</button>
+        </div>
+    </form>
+
+    <a href="{% url 'add_main_course' %}" class="btn btn-primary mb-2">新增主菜</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>主菜名稱</th>
+                <th>價格</th>
+                <th>庫存</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in main_courses %}
+            <tr>
+                <td>{{ course.course_name }}</td>
+                <td>{{ course.course_price }}</td>
+                <td>{{ course.course_stock }}</td>
+                <td>
+                    <a href="{% url 'edit_main_course' course.course_id %}" class="btn btn-primary btn-sm">編輯</a>
+                    <form action="{% url 'delete_main_course' course.course_id %}" method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('確定要刪除這個主菜嗎？');">刪除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 分页控件 -->
+    <div class="d-flex justify-content-center">
+        <ul class="pagination">
+            {% if main_courses.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ main_courses.previous_page_number }}{% if query %}&query={{ query }}{% endif %}">上一頁</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">上一頁</span></li>
+            {% endif %}
+            {% for num in main_courses.paginator.page_range %}
+                {% if main_courses.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if query %}&query={{ query }}{% endif %}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+            {% if main_courses.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ main_courses.next_page_number }}{% if query %}&query={{ query }}{% endif %}">下一頁</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled"><span class="page-link">下一頁</span></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/base.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('nav a');
+
+        navLinks.forEach(link => {
+            link.parentNode.classList.remove('active');
+        });
+
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'main_course_list' %}"]');
+        if (addMedicineLink) {
+            addMedicineLink.parentNode.classList.add('active');
+        }
+    });
+</script>
+{% endblock %}
