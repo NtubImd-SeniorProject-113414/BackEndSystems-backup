@@ -1,6 +1,5 @@
 import datetime
 import json
-from django import forms
 from django.contrib import messages
 from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -13,18 +12,38 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .forms import NewMedicineForm,NewPurchase, WarehouseCreationForm,WarehouseFilterForm
-from backendApp import models
+from .forms import NewMedicineForm, WarehouseCreationForm,WarehouseFilterForm,UserProfileForm
 from django.views.decorators.http import require_POST
+from django.contrib.auth.models import User,Group
 
 
-#主頁
-@group_required('pharmacy_admin')
+
+@group_required('caregiver', 'admin','pharmacy_admin')
 @login_required
 def index(request):
-    username = request.user.username if request.user.is_authenticated else "Guest"
-    context = {'username': username}
+    first_name = request.user.first_name
+    last_name = request.user.last_name
+
+    if not first_name and not last_name:
+        display_name = request.user.username
+    else:
+        display_name = f"{first_name} {last_name}"
+
+    context = {'username': display_name}
     return render(request, 'index.html', context)
+
+@login_required
+def edit_profile(request):
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('index') 
+    else:
+        form = UserProfileForm(instance=request.user)
+    
+    return render(request, 'edit_profile.html', {'form': form})
+
 
   
 #藥品管理
@@ -57,8 +76,7 @@ def medicine_list(request):
             return JsonResponse({'status': 'error', 'message': '最小庫存必須是一個數字'})
         except Medicine.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': '找不到藥品'})
-        except Exception as e:
-            return JsonResponse({'status': 'error', 'message': str(e)})
+
     
     else:
         search_query = request.GET.get('search', '') 
@@ -136,19 +154,17 @@ def add_medicine(request):
 @group_required('pharmacy_admin')
 @login_required
 def add_purchase(request):
-    medicines = Medicine.objects.all()  # Get all Medicine objects
+    medicines = Medicine.objects.all() 
 
-    # Determine the sort order based on the 'sort' GET parameter
     sort_by = request.GET.get('sort', 'purchase_date')
     if sort_by == 'date_desc':
-        order = '-purchase_date'  # Sort by purchase_date in descending order
+        order = '-purchase_date' 
     else:
-        order = 'purchase_date'  # Default to ascending if not specified or any other value
+        order = 'purchase_date' 
 
-    purchases = Purchase.objects.all().order_by(order)  # Apply sorting
+    purchases = Purchase.objects.all().order_by(order)  
 
-    # Pagination setup
-    paginator = Paginator(purchases, 10)  # 10 items per page
+    paginator = Paginator(purchases, 10) 
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
 

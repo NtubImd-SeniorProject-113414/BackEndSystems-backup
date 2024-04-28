@@ -1,59 +1,22 @@
+{% extends 'base.html' %}
 {% load static %}
-
-<!DOCTYPE html>
-<html lang="zh-Hant">
+{% block content %}
 
 <head>
-    {% load static %}
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>無人智慧藥師後臺系統</title>
-    <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}">
-    <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
-
-
-    {% block extra_head %}{% endblock %} 
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+<h1>歡迎，
+    {% if user.first_name and user.last_name %}
+      {{ user.first_name }}{{ user.last_name }}
+    {% else %}
+      {{ user.username }}
+    {% endif %}
+  ！</h1>
+{% if user.is_superuser %}
+<p>您的目前的身分為：<strong>超級使用者</strong>。</p>
+{% else %}
+<p>您的目前的身分為：<strong>{% for group in user.groups.all %}{{ group.name }}{% endfor %}</strong></p>
 
-<body>
-    <header>
-        <a href="{% url 'index' %}" class="logo">
-            <img src="{% static 'img/logo.png' %}" alt="公司LOGO">
-            <h2>無人智慧藥師後臺系統</h2>
-        </a>
-        <div class="account">
-            <a href="#"><i class="fas fa-user-circle"></i> {{ request.user.username }}</a>
-            <div class="account-dropdown" id="account-dropdown">
-                <a href="#">帳戶資訊</a>
-                <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> 登出</a>
-            </div>
-        </div>
-    </header>
-
-    <nav id="sidebar">
-        <ul>
-            <li class="active"><a href="{% url 'index' %}"><i class="fas fa-home"></i> 首頁</a></li>
-            <li><a href="{% url 'add_medicine' %}"><i class="fa-solid fa-plus"></i> 新增藥品</a></li>
-            <li><a href="{% url 'medicine_list' %}"><i class="fa-solid fa-square-poll-vertical"></i></i> 藥品管理</a></li>
-            <li><a href="{% url 'add_purchase' %}"><i class="fa-solid fa-cart-flatbed"></i> 進貨表單</a></li> <!--在後台將所進貨之藥品輸入至此-->
-            <li><a href="#"><i class="fa-solid fa-clipboard-list"></i> 處方管理</a></li> <!--記錄掃多少的處方 不為後台輸入-->
-            <li><a href="{% url 'warehouse' %}"><i class="fa-solid fa-car"></i> 倉儲與運行管理</a></li>
-        </ul>
-    </nav>
-
-
-    <main>
-
-    
-        {% block content %}{% endblock %}
-    </main>
-
-    {% block extra_scripts %}
-    <script src="{% static 'js/base.js' %}"></script>
-    
-    {% endblock %}
-</body>
-
-</html>
+{% endif %}
+{% endblock %}

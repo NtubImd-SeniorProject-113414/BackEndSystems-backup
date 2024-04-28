@@ -7,20 +7,29 @@
         }
 
         header {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-            width: 100%;
+            background-color: #333 !important;
+            color: #fff  !important;
+            padding: 10px  !important;
+            text-align: center  !important;
+            width: 100%  !important;
             position: fixed;
-            top: 0;
-            z-index: 1000;
-            height: 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s;
+            top: 0  !important;
+            z-index: 1000  !important;
+            height: 60px  !important;
+            display: flex  !important;
+            justify-content: space-between  !important;
+            align-items: center  !important;
+            transition: background-color 0.3s  !important;
         }
+        
+        header h2 {
+            color: #fff !important; /* 確保文字顏色為白色 */
+            font-size: 24px  !important; /* 可以調整適合的字體大小 */
+            margin: 0 ; /* 移除外邊距 */
+            padding: 0; /* 移除內邊距 */
+        }
+
+
 
         header .logo {
             display: flex;

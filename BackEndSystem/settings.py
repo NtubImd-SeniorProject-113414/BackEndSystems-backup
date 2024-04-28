@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-)=(hzjf$06hdk+@$vj#q+zm$liz@4oq$vg208rf*itfk+0*#3w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'backendApp',
-    'caresystem'
 ]
 
 MIDDLEWARE = [
@@ -58,7 +57,10 @@ ROOT_URLCONF = 'BackEndSystem.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'backendApp/templates'),
+            os.path.join(BASE_DIR, 'lineIntegrations/templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,6 +131,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'lineIntegrations/static'),
 ]
 
 MEDIA_URL = '/media/'
