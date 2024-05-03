@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'lineIntegrations/css/order/state.css' %}">
+    <title>您的訂單</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-center">您的訂單</h2>
+            </div>
+            <div class="card-body">
+                <h4 class="card-title interval">點餐內容</h4>
+                <ul id="orderItems" class="list-group mb-4">
+                    <li class="list-group-item">
+                        <img src="{{ orderData.course.course_image.url }}">
+                        <h3>{{ orderData.course.course_name }}</h3>
+                    </li>
+                </ul>
+                <h4 class="card-title interval">餐點狀態</h4>
+                <div id="orderStatus" class="alert {{ orderData.orderState.OrderState_htmlStyle }} alerText" role="alert">
+                    {{ orderData.orderState.OrderState_name }}
+                </div>
+                <h4 class="card-title interval">下次點餐時間</h4>
+                <div class="next-order-time">
+                    <span id="nextOrderTime">{{nextTimeSlotName}} ({{ nextTimeSlot }})</span>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <button class="btn btn-primary card-title" onclick="window.location.reload()">刷新頁面</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
