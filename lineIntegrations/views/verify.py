@@ -12,10 +12,9 @@ def getWebPage(request):
         return render(request, 'verify.html')
     elif request.method == 'POST':
         name = request.POST.get('name')
-        patient_number = request.POST.get('patient_number')
+        idCard = request.POST.get('idCard')
         phone = request.POST.get('phone')
         lineUid = request.POST.get('lineUid')
-        req = Patient.createLineAccount(name, patient_number, phone, lineUid)
-        print(req)
+        req = Patient.createLineAccount(name, idCard, phone, lineUid)
         return render(request, 'verify.html', req)
     return HttpResponse("Unsupported HTTP method", status=405)

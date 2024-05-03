@@ -1,8 +1,5 @@
-import datetime
-import json
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import *
@@ -29,7 +26,7 @@ def line_bot_webhook(request):
 @handler.add(FollowEvent)
 def handle_follow_event(event):
     user_id = event.source.user_id
-    if Patient.checkLineRegister(user_id):
+    if Patient.getpatientIdByLineUid(user_id) != None:
         line_bot_api.link_rich_menu_to_user(user_id, "richmenu-c4a8f833e6c72acc2874f85dfdc21a23")
     else:
         line_bot_api.link_rich_menu_to_user(user_id, "richmenu-f8c5972573b1e147f6382a36f8b23003")
@@ -41,7 +38,7 @@ def handle_follow_event(event):
 def handle_message(event):
     user_id = event.source.user_id
     message_text = event.message.text
-    if Patient.checkLineRegister(user_id):
+    if Patient.getpatientIdByLineUid(user_id) != None:
         if message_text == "@虛擬人陪伴":
             line_bot_api.link_rich_menu_to_user(user_id, "richmenu-5c4079b91cd415fb5aab5cd4abcfd362")
         elif message_text == "@服務選單" or message_text == "@完成註冊":
@@ -49,7 +46,6 @@ def handle_message(event):
         else:
             line_bot_api.reply_message(event.reply_token, TextSendMessage(text="開發階段"))
     else:
-        print(user_id)
         line_bot_api.link_rich_menu_to_user(user_id, "richmenu-f8c5972573b1e147f6382a36f8b23003")
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text="尚未註冊"))
 

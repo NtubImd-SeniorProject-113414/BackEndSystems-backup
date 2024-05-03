@@ -1,12 +1,9 @@
-import datetime
 import os
-import secrets
-from django.utils import timezone
 import uuid
-from MySQLdb import IntegrityError
+from django.utils import timezone
 from django.db import models
 from django.db.models import Sum
-from regex import F
+from datetime import datetime, time
 
 
 class Medicine(models.Model):
@@ -24,19 +21,9 @@ class Medicine(models.Model):
         total_dispensed = self.prescriptiondetails_set.aggregate(total=Sum('dispensing_q')).get('total') or 0
         return total_purchased - total_dispensed
 
-
-class LineBOT(models.Model):
-    line_uid = models.CharField(primary_key=True, max_length=100, unique=True)
-    name = models.CharField(max_length=100)
-    id_card = models.CharField(max_length=100)
-    phone_number = models.CharField(max_length=20)
-    email = models.EmailField()
-    birth = models.DateField()
-
 #處方
 class Prescription(models.Model):
     prescription_id = models.AutoField(primary_key=True)
-    line_bot = models.ForeignKey(LineBOT, on_delete=models.CASCADE)
     date = models.DateField(auto_now_add=True)
     barcode = models.CharField(max_length=100, default=uuid.uuid4, unique=True, editable=False)
 
@@ -78,16 +65,16 @@ class Patient(models.Model):
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     @staticmethod
-    def checkLineRegister(lineUid):
-        matching_patients = Patient.objects.filter(line_id=lineUid)
-        return matching_patients.exists()
+    def getpatientIdByLineUid(line_uid):
+        matching_patient = Patient.objects.filter(line_id=line_uid).first()
+        return matching_patient.patient_id if matching_patient else None
     
     @staticmethod
-    def createLineAccount(name, patient_number, phone, lineUid):
+    def createLineAccount(name, idcard, phone, lineUid):
         if Patient.checkLineRegister(lineUid):
             return {"status": True, "msg":"此LINE帳戶已經驗證"}
         try:
-            patient = Patient.objects.get(patient_name=name, patient_number=patient_number)
+            patient = Patient.objects.get(patient_name=name, patient_idcard=idcard, patient_number=phone)
             patient.line_id = lineUid
             patient.save()
             return {"status": True, "msg":"驗證成功!"}
@@ -97,10 +84,58 @@ class Patient(models.Model):
     def __str__(self):
         return self.patient_name
 
+#點餐時段
+class MealOrderTimeSlot(models.Model):
+    timeSlot_id = models.AutoField(primary_key=True)
+    timeSlot_name = models.CharField(max_length=3)
+    startTime = models.TimeField(default='00:00')
+    deadlineTime = models.TimeField(default='00:00')
+    endTimes = models.TimeField(default='00:00')
+    def __str__(self):
+        return f'{self.timeSlot_name} ({self.startTime} - {self.endTimes})'
+    
+    #尋找與現在時間相符的時段
+    @staticmethod
+    def find_time_slot(formatted_time):
+        hour, minute = map(int, formatted_time.split(':'))
+        current_time = time(hour, minute)
+        time_slots = MealOrderTimeSlot.objects.all()
+        for time_slot in time_slots:
+            if time_slot.startTime <= current_time <= time_slot.endTimes:
+                return time_slot
+        return None 
+    
+    #尋找離現在時間最近的下個時段
+    @staticmethod
+    def find_nearest_time_slot(nowTimeSlot, formatted_time):
+        nowHour, nowMinute = map(int, formatted_time.split(':'))
+        current_time = time(nowHour, nowMinute)
+        time_slots = MealOrderTimeSlot.objects.all()
+        nearest_time_slot = None
+        min_distance = float('inf')
+        for time_slot in time_slots:
+            if current_time <= time_slot.endTimes:
+                start_distance = abs((current_time.hour * 60 + current_time.minute) - (time_slot.startTime.hour * 60 + time_slot.startTime.minute))
+                end_distance = abs((current_time.hour * 60 + current_time.minute) - (time_slot.endTimes.hour * 60 + time_slot.endTimes.minute))
+                if start_distance < min_distance and time_slot != nowTimeSlot:
+                    min_distance = start_distance
+                    nearest_time_slot = time_slot
+                if end_distance < min_distance and time_slot != nowTimeSlot:
+                    min_distance = end_distance
+                    nearest_time_slot = time_slot
+        min_distance = float('inf')
+        if nearest_time_slot == None:
+            for time_slot in time_slots:
+                start_distance = (time_slot.startTime.hour * 60 + time_slot.startTime.minute)
+                if start_distance < min_distance:
+                    nearest_time_slot = time_slot
+                    min_distance = start_distance
+        return nearest_time_slot
+
 def course_image_upload_to(instance, filename):
     ext = filename.split('.')[-1]
-    filename = f"{uuid.uuid4()}.{ext}"
-    return os.path.join('course_images', filename)
+    new_filename = f"{uuid.uuid4()}.{ext}"
+    return os.path.join('img', new_filename)
 
 #主餐
 class MainCourse(models.Model):
@@ -108,8 +143,9 @@ class MainCourse(models.Model):
     course_name = models.CharField(max_length=45)
     course_price = models.IntegerField()
     course_stock = models.IntegerField()
-    course_image = models.ImageField(upload_to='img/', blank=True, null=True) 
+    course_image = models.ImageField(upload_to=course_image_upload_to, blank=True, null=True)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
+    timeSlot = models.ForeignKey(MealOrderTimeSlot, on_delete=models.CASCADE, related_name='details')
 
     def __str__(self):
         return self.course_name
@@ -121,14 +157,29 @@ class MainCourse(models.Model):
             total_needed = cs.quantity * number_of_patients * days
             bom_results[cs.sides.sides_name] = total_needed
         return bom_results
+    
+#訂單狀態
+class OrderState(models.Model):
+    OrderState_code = models.AutoField(primary_key=True)
+    OrderState_name = models.CharField(max_length=10)
+    OrderState_htmlStyle = models.CharField(max_length=100)
 
 #訂單
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='details')
     course = models.ForeignKey(MainCourse, on_delete=models.CASCADE, db_column='course_id')
+    orderState = models.ForeignKey(OrderState, on_delete=models.CASCADE, db_column='OrderState_code', related_name='orders')
     order_quantity = models.IntegerField()
-    order_date = models.DateTimeField(auto_now_add=True)
+    order_time = models.DateTimeField(auto_now_add=True)
 
+    @staticmethod
+    def getOrderByPatientIdAndTimeSlot(patient_id, timeSlot):
+        today = datetime.today()
+        start_time = datetime.combine(today, timeSlot.startTime)
+        end_time = datetime.combine(today, timeSlot.deadlineTime)
+        print(start_time, end_time)
+        return Order.objects.filter(patient_id=patient_id, order_time__range=(start_time, end_time))
 
 #配菜
 class Sides(models.Model):
