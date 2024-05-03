@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import CourseSides, MainCourse, Medicine, Patient,Purchase, Sides, Stocking, StockingDetail, Supplier, Warehouse,Bed
+from .models import CourseSides, MainCourse, Medicine, Patient,Purchase, Sides, Stocking, StockingDetail, Supplier, Warehouse,Bed, MealOrderTimeSlot
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,Group
 
@@ -151,9 +151,10 @@ class SupplierForm(forms.ModelForm):
 
 
 class MainCourseForm(forms.ModelForm):
+    timeSlot = forms.ModelChoiceField(queryset=MealOrderTimeSlot.objects.all(), empty_label=None)
     class Meta:
         model = MainCourse
-        fields = ['course_name', 'course_price', 'course_stock', 'course_image']
+        fields = ['course_name', 'course_price', 'course_stock', 'course_image', 'timeSlot']
 
 class CourseSidesForm(forms.ModelForm):
     class Meta:

@@ -1,18 +1,15 @@
 import os
+import uuid
 from django.contrib import messages
-from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from jsonschema import ValidationError
-from django.db.models import F
 from backendApp.decorator import group_required
-from backendApp.forms import  BedForm, CourseSidesForm, MainCourseForm, PatientForm, StockingDetailForm, StockingForm, SupplierForm, UserProfileForm
+from backendApp.forms import  BedForm, CourseSidesForm, MainCourseForm, PatientForm, StockingDetailForm, SupplierForm, UserProfileForm
 from backendApp.middleware import login_required
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q, Value
+from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Bed, CourseSides, MainCourse, Patient, Sides, Stocking, StockingDetail, Supplier
-from django.views.decorators.http import require_POST
-from django.contrib.auth.models import User,Group
+from .models import Bed, CourseSides, MainCourse, Patient, Sides, StockingDetail, Supplier
+from django.contrib.auth.models import User
 from django.db.models.functions import Concat
 
 
@@ -233,7 +230,7 @@ def main_course_list(request):
     else:
         main_courses = MainCourse.objects.all()
 
-    paginator = Paginator(main_courses, 10)  # 每页显示10条记录
+    paginator = Paginator(main_courses, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
