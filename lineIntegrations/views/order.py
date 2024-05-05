@@ -13,10 +13,20 @@ from lineIntegrations.module.lineVerify import getLineUserUidByToken
 def getWebPage(request):
     nowTime = datetime.now()
     formatted_time = nowTime.strftime("%H:%M")
-    #formatted_time = "08:00" #測試用
+    #formatted_time = "12:00" #測試用
     nowTimeSlot = MealOrderTimeSlot.find_time_slot(formatted_time)
     nextTimeSlot = MealOrderTimeSlot.find_nearest_time_slot(nowTimeSlot, formatted_time)
     next_time_slot_str = f"{nextTimeSlot.startTime.strftime('%H:%M')} 至 {nextTimeSlot.deadlineTime.strftime('%H:%M')}"
+
+    access_token = request.session.get('line_access_token')
+    LineUid = getLineUserUidByToken(access_token)
+    patient_id = Patient.getpatientIdByLineUid(LineUid)
+
+    #這時段是否點餐了
+    if nowTimeSlot!= None:
+        orderData = Order.getOrderByPatientIdAndTimeSlot(patient_id, nowTimeSlot)
+        if orderData:
+            return render(request, 'order/state.html', {'orderData': orderData[0], 'nextTimeSlotName': nextTimeSlot.timeSlot_name, 'nextTimeSlot': next_time_slot_str})
 
     #時段檢查
     if (nowTimeSlot is None) or (formatted_time > nowTimeSlot.deadlineTime.strftime('%H:%M')):
@@ -26,16 +36,6 @@ def getWebPage(request):
             msg = '本時段點餐時間已過'
         
         return render(request, 'order/unopened.html', {'msg': msg, 'nextTimeSlotName': nextTimeSlot.timeSlot_name, 'nextTimeSlot': next_time_slot_str})
-
-    access_token = request.session.get('line_access_token')
-    LineUid = getLineUserUidByToken(access_token)
-    patient_id = Patient.getpatientIdByLineUid(LineUid)
-
-    #這時段是否點餐了
-    orderData = Order.getOrderByPatientIdAndTimeSlot(patient_id, nowTimeSlot)
-
-    if orderData:
-        return render(request, 'order/state.html', {'orderData': orderData[0], 'nextTimeSlotName': nextTimeSlot.timeSlot_name, 'nextTimeSlot': next_time_slot_str})
 
     if request.method == 'GET':
         courses = MainCourse.objects.filter(timeSlot=nowTimeSlot)
