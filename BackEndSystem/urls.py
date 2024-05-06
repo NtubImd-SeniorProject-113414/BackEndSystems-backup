@@ -28,7 +28,7 @@ from backendApp.caresystem_views import add_bed, add_patient, bed_manager, careg
 from backendApp.caresystem_views import add_patient, caregiver_manager, delete_patient,edit_caregiver, edit_patient, patient_manager
 from django.contrib.auth import views as auth_views
 
-from lineIntegrations.views import linebot, verify, order, medicament
+from lineIntegrations.views import linebot, verify, order, medicament, notify
 
 urlpatterns = [
     path('', index, name='index'),
@@ -82,7 +82,9 @@ urlpatterns = [
     path('linebot/verify', verify.getWebPage),
     path('linebot/order', order.getWebPage),
     path('linebot/medicament', medicament.getWebPage),
-    path('linebot/notify', medicament.getWebPage)
+    path('linebot/notify', notify.getWebPage),
+    path('linebot/api/notifyList', notify.getPatientNotifyList)
+
 
 
 

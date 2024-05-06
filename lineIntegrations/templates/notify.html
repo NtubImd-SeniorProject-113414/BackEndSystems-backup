@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通知欄</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .notify {
+            margin-bottom: 15px;
+        }
+        .notify.unread {
+            background-color: #f8f9fa;
+            border-left: 5px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">通知面板</h1>
+    <div class="btn-group mb-3" role="group" aria-label="篩選器">
+        <button type="button" class="btn btn-secondary" id="show-unread">未讀訊息 (<span id="unread-count"></span>)</button>
+        <button type="button" class="btn btn-secondary" id="show-read">已讀訊息</button>
+    </div>
+    <div id="notifies">
+       
+    </div>
+</div>
+<script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+<script>
+    const notifies = [
+        { id: 1, text: '這是未讀訊息 1', read: false },
+        { id: 2, text: '這是已讀訊息 1', read: true },
+        { id: 3, text: '這是未讀訊息 2', read: false },
+        { id: 4, text: '這是已讀訊息 2', read: true }
+    ];
+
+    function renderNotifies(filter) {
+        const container = $('#notifies');
+        container.empty();
+        const filteredNotifies = notifies.filter(notify => {
+            if (filter === 'unread') return !notify.read;
+            if (filter === 'read') return notify.read;
+            return true;
+        });
+
+        filteredNotifies.forEach(notify => {
+            const notifyElement = $('<div></div>', {
+                class: 'notify p-3 border rounded'
+            });
+            if (!notify.read) notifyElement.addClass('unread');
+            notifyElement.html(`
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>${notify.text}</span>
+                    ${!notify.read ? `<button class="btn btn-sm btn-primary mark-read" data-id="${notify.id}">標記為已讀</button>` : ''}
+                </div>
+            `);
+            container.append(notifyElement);
+        });
+
+        $('.mark-read').on('click', function() {
+            const id = $(this).data('id');
+            markAsRead(id);
+        });
+
+        updateUnreadCount();
+    }
+
+    function markAsRead(id) {
+        const notify = notifies.find(notify => notify.id == id);
+        if (notify) {
+            notify.read = true;
+            renderNotifies(currentFilter);
+        }
+    }
+
+    function updateUnreadCount() {
+        const unreadCount = notifies.filter(notify => !notify.read).length;
+        $('#unread-count').text(unreadCount);
+    }
+
+    let currentFilter = 'unread';
+    $('#show-unread').on('click', function() {
+        currentFilter = 'unread';
+        renderNotifies(currentFilter);
+    });
+    $('#show-read').on('click', function() {
+        currentFilter = 'read';
+        renderNotifies(currentFilter);
+    });
+
+    renderNotifies(currentFilter);
+</script>
+</body>
+</html>
