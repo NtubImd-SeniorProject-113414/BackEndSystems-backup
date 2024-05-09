@@ -29,7 +29,6 @@ class Migration(migrations.Migration):
                 ('course_id', models.AutoField(primary_key=True, serialize=False)),
                 ('course_name', models.CharField(max_length=45)),
                 ('course_price', models.IntegerField()),
-                ('course_stock', models.IntegerField()),
                 ('course_image', models.ImageField(blank=True, null=True, upload_to=backendApp.models.course_image_upload_to)),
                 ('created_time', models.DateTimeField(default=django.utils.timezone.now)),
             ],
