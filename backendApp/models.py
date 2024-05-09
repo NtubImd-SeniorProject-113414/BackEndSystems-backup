@@ -46,7 +46,7 @@ class Warehouse(models.Model):
 
 #處方明細
 class PrescriptionDetails(models.Model):
-    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE, related_name='details')
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
     dosage = models.CharField(max_length=100)
     dispensing_q = models.IntegerField()
@@ -71,7 +71,7 @@ class Patient(models.Model):
     
     @staticmethod
     def createLineAccount(name, idcard, phone, lineUid):
-        if Patient.checkLineRegister(lineUid):
+        if Patient.getpatientIdByLineUid(lineUid):
             return {"status": True, "msg":"此LINE帳戶已經驗證"}
         try:
             patient = Patient.objects.get(patient_name=name, patient_idcard=idcard, patient_number=phone)
@@ -87,8 +87,7 @@ class Patient(models.Model):
 #RFID卡片
 class RfidCard(models.Model):
     RfidCard_code = models.CharField(primary_key=True, max_length=50)
-    RfidCard_id = models.AutoField(unique=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='details')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #點餐時段
@@ -149,10 +148,9 @@ class MainCourse(models.Model):
     course_id = models.AutoField(primary_key=True)
     course_name = models.CharField(max_length=45)
     course_price = models.IntegerField()
-    course_stock = models.IntegerField()
     course_image = models.ImageField(upload_to=course_image_upload_to, blank=True, null=True)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
-    timeSlot = models.ForeignKey(MealOrderTimeSlot, on_delete=models.CASCADE, related_name='details')
+    timeSlot = models.ForeignKey(MealOrderTimeSlot, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.course_name
@@ -174,7 +172,7 @@ class OrderState(models.Model):
 #訂單
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='details')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     course = models.ForeignKey(MainCourse, on_delete=models.CASCADE, db_column='course_id')
     orderState = models.ForeignKey(OrderState, on_delete=models.CASCADE, db_column='OrderState_code', related_name='orders')
     order_quantity = models.IntegerField()
@@ -185,7 +183,6 @@ class Order(models.Model):
         today = datetime.today()
         start_time = datetime.combine(today, timeSlot.startTime)
         end_time = datetime.combine(today, timeSlot.deadlineTime)
-        print(start_time, end_time)
         return Order.objects.filter(patient_id=patient_id, order_time__range=(start_time, end_time))
 
 #配菜
@@ -197,24 +194,27 @@ class Sides(models.Model):
     def __str__(self):
         return self.sides_name
 
-    def check_and_reorder(self):
-        current_stock = self.get_current_stock()
-        if current_stock < self.min_stock_level:
-            print(f"觸發重新訂購 {self.sides_name}，當前庫存：{current_stock}")
-
-    @property
-    def current_stock(self):
-        total_stocked = self.stockingdetail_set.aggregate(total=Sum('stocking_quantity'))['total'] or 0
-        return total_stocked
-
 
 #主餐與配菜
 class CourseSides(models.Model):
     coursesides_id = models.AutoField(primary_key=True)
     course = models.ForeignKey(MainCourse, related_name='course_sides', on_delete=models.CASCADE, db_column='course_id')
     sides = models.ForeignKey(Sides, on_delete=models.CASCADE, db_column='sides_id')
-    quantity = models.IntegerField(default=0) 
+    quantity = models.IntegerField() 
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
+
+    @staticmethod
+    def calculateTotalQuantityBySideId(sides_id):
+        sides = Sides.objects.get(sides_id=sides_id)
+        course_sides = CourseSides.objects.filter(sides=sides)
+        total_quantity = 0
+        for course_side in course_sides:
+            print(course_side.course.course_name)
+            order_quantity = Order.objects.filter(course=course_side.course)
+            print(order_quantity)
+            # if order_quantity:
+            #     total_quantity += order_quantity * course_side.quantity
+        return total_quantity
 
 
 #床位
@@ -243,6 +243,11 @@ class StockingDetail(models.Model):
     stocking_date = models.DateTimeField(auto_now_add=False)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
+    @staticmethod
+    def getSidesQuantityBySides(sides):
+        total_quantity = StockingDetail.objects.filter(sides=sides).aggregate(Sum('stocking_quantity'))['stocking_quantity__sum']
+        return total_quantity if total_quantity is not None else 0
+
     def __str__(self):
         return f"{self.sides.sides_name} - {self.stocking_quantity}"
 
@@ -261,31 +266,31 @@ class Supplier(models.Model):
 class Notify(models.Model):
     notify_id = models.AutoField(primary_key=True)
     notify_message = models.CharField(max_length=1000)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='details')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     is_read = models.BooleanField(default=False)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #虛擬人聊天紀錄
 class ChatLogs(models.Model):
     chatLog_id = models.AutoField(primary_key=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='details')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     patient_message = models.CharField(max_length=1000)
     response_message = models.CharField(max_length=1000)
-    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
-
-#用藥需求
-class MedicineDemand(models.Model):
-    medicineDemand_id = models.AutoField(primary_key=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='details')
-    patient_demand = models.CharField(max_length=300)
-    MedicineDemandState = models.ForeignKey(MedicineDemandState, on_delete=models.CASCADE, db_column='MedicineDemandState_code')
-    review_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #用藥需求狀態
 class MedicineDemandState(models.Model):
     MedicineDemandState_code = models.AutoField(primary_key=True)
     OrderState_name = models.CharField(max_length=10)
+
+#用藥需求
+class MedicineDemand(models.Model):
+    medicineDemand_id = models.AutoField(primary_key=True)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    patient_demand = models.CharField(max_length=300)
+    MedicineDemandState = models.ForeignKey(MedicineDemandState, on_delete=models.CASCADE, db_column='MedicineDemandState_code')
+    review_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #車子
 class Vehicle(models.Model):
