@@ -154,7 +154,7 @@ class MainCourseForm(forms.ModelForm):
     timeSlot = forms.ModelChoiceField(queryset=MealOrderTimeSlot.objects.all(), empty_label=None)
     class Meta:
         model = MainCourse
-        fields = ['course_name', 'course_price', 'course_stock', 'course_image', 'timeSlot']
+        fields = ['course_name', 'course_price', 'course_image', 'timeSlot']
 
 class CourseSidesForm(forms.ModelForm):
     class Meta:
