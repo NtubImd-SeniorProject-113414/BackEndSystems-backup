@@ -21,7 +21,7 @@
             </div>
         </form>
 
-        <a href="{% url 'stocking_detail_create' %}" class="btn btn-primary mb-3">新增進貨</a>
+        <a href="{% url 'purchase_detail_create' %}" class="btn btn-primary mb-3">新增進貨</a>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -35,10 +35,10 @@
                 {% for detail in details %}
                 <tr>
                     <td>{{ detail.sides.sides_name }}</td>
-                    <td>{{ detail.stocking_quantity }}</td>
-                    <td>{{ detail.stocking_date }}</td>
+                    <td>{{ detail.purchase_quantity }}</td>
+                    <td>{{ detail.purchase_date }}</td>
                     <td>
-                        <a href="{% url 'stocking_detail_delete' detail.pk %}" class="btn btn-danger">刪除</a>
+                        <a href="{% url 'purchase_detail_delete' detail.pk %}" class="btn btn-danger">刪除</a>
                     </td>
                 </tr>
                 {% endfor %}
@@ -86,7 +86,7 @@
             link.parentNode.classList.remove('active');
         });
 
-        const addMedicineLink = document.querySelector('nav a[href="{% url 'stocking_detail_list' %}"]');
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'purchase_detail_list' %}"]');
         if (addMedicineLink) {
             addMedicineLink.parentNode.classList.add('active');
         }

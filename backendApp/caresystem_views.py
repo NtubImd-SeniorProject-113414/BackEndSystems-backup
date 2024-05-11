@@ -2,15 +2,16 @@ import os
 import uuid
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
-from backendApp.decorator import group_required
-from backendApp.forms import  BedForm, CourseSidesForm, MainCourseForm, PatientForm, StockingDetailForm, SupplierForm, UserProfileForm
-from backendApp.middleware import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Bed, CourseSides, MainCourse, Patient, Sides, StockingDetail, Supplier
 from django.contrib.auth.models import User
 from django.db.models.functions import Concat
+from backendApp.decorator import group_required
+from backendApp.forms import  BedForm, CourseSidesForm, MainCourseForm, PatientForm, PurchaseDetailForm, SupplierForm, UserProfileForm
+from backendApp.middleware import login_required
+from backendApp.module.sideStock import getSideStockBySidesId
+from .models import Bed, CourseSides, MainCourse, Patient, Sides, PurchaseDetail, Supplier
 
 
 @group_required('admin')
@@ -275,52 +276,52 @@ def delete_main_course(request, course_id):
 
 @group_required('admin')
 @login_required
-def stocking_detail_list(request):
+def purchase_detail_list(request):
     query = request.GET.get('query', '')
 
     if query:
-        details = StockingDetail.objects.filter(sides__sides_name__icontains=query)
+        details = PurchaseDetail.objects.filter(sides__sides_name__icontains=query)
     else:
-        details = StockingDetail.objects.all()
+        details = PurchaseDetail.objects.all()
 
-    paginator = Paginator(details, 10)  # 每页显示10条记录
+    paginator = Paginator(details, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'stocking_detail_list.html', {'details': page_obj, 'query': query})
+    return render(request, 'purchase/detail_list.html', {'details': page_obj, 'query': query})
 
 @group_required('admin')
 @login_required
-def stocking_detail_create(request):
+def purchase_detail_create(request):
     if request.method == 'POST':
-        form = StockingDetailForm(request.POST)
+        form = PurchaseDetailForm(request.POST)
         if form.is_valid():
             new_detail = form.save()
-            return redirect('stocking_detail_list')
+            return redirect('purchase_detail_list')
     else:
-        form = StockingDetailForm()
-    return render(request, 'stocking_detail_form.html', {'form': form})
+        form = PurchaseDetailForm()
+    return render(request, 'purchase/detail_form.html', {'form': form})
 
 @group_required('admin')
 @login_required
-def stocking_detail_update(request, pk):
-    detail = get_object_or_404(StockingDetail, pk=pk)
-    initial_quantity = detail.stocking_quantity
+def purchase_detail_update(request, pk):
+    detail = get_object_or_404(PurchaseDetail, pk=pk)
+    initial_quantity = detail.purchase_quantity
     if request.method == 'POST':
-        form = StockingDetailForm(request.POST, instance=detail)
+        form = PurchaseDetailForm(request.POST, instance=detail)
         if form.is_valid():
             updated_detail = form.save()
-            return redirect('stocking_detail_list')
+            return redirect('purchase_detail_list')
     else:
-        form = StockingDetailForm(instance=detail)
-    return render(request, 'stocking_detail_form.html', {'form': form})
+        form = PurchaseDetailForm(instance=detail)
+    return render(request, 'purchase/detail_form.html', {'form': form})
 
 @group_required('admin')
 @login_required
-def stocking_detail_delete(request, pk):
-    detail = get_object_or_404(StockingDetail, pk=pk)
+def purchase_detail_delete(request, pk):
+    detail = get_object_or_404(PurchaseDetail, pk=pk)
     detail.delete()
-    return redirect('stocking_detail_list')
+    return redirect('purchase_detail_list')
 
 @group_required('admin')
 @login_required
@@ -394,13 +395,12 @@ def inventory_management(request):
     inventory_data = []
     for side in sides:
         total_needed = 0
-        related_course_sides = CourseSides.objects.filter(sides=side)
-        for cs in related_course_sides:
-            total_needed += cs.quantity * total_patients * days
-        
+        SideStock = getSideStockBySidesId(side.sides_id)
+        SideStock = SideStock if SideStock >=0 else 0
+        total_needed = SideStock * total_patients * days
         inventory_data.append({
             'sides_name': side.sides_name,
-           'current_stock': side.current_stock,
+            'current_stock': SideStock,
             'minimum_required': total_needed,
         })
 

@@ -6,50 +6,50 @@ from django.db.models import Sum
 from datetime import datetime, time
 
 
-class Medicine(models.Model):
-    medicine_id = models.AutoField(primary_key=True)
-    medicine_name = models.CharField(max_length=100)
-    efficacy = models.TextField()
-    side_effects = models.TextField()
-    min_stock_level = models.IntegerField()
+# class Medicine(models.Model):
+#     medicine_id = models.AutoField(primary_key=True)
+#     medicine_name = models.CharField(max_length=100)
+#     efficacy = models.TextField()
+#     side_effects = models.TextField()
+#     min_stock_level = models.IntegerField()
 
-    def __str__(self):
-        return self.medicine_name
+#     def __str__(self):
+#         return self.medicine_name
 
-    def get_current_stock(self):
-        total_purchased = self.purchase_set.aggregate(total=Sum('purchase_q')).get('total') or 0
-        total_dispensed = self.prescriptiondetails_set.aggregate(total=Sum('dispensing_q')).get('total') or 0
-        return total_purchased - total_dispensed
+#     def get_current_stock(self):
+#         total_purchased = self.purchase_set.aggregate(total=Sum('purchase_q')).get('total') or 0
+#         total_dispensed = self.prescriptiondetails_set.aggregate(total=Sum('dispensing_q')).get('total') or 0
+#         return total_purchased - total_dispensed
 
-#處方
-class Prescription(models.Model):
-    prescription_id = models.AutoField(primary_key=True)
-    date = models.DateField(auto_now_add=True)
-    barcode = models.CharField(max_length=100, default=uuid.uuid4, unique=True, editable=False)
-
-
-#進貨
-class Purchase(models.Model):
-    order_id = models.AutoField(primary_key=True)
-    medicine = models.ForeignKey('Medicine', on_delete=models.CASCADE)
-    purchase_date = models.DateField()
-    purchase_q = models.IntegerField()
-    purchase_unit_price = models.IntegerField()
+# #處方
+# class Prescription(models.Model):
+#     prescription_id = models.AutoField(primary_key=True)
+#     date = models.DateField(auto_now_add=True)
+#     barcode = models.CharField(max_length=100, default=uuid.uuid4, unique=True, editable=False)
 
 
-#庫存與車
-class Warehouse(models.Model):
-    warehouse_id = models.AutoField(primary_key=True)
-    medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
-    creation_date = models.DateField()
-    is_active = models.BooleanField(default=True)
+#藥品進貨
+# class Purchase(models.Model):
+#     order_id = models.AutoField(primary_key=True)
+#     medicine = models.ForeignKey('Medicine', on_delete=models.CASCADE)
+#     purchase_date = models.DateField()
+#     purchase_q = models.IntegerField()
+#     purchase_unit_price = models.IntegerField()
 
-#處方明細
-class PrescriptionDetails(models.Model):
-    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
-    medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
-    dosage = models.CharField(max_length=100)
-    dispensing_q = models.IntegerField()
+
+# #庫存與車
+# class Warehouse(models.Model):
+#     warehouse_id = models.AutoField(primary_key=True)
+#     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
+#     creation_date = models.DateField()
+#     is_active = models.BooleanField(default=True)
+
+# #處方明細
+# class PrescriptionDetails(models.Model):
+#     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
+#     medicine = models.ForeignKey(Medicine, on_delete=models.CASCADE)
+#     dosage = models.CharField(max_length=100)
+#     dispensing_q = models.IntegerField()
 
 
 #---------------------------
@@ -203,17 +203,16 @@ class CourseSides(models.Model):
     quantity = models.IntegerField() 
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
+    #取得某個配菜已出售的數量
     @staticmethod
     def calculateTotalQuantityBySideId(sides_id):
         sides = Sides.objects.get(sides_id=sides_id)
         course_sides = CourseSides.objects.filter(sides=sides)
         total_quantity = 0
         for course_side in course_sides:
-            print(course_side.course.course_name)
-            order_quantity = Order.objects.filter(course=course_side.course)
-            print(order_quantity)
-            # if order_quantity:
-            #     total_quantity += order_quantity * course_side.quantity
+            orders = Order.objects.filter(course=course_side.course)
+            for order in orders:
+                total_quantity += course_side.quantity * order.order_quantity
         return total_quantity
 
 
@@ -228,28 +227,30 @@ class Bed(models.Model):
         return self.bed_number
 
 #進貨
-class Stocking(models.Model):
-    stocking_id = models.AutoField(primary_key=True)
+class Purchase(models.Model):
+    purchase_id = models.AutoField(primary_key=True)
     supplier = models.ForeignKey('Supplier', on_delete=models.CASCADE, db_column='supplier_id')
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 
 #進貨明細
-class StockingDetail(models.Model):
-    stocking_detail_id = models.AutoField(primary_key=True)
-    stocking = models.ForeignKey(Stocking, on_delete=models.CASCADE, db_column='stocking_id')
+class PurchaseDetail(models.Model):
+    purchase_detail_id = models.AutoField(primary_key=True)
+    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, db_column='purchase_id')
     sides = models.ForeignKey(Sides, on_delete=models.CASCADE, db_column='sides_id')
-    stocking_quantity = models.IntegerField()
-    stocking_date = models.DateTimeField(auto_now_add=False)
+    purchase_quantity = models.IntegerField()
+    purchase_date = models.DateTimeField(auto_now_add=False)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     @staticmethod
-    def getSidesQuantityBySides(sides):
-        total_quantity = StockingDetail.objects.filter(sides=sides).aggregate(Sum('stocking_quantity'))['stocking_quantity__sum']
+    def calculateTotalQuantityBySideId(sides_id):
+        sides = Sides.objects.get(sides_id=sides_id)
+        total_quantity = PurchaseDetail.objects.filter(sides=sides).aggregate(Sum('purchase_quantity'))['purchase_quantity__sum']
+        print(total_quantity)
         return total_quantity if total_quantity is not None else 0
 
     def __str__(self):
-        return f"{self.sides.sides_name} - {self.stocking_quantity}"
+        return f"{self.sides.sides_name} - {self.purchase_quantity}"
 
 #供應商
 class Supplier(models.Model):

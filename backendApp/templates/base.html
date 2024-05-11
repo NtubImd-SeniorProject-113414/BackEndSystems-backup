@@ -72,15 +72,11 @@
             <li><a href="{% url 'patient_manager' %}"><i class="fa-solid fa-hospital-user"></i> 被照護者管理</a></li>
             <li><a href="{% url 'bed_manager' %}"><i class="fa-solid fa-bed"></i> 床位管理</a></li>
             <li><a href="{% url 'main_course_list' %}"><i class="fa-solid fa-burger"></i>主菜管理</a></li>
+            <li><a href="{% url 'inventory_management' %}"><i class="fa-solid fa-box-open"></i>配料管理</a></li>
             <li><a href="{% url 'main_course_bom_settings' %}"><i class="fa-solid fa-egg"></i>主菜配料管理</a></li>
-            <li><a href="{% url 'stocking_detail_list' %}"><i class="fa-solid fa-cart-flatbed"></i> 配料進貨管理</a></li>
+            <li><a href="{% url 'purchase_detail_list' %}"><i class="fa-solid fa-cart-flatbed"></i> 配料進貨管理</a></li>
             <li><a href="{% url 'supplier_list' %}"><i class="fa-solid fa-city"></i>配料供應商管理</a></li>
             <li><a href="{% url 'inventory_management' %}"><i class="fa-solid fa-box-open"></i>配料存貨管理</a></li>
-            <li><a href="{% url 'add_medicine' %}"><i class="fa-solid fa-plus"></i> 新增藥品</a></li>
-            <li><a href="{% url 'medicine_list' %}"><i class="fa-solid fa-square-poll-vertical"></i></i> 藥品管理</a></li>
-            <li><a href="{% url 'add_purchase' %}"><i class="fa-solid fa-cart-flatbed"></i> 藥品進貨管理</a></li>
-            <li><a href="{% url 'warehouse' %}"><i class="fa-solid fa-car"></i> 倉儲與運行管理</a></li>
-            <li><a href="{% url 'warehouse' %}"><i class="fa-solid fa-chart-pie"></i>數據統計</a></li>
             {% else %}
                 {% if request.user|has_group:"caregiver" %}
                 <li><a href="{% url 'patient_manager' %}"><i class="fa-solid fa-hospital-user"></i> 被照護者管理</a></li>
@@ -89,10 +85,6 @@
                 {% endif %}
 
                 {% if request.user|has_group:"pharmacy_admin" %}
-                <li><a href="{% url 'add_medicine' %}"><i class="fa-solid fa-plus"></i> 新增藥品</a></li>
-                <li><a href="{% url 'medicine_list' %}"><i class="fa-solid fa-square-poll-vertical"></i></i> 藥品管理</a></li>
-                <li><a href="{% url 'add_purchase' %}"><i class="fa-solid fa-cart-flatbed"></i> 藥品進貨表單</a></li>
-                <li><a href="{% url 'warehouse' %}"><i class="fa-solid fa-car"></i> 倉儲與運行管理</a></li>
                 
                 {% endif %}
 
@@ -101,11 +93,10 @@
                 <li><a href="{% url 'patient_manager' %}"><i class="fa-solid fa-hospital-user"></i> 被照護者管理</a></li>
                 <li><a href="{% url 'bed_manager' %}"><i class="fa-solid fa-bed"></i> 床位管理</a></li>
                 <li><a href="{% url 'main_course_list' %}"><i class="fa-solid fa-burger"></i>主菜管理</a></li>
+                <li><a href="{% url 'inventory_management' %}"><i class="fa-solid fa-box-open"></i>配料管理</a></li>
                 <li><a href="{% url 'main_course_bom_settings' %}"><i class="fa-solid fa-egg"></i>主菜配料管理</a></li>
-                <li><a href="{% url 'stocking_detail_list' %}"><i class="fa-solid fa-cart-flatbed"></i> 配料進貨管理</a></li>
+                <li><a href="{% url 'purchase_detail_list' %}"><i class="fa-solid fa-cart-flatbed"></i> 配料進貨管理</a></li>
                 <li><a href="{% url 'supplier_list' %}"><i class="fa-solid fa-city"></i>配料供應商管理</a></li>
-                <li><a href="{% url 'inventory_management' %}"><i class="fa-solid fa-box-open"></i>配料存貨管理</a></li>
-                <li><a href="{% url 'warehouse' %}"><i class="fa-solid fa-chart-pie"></i>數據統計</a></li>
                 {% endif %}
                 
             {% endif %}
