@@ -47,8 +47,6 @@ def handle_message(event):
             line_bot_api.link_rich_menu_to_user(user_id, serviceMenuToken)
         elif message_text == "@資訊查看" or message_text == "@完成註冊":
             line_bot_api.link_rich_menu_to_user(user_id, infoMenuToken)
-        else:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="開發階段"))
     else:
         line_bot_api.link_rich_menu_to_user(user_id, registerMenuToken)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text="尚未註冊"))
