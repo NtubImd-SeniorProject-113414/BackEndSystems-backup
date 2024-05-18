@@ -16,7 +16,7 @@
             {% csrf_token %}
             {{ form.as_p }}
             <button type="submit" class="btn btn-success">保存</button>
-            <a href="{% url 'purchase_detail_list' %}" class="btn btn-secondary">取消</a>
+            <a href="{% url 'purchase_detail' %}" class="btn btn-secondary">取消</a>
         </form>
     </div>
 </body>
@@ -32,7 +32,7 @@
             link.parentNode.classList.remove('active');
         });
 
-        const addMedicineLink = document.querySelector('nav a[href="{% url 'purchase_detail_list' %}"]');
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'purchase_detail' %}"]');
         if (addMedicineLink) {
             addMedicineLink.parentNode.classList.add('active');
         }

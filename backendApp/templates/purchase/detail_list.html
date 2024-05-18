@@ -86,7 +86,7 @@
             link.parentNode.classList.remove('active');
         });
 
-        const addMedicineLink = document.querySelector('nav a[href="{% url 'purchase_detail_list' %}"]');
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'purchase_detail' %}"]');
         if (addMedicineLink) {
             addMedicineLink.parentNode.classList.add('active');
         }

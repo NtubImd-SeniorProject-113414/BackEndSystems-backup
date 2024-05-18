@@ -196,7 +196,7 @@ def add_supplier(request):
         form = SupplierForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('supplier_list')
+            return redirect('supplierts')
     else:
         form = SupplierForm()
     return render(request, 'add_supplier.html', {'form': form})
@@ -209,7 +209,7 @@ def edit_supplier(request, supplier_id):
         form = SupplierForm(request.POST, instance=supplier)
         if form.is_valid():
             form.save()
-            return redirect('supplier_list')
+            return redirect('supplierts')
     else:
         form = SupplierForm(instance=supplier)
     return render(request, 'edit_supplier.html', {'form': form})
@@ -219,7 +219,7 @@ def edit_supplier(request, supplier_id):
 def delete_supplier(request, supplier_id):
     supplier = get_object_or_404(Supplier, supplier_id=supplier_id)
     supplier.delete()
-    return redirect('supplier_list')
+    return redirect('supplierts')
 
 @group_required('admin')
 @login_required
@@ -262,7 +262,7 @@ def edit_main_course(request, course_id):
                     if os.path.isfile(old_image_path):
                         os.remove(old_image_path)
             form.save()
-            return redirect('main_course_list')
+            return redirect('main_course')
     else:
         form = MainCourseForm(instance=course)
     return render(request, 'edit_main_course.html', {'form': form})
@@ -272,7 +272,7 @@ def edit_main_course(request, course_id):
 def delete_main_course(request, course_id):
     course = get_object_or_404(MainCourse, course_id=course_id)
     course.delete()
-    return redirect('main_course_list')
+    return redirect('main_course')
 
 @group_required('admin')
 @login_required
@@ -297,7 +297,7 @@ def purchase_detail_create(request):
         form = PurchaseDetailForm(request.POST)
         if form.is_valid():
             new_detail = form.save()
-            return redirect('purchase_detail_list')
+            return redirect('purchase_detail')
     else:
         form = PurchaseDetailForm()
     return render(request, 'purchase/detail_form.html', {'form': form})
@@ -311,7 +311,7 @@ def purchase_detail_update(request, pk):
         form = PurchaseDetailForm(request.POST, instance=detail)
         if form.is_valid():
             updated_detail = form.save()
-            return redirect('purchase_detail_list')
+            return redirect('purchase_detail')
     else:
         form = PurchaseDetailForm(instance=detail)
     return render(request, 'purchase/detail_form.html', {'form': form})
@@ -321,7 +321,7 @@ def purchase_detail_update(request, pk):
 def purchase_detail_delete(request, pk):
     detail = get_object_or_404(PurchaseDetail, pk=pk)
     detail.delete()
-    return redirect('purchase_detail_list')
+    return redirect('purchase_detail')
 
 @group_required('admin')
 @login_required
@@ -330,7 +330,7 @@ def main_course_bom_settings(request):
         form = CourseSidesForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('main_course_bom_settings')
+            return redirect('bom_settings')
     else:
         form = CourseSidesForm()
         courses = MainCourse.objects.all()
@@ -349,7 +349,7 @@ def edit_course_sides(request, pk):
         form = CourseSidesForm(request.POST, instance=cs)
         if form.is_valid():
             form.save()
-            return redirect('main_course_bom_settings')
+            return redirect('bom_settings')
     else:
         form = CourseSidesForm(instance=cs)
     return render(request, 'course_sides_form.html', {
@@ -361,7 +361,7 @@ def edit_course_sides(request, pk):
 def delete_course_sides(request, pk):
     cs = get_object_or_404(CourseSides, pk=pk)
     cs.delete()
-    return redirect('main_course_bom_settings')
+    return redirect('bom_settings')
 
 @group_required('admin')
 @login_required
@@ -371,7 +371,7 @@ def edit_course_sides(request, pk):
         form = CourseSidesForm(request.POST, instance=cs)
         if form.is_valid():
             form.save()
-            return redirect('main_course_bom_settings')
+            return redirect('bom_settings')
     else:
         form = CourseSidesForm(instance=cs)
     return render(request, 'course_sides_form.html', {'form': form})
@@ -381,7 +381,7 @@ def edit_course_sides(request, pk):
 def delete_course_sides(request, pk):
     cs = get_object_or_404(CourseSides, pk=pk)
     cs.delete()
-    return redirect('main_course_bom_settings')
+    return redirect('bom_settings')
 
 @group_required('admin')
 @login_required
