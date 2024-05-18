@@ -23,7 +23,6 @@
             <tr>
                 <th>主菜名稱</th>
                 <th>價格</th>
-                <th>庫存</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -32,7 +31,7 @@
             <tr>
                 <td>{{ course.course_name }}</td>
                 <td>{{ course.course_price }}</td>
-                <td>{{ course.course_stock }}</td>
+                <td>{{ course.course_price }}</td>
                 <td>
                     <a href="{% url 'edit_main_course' course.course_id %}" class="btn btn-primary btn-sm">編輯</a>
                     <form action="{% url 'delete_main_course' course.course_id %}" method="post" style="display:inline;">
@@ -84,7 +83,7 @@
             link.parentNode.classList.remove('active');
         });
 
-        const addMedicineLink = document.querySelector('nav a[href="{% url 'main_course_list' %}"]');
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'main_course' %}"]');
         if (addMedicineLink) {
             addMedicineLink.parentNode.classList.add('active');
         }

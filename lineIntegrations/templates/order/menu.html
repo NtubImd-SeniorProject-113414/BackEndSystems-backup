@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>點餐頁面</title>
+    <link rel="stylesheet" href="{% static 'lineIntegrations/css/order/menu.css' %}">
+</head>
+<body>
+    <div class="menu-container">
+        <h2 class="card-title">點餐時段：{{ timeSlotName }}</h2>
+        {% for course in courses %}
+        <div class="menu-item">
+            <img src="{{ course.course_image.url }}" alt="{{ course.course_name }}">
+            <h2>{{ course.course_name }}</h2>
+            <p>價格: {{ course.course_price }}</p>
+            <button class="order-button" onclick="submitOrder('{{ course.course_name }}','{{ course.course_id }}')">選擇</button>
+        </div>
+        {% endfor %}
+    </div>
+    <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+    <script src="{% static 'lineIntegrations/js/orderV3.js' %}"></script>
+</body>
+</html>

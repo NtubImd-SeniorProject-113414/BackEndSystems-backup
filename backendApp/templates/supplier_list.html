@@ -9,7 +9,7 @@
 
 <div class="container">
     <h2>供應商管理</h2>
-    <form method="get" action="{% url 'supplier_list' %}" class="input-group mb-3">
+    <form method="get" action="{% url 'suppliers' %}" class="input-group mb-3">
         <input type="text" class="form-control" placeholder="搜尋供應商" aria-label="搜尋供應商" aria-describedby="button-search" name="q" value="{{ request.GET.q }}">
         <button class="btn btn-outline-success" type="submit" id="button-search">搜尋</button>
     </form>
@@ -76,7 +76,7 @@
       link.parentNode.classList.remove('active');
     });
 
-    const addMedicineLink = document.querySelector('nav a[href="{% url 'supplier_list' %}"]');
+    const addMedicineLink = document.querySelector('nav a[href="{% url 'suppliers' %}"]');
     if (addMedicineLink) {
       addMedicineLink.parentNode.classList.add('active');
     }

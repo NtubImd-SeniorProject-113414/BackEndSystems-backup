@@ -1,0 +1,32 @@
+.text-center{
+    font-size: 4.8vw;
+}
+.card-title{
+    font-size: 3.5vw;
+}
+.alerText{
+    font-size: 3vw;
+}
+.list-group-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.list-group-item h3 {
+    font-size: 4vw;
+    padding: 1.5vw;
+    color: rgb(57, 56, 56);
+}
+.list-group-item img {
+    width: 20vw;
+    padding: 1.5vw;
+}
+.next-order-time {
+    font-size: 4vw;
+    color: #484747;
+    padding-left: 2vw;
+    border-radius: 5px;
+}
+.interval{
+    padding-top: 1.5vh;
+}

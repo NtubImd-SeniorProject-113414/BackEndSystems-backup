@@ -1,0 +1,32 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.card-title {
+    color: #483636;
+    font-size: 4.5vw;
+}
+
+.card-text {
+    font-size: 4vw;
+    color: #666;
+}
+
+.card-time {
+    font-size: 5vw;
+    font-weight: bolder;
+    color: #312c38;
+}

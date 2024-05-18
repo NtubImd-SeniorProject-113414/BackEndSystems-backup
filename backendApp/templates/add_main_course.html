@@ -12,7 +12,7 @@
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="btn btn-success">儲存</button>
-        <a href="{% url 'main_course_list' %}" class="btn btn-secondary">取消</a>
+        <a href="{% url 'main_course' %}" class="btn btn-secondary">取消</a>
     </form>
 </div>
 {% endblock %}
@@ -26,7 +26,7 @@
             link.parentNode.classList.remove('active');
         });
 
-        const addMedicineLink = document.querySelector('nav a[href="{% url 'main_course_list' %}"]');
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'main_course' %}"]');
         if (addMedicineLink) {
             addMedicineLink.parentNode.classList.add('active');
         }

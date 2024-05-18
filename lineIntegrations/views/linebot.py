@@ -1,8 +1,5 @@
-import datetime
-import json
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import *
@@ -11,6 +8,10 @@ from backendApp.models import *
 
 line_bot_api = LineBotApi('WPKuz6JHpaA3ezn2yM4rQXacGz4IQBCyEZWAt2qdSzCGrwr/dfscWGauXmr4AKJIuN0Nqhm+/kFfIqz9pvmZ0mCe13sVUAOdgDEnY3wAjol5KU18d5xSq05kTevosHuMWGZ4cfnXdeAN933yV8t2RwdB04t89/1O/w1cDnyilFU=')
 handler = WebhookHandler('0f60e5abbb4548dd078f9df4d370582a')
+
+registerMenuToken = "richmenu-96223bed4ba0357176fd33bfa194511b"
+infoMenuToken = "richmenu-834767c03de7c789ef8264cdc55bea7b"
+serviceMenuToken = "richmenu-e7c520ec9b8096e1e0a137d1899ae04a"
 
 @csrf_exempt
 def line_bot_webhook(request):
@@ -29,10 +30,10 @@ def line_bot_webhook(request):
 @handler.add(FollowEvent)
 def handle_follow_event(event):
     user_id = event.source.user_id
-    if Patient.checkLineRegister(user_id):
-        line_bot_api.link_rich_menu_to_user(user_id, "richmenu-c4a8f833e6c72acc2874f85dfdc21a23")
+    if Patient.getpatientIdByLineUid(user_id) != None:
+        line_bot_api.link_rich_menu_to_user(user_id, infoMenuToken)
     else:
-        line_bot_api.link_rich_menu_to_user(user_id, "richmenu-f8c5972573b1e147f6382a36f8b23003")
+        line_bot_api.link_rich_menu_to_user(user_id, registerMenuToken)
         welcome_message = "歡迎使用本系統！請先進行註冊"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=welcome_message))
 
@@ -41,15 +42,12 @@ def handle_follow_event(event):
 def handle_message(event):
     user_id = event.source.user_id
     message_text = event.message.text
-    if Patient.checkLineRegister(user_id):
-        if message_text == "@虛擬人陪伴":
-            line_bot_api.link_rich_menu_to_user(user_id, "richmenu-5c4079b91cd415fb5aab5cd4abcfd362")
-        elif message_text == "@服務選單" or message_text == "@完成註冊":
-            line_bot_api.link_rich_menu_to_user(user_id, "richmenu-c4a8f833e6c72acc2874f85dfdc21a23")
-        else:
-            line_bot_api.reply_message(event.reply_token, TextSendMessage(text="開發階段"))
+    if Patient.getpatientIdByLineUid(user_id) != None:
+        if message_text == "@服務選單":
+            line_bot_api.link_rich_menu_to_user(user_id, serviceMenuToken)
+        elif message_text == "@資訊查看" or message_text == "@完成註冊":
+            line_bot_api.link_rich_menu_to_user(user_id, infoMenuToken)
     else:
-        print(user_id)
-        line_bot_api.link_rich_menu_to_user(user_id, "richmenu-f8c5972573b1e147f6382a36f8b23003")
+        line_bot_api.link_rich_menu_to_user(user_id, registerMenuToken)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text="尚未註冊"))
 

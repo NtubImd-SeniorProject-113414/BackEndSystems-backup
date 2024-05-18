@@ -1,201 +1,193 @@
-        body {
-            padding-top: 70px;
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f8f8f8;
-            overflow-y: auto;
-        }
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-y: hidden;
+}
 
-        header {
-            background-color: #333 !important;
-            color: #fff  !important;
-            padding: 10px  !important;
-            text-align: center  !important;
-            width: 100%  !important;
-            position: fixed;
-            top: 0  !important;
-            z-index: 1000  !important;
-            height: 60px  !important;
-            display: flex  !important;
-            justify-content: space-between  !important;
-            align-items: center  !important;
-            transition: background-color 0.3s  !important;
-        }
-        
-        header h2 {
-            color: #fff !important; /* 確保文字顏色為白色 */
-            font-size: 24px  !important; /* 可以調整適合的字體大小 */
-            margin: 0 ; /* 移除外邊距 */
-            padding: 0; /* 移除內邊距 */
-        }
+header {
+    background-color: #333 !important;
+    color: #fff !important;
+    padding: 10px !important;
+    text-align: center !important;
+    width: 100% !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    height: 60px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    transition: background-color 0.3s !important;
+    flex-shrink: 0;
+}
 
+header h2 {
+    color: #fff !important;
+    font-size: 24px !important;
+    margin: 0;
+    padding: 0;
+}
 
+header .logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
 
-        header .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: inherit;
-        }
+header img {
+    height: 40px;
+    vertical-align: middle;
+    margin-right: 10px;
+}
 
-        header img {
-            height: 40px;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
+.account {
+    margin-right: 50px;
+    position: relative;
+}
 
-        .account {
-            margin-right: 50px;
-            position: relative;
-        }
+.account a {
+    color: #fff;
+    text-decoration: none;
+    margin-left: 10px;
+}
 
-        .account a {
-            color: #fff;
-            text-decoration: none;
-            margin-left: 10px;
-        }
-        .account li i {
-            margin-right: 20px;
-        }
+.account li i {
+    margin-right: 20px;
+}
 
-        .account-dropdown {
-            position: absolute;
-            font-size: 14px;
-            font-family: sans-serif;
-            top: calc(100% + 5px);
-            right: 0;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: none;
-            width: 120px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
+.account-dropdown {
+    position: absolute;
+    font-size: 14px;
+    font-family: sans-serif;
+    top: calc(100% + 5px);
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: none;
+    width: 120px;
+    max-height: 200px;
+    overflow-y: auto;
+}
 
-        .account-dropdown.show {
-            display: block;
-        }
+.account-dropdown.show {
+    display: block;
+}
 
-        .account:hover .account-dropdown {
-            display: block;
-        }
+.account:hover .account-dropdown {
+    display: block;
+}
 
-        .account-dropdown a {
-            display: block;
-            padding: 10px 20px;
-            text-decoration: none;
-            color: #333;
-            line-height: 1.5;
-        }
+.account-dropdown a {
+    display: block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+    line-height: 1.5;
+}
 
-        .account-dropdown a:hover {
-            background-color: #f4f4f4;
-        }
+.account-dropdown a:hover {
+    background-color: #f4f4f4;
+}
 
-        .content-container {
-            padding-top: 70px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
+nav {
+    background-color: #f2f2f2;
+    width: 250px;
+    height: 100%;
+}
 
-        nav {
-            background-color: #f2f2f2;
-            width: 250px;
-            max-height: calc(100vh - 70px);
-            overflow-y: hidden;
-            position: fixed;
-            bottom: 0; 
-            top: 70px;
-            left: 0;
-        }
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    height: 100%;
+}
 
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            overflow-y: auto; 
-            height: 100%;
-        }
+nav li {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ccc;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+}
 
-        nav.hovered ul {
-            overflow-y: auto;
-        }
+nav li a, .FunctionMenu-item {
+    text-decoration: none;
+    margin-left: 10px;
+    display: block;
+    width: 100%;
+    padding: 5px 5px;
+    align-items: center;
+    color: #333;
+    font-weight: bold;
+}
 
-        nav li {
-            padding: 15px 20px;
-            border-bottom: 1px solid #ccc;
-            display: flex;
-            align-items: center;
-            transition: background-color 0.3s, color 0.3s;
-            cursor: pointer;
-        }
+nav,
+main {
+    transition: margin-left 0.5s ease;
+}
 
-        nav li:hover {
-            background-color: #c2c2c2;
-        }
+nav.slide-in,
+main.slide-in {
+    margin-left: 0;
+}
 
-        nav li a {
-            text-decoration: none;
-            color: #333;
-            margin-left: 10px;
-            display: flex;
-            align-items: center;
-            display: block;
-            width: 100%; /* 確保填滿整個<li> */
-            padding: 5px 5px; /* 可調整padding以填充空間 */
-        }
+nav.slide-out,
+main.slide-out {
+    margin-left: -250px;
+}
 
-        nav,
-        main {
-            transition: margin-left 0.5s ease;
-        }
-
-        nav.slide-in,
-        main.slide-in {
-            margin-left: 0;
-        }
-
-        nav.slide-out,
-        main.slide-out {
-            margin-left: -250px;
-        }
-
-        nav li i {
-            margin-right: 10px;
-        }
-
-        nav li:hover a {
-            color: #007bff;
-        }
-
-        nav li.active {
-            background-color: #ccc;
-            color: #333;
-            font-weight: bold;
-            border-left: 3px solid #007bff;
-        }
-
-        main {
-            flex: 1;
-            padding: 20px;
-            margin-left: 250px;
-            height: calc(100vh - 70px);
-        }
+nav li i {
+    margin-right: 10px;
+}
 
 
 
-        @media screen and (max-width: 768px) {
-            nav {
-                width: 100%;
-                height: auto;
-                position: static;
-                left: 0;
-                margin-top: 60px; 
-            }
-            main {
-                flex: 1;
-                padding: 20px;
-                margin-left: 0;
-                height: calc(100vh - 70px);
-            }
-        }
+main {
+    flex: 1;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+}
+.content {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+@media screen and (max-width: 768px) {
+    nav {
+        width: 100%;
+        height: auto;
+        position: static;
+        left: 0;
+    }
+    main {
+        flex: 1;
+        padding: 20px;
+        margin-left: 0;
+        height: calc(100vh - 70px);
+    }
+    .content {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+}
+
+.FunctionMenuBtn.active {
+    color: cadetblue;
+}
+.FunctionMenu-item {
+    padding: 20px;
+    justify-content: center;
+}
+.FunctionMenu-item:hover {
+    color: #007bff;
+    background-color: #e9ecef;
+}
+.FunctionMenu-item.active {
+    color: cadetblue;
+}
