@@ -5,7 +5,7 @@ from django.contrib import admin
 from backendApp.views.views import index, edit_profile
 from backendApp.login import login_view,logout_view
 from backendApp.caresystem_views import *
-from backendApp.views.userManagement import *
+from backendApp.views import userManagement, card
 from lineIntegrations.views import linebot, verify, order, medicament, notify
 
 urlpatterns = [
@@ -14,9 +14,9 @@ urlpatterns = [
     path('admin', admin.site.urls),
     path('login', login_view, name='login'),
     path('logout', logout_view, name='logout'),
-    path('user_manager/',user_manager, name='user_manager'),
-    path('user_manager/create', create_user, name='add_user'),
-    path('user_manager/edit/<int:user_id>/', edit_user, name='edit_user'),
+    path('user_manager/',userManagement.user_manager, name='user_manager'),
+    path('user_manager/create', userManagement.create_user, name='add_user'),
+    path('user_manager/edit/<int:user_id>/', userManagement.edit_user, name='edit_user'),
     
     path('edit_profile/', edit_profile, name='edit_profile'),
     path('patient_manager/', patient_manager, name='patient_manager'),
@@ -45,7 +45,6 @@ urlpatterns = [
 
     path('bom_settings/', main_course_bom_settings, name='bom_settings'),
 
-
     path('edit_course_sides/<int:pk>/', edit_course_sides, name='edit_course_sides'),
     path('delete_course_sides/<int:pk>/', delete_course_sides, name='delete_course_sides'),
     path('inventory_management/', inventory_management, name='inventory_management'),
@@ -64,8 +63,7 @@ urlpatterns = [
     path('linebot/order', order.getWebPage),
     path('linebot/medicament', medicament.getWebPage),
     path('linebot/notify', notify.getWebPage),
-    path('linebot/api/notifyList', notify.getPatientNotifyList)
-
+    path('linebot/api/notifyList', notify.getPatientNotifyList),
 
 
     # path('add_purchase/', add_purchase, name='add_purchase'),
@@ -78,5 +76,9 @@ urlpatterns = [
     # path('warehouse/delete/<int:warehouse_id>/', delete_warehouse, name='delete_warehouse'),
     # path('purchase/delete/<int:order_id>/', delete_purchase, name='delete_purchase'),
 
+    path('card_manager/', card.card_list, name='card_manager'),
+    path('card_manager/add', card.add_card, name='add_card'),
+    path('card_manager/delete_card/<str:RfidCode_code>', card.delete_card, name='delete_card'),
+    path('card_manager/edit_card/<str:RfidCode_code>', card.edit_card, name='edit_card'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
