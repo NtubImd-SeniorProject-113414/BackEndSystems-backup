@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>更新用戶資訊</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">儲存更改</button>
+    <a href="{% url 'user_manager' %}" class="btn btn-secondary">取消更改</a>
+  </form>
+</div>
+{% endblock %}

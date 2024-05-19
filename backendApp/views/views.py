@@ -1,22 +1,7 @@
-import datetime
-import json
-from django.contrib import messages
-from django.http import HttpResponseForbidden, HttpResponseRedirect, JsonResponse
-from django.shortcuts import render, redirect, get_object_or_404
-from jsonschema import ValidationError
-from django.db.models import F
+from django.shortcuts import render, redirect
 from backendApp.decorator import group_required
 from backendApp.middleware import login_required
-from .models import Purchase
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .forms import UserProfileForm
-from django.views.decorators.http import require_POST
-from django.contrib.auth.models import User,Group
-
-
+from ..forms import UserProfileForm
 
 @group_required('caregiver', 'admin','pharmacy_admin')
 @login_required

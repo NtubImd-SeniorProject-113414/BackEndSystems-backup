@@ -1,28 +1,11 @@
-"""
-URL configuration for BackEndSystem project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path
 from django.contrib import admin
-from backendApp.views import index, edit_profile
+from backendApp.views.views import index, edit_profile
 from backendApp.login import login_view,logout_view
-from backendApp.account import register
-from backendApp.caresystem_views import add_bed, add_main_course, add_patient, add_supplier, bed_manager, caregiver_manager, delete_bed, delete_course_sides, delete_main_course, delete_patient, delete_supplier, edit_bed,edit_caregiver, edit_course_sides, edit_main_course, edit_patient, edit_supplier, inventory_management, main_course_bom_settings, main_course_list, patient_manager, purchase_detail_create, purchase_detail_delete, purchase_detail_list, purchase_detail_update, supplier_list
-from backendApp.caresystem_views import add_bed, add_patient, bed_manager, caregiver_manager, delete_bed, delete_patient, edit_bed,edit_caregiver, edit_patient, patient_manager
+from backendApp.caresystem_views import *
+from backendApp.views.userManagement import *
 from lineIntegrations.views import linebot, verify, order, medicament, notify
 
 urlpatterns = [
@@ -31,9 +14,10 @@ urlpatterns = [
     path('admin', admin.site.urls),
     path('login', login_view, name='login'),
     path('logout', logout_view, name='logout'),
-    path('creat_account/', register, name='creat_account'),
-    path('caregiver_manager/',caregiver_manager, name='caregiver_manager'),
-    path('caregivers/edit/<int:caregiver_id>/', edit_caregiver, name='edit_caregiver'), 
+    path('user_manager/',user_manager, name='user_manager'),
+    path('user_manager/create', create_user, name='add_user'),
+    path('user_manager/edit/<int:user_id>/', edit_user, name='edit_user'),
+    
     path('edit_profile/', edit_profile, name='edit_profile'),
     path('patient_manager/', patient_manager, name='patient_manager'),
     path('add_patient/', add_patient, name='add_patient'),

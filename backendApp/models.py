@@ -4,7 +4,8 @@ from django.utils import timezone
 from django.db import models
 from django.db.models import Sum
 from datetime import datetime, time
-
+from django.contrib.auth.models import Group
+Group.add_to_class('display', models.CharField(max_length=50))
 
 # class Medicine(models.Model):
 #     medicine_id = models.AutoField(primary_key=True)
@@ -53,6 +54,8 @@ from datetime import datetime, time
 
 
 #---------------------------
+
+
 #被照顧者
 class Patient(models.Model):
     patient_id = models.AutoField(primary_key=True)

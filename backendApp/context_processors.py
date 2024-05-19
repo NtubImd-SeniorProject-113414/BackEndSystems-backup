@@ -11,7 +11,7 @@ def function_menu(request):
             'name': '用戶管理',
             'permission': ['admin', 'caregiver', 'pharmacy'],
             'mode': 'one',
-            'url': 'caregiver_manager',
+            'url': 'user_manager',
             'icon': 'fa-user-nurse'
         },
         {

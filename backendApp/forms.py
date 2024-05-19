@@ -84,32 +84,34 @@ from django.contrib.auth.models import User,Group
 #     )
 #     is_active = forms.BooleanField(label='是否啟用', required=False)
 
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User, Group
+
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, help_text='必填，請輸入有效的郵件地址。')
     first_name = forms.CharField(max_length=30, required=True, help_text='必填')
     last_name = forms.CharField(max_length=30, required=True, help_text='必填')
     is_active = forms.BooleanField(required=False, help_text='選擇是否啟用帳戶')
-    is_superuser = forms.BooleanField(required=False, help_text='選擇是否設為超級用戶')
-    groups = forms.ModelMultipleChoiceField(
+    groups = forms.ModelChoiceField(
         queryset=Group.objects.all(),
-        required=False,
-        widget=forms.CheckboxSelectMultiple,
-        help_text='選擇用戶所屬的群組。'
+        required=True,
+        help_text='選擇用戶所屬的群組'
     )
+
+
 
     class Meta:
         model = User
         fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'is_active', 'is_superuser', 'groups')
 
-    def clean_prdfilo(self):
-        email = self.email
-        first_name = self.first_name
-        last_name = self.last_name
-        if not first_name and last_name:
-            raise forms.ValidationError("姓名是必填項")
-        elif not email:
-            raise forms.ValidationError("電子郵件是必填項")
-        return email + first_name + last_name
+    def clean_groups(self):
+        groups = self.cleaned_data.get('groups')
+        if not groups:
+            raise forms.ValidationError("必須選擇一個群組。")
+        if len(groups) != 1:
+            raise forms.ValidationError("只能選擇一個群組。")
+        return groups
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -117,12 +119,13 @@ class CustomUserCreationForm(UserCreationForm):
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
         user.is_active = self.cleaned_data['is_active']
-        user.is_superuser = self.cleaned_data['is_superuser']
-        user.is_staff = self.cleaned_data['is_superuser'] 
+        user.is_superuser = 0
+        user.is_staff = 0
         if commit:
             user.save()
             user.groups.set(self.cleaned_data['groups'])
         return user
+
 
 class UserProfileForm(forms.ModelForm):
     class Meta:

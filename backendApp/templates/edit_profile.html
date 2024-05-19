@@ -11,7 +11,7 @@
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button href="{% url 'caregiver_manager' %}" type="submit" class="btn btn-primary">儲存更改</button>
+    <button href="{% url 'user_manager' %}" type="submit" class="btn btn-primary">儲存更改</button>
     <a href="{% url 'index' %}" class="btn btn-secondary">取消更改</a>
   </form>
 </div>

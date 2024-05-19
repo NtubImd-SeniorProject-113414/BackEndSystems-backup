@@ -13,53 +13,6 @@ from backendApp.middleware import login_required
 from backendApp.module.sideStock import getSideStockBySidesId
 from .models import Bed, CourseSides, MainCourse, Patient, Sides, PurchaseDetail, Supplier
 
-
-@group_required('admin')
-@login_required
-def caregiver_manager(request):
-    query = request.GET.get('search', '').strip()
-    if query:
-        caregivers = User.objects.filter(groups__name='caregiver').annotate(
-            full_name=Concat('first_name','last_name')
-        ).filter(
-            Q(username__icontains=query) |
-            Q(email__icontains=query) |
-            Q(first_name__icontains=query) |
-            Q(last_name__icontains=query) |
-            Q(full_name__icontains=query)  
-        )
-    else:
-        caregivers = User.objects.filter(groups__name='caregiver')
-
-    if request.method == 'POST':
-        if 'delete' in request.POST:
-            user_id = request.POST.get('delete')
-            User.objects.filter(id=user_id).delete()
-        elif 'edit' in request.POST:
-            user_id = request.POST.get('edit')
-            caregiver_to_edit = get_object_or_404(User, id=user_id)
-            form = UserProfileForm(request.POST, instance=caregiver_to_edit)
-            if form.is_valid():
-                form.save()
-                return redirect('caregiver_manager')
-
-    return render(request, 'caregiver_manager.html', {'caregivers': caregivers})
-
-@login_required
-@group_required('admin')
-def edit_caregiver(request, caregiver_id):
-    caregiver_to_edit = get_object_or_404(User, id=caregiver_id)
-    
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, instance=caregiver_to_edit)
-        if form.is_valid():
-            form.save()
-            return redirect('caregiver_manager')
-    else:
-        form = UserProfileForm(instance=caregiver_to_edit)
-    
-    return render(request, 'caregiver_edit.html', {'form': form, 'caregiver_id': caregiver_id})
-
 @group_required('admin','caregiver')
 @login_required
 def patient_manager(request):
