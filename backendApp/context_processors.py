@@ -28,7 +28,8 @@ def function_menu(request):
             'mode': 'multi',
             'items': [
                 {'url': 'patient_manager', 'name': '被照護者管理', 'icon': 'fa-hospital-user'},
-                {'url': 'bed_manager', 'name': ' 床位管理', 'icon': 'fa-solid fa-bed'}
+                {'url': 'bed_manager', 'name': ' 床位管理', 'icon': 'fa-solid fa-bed'},
+                {'url': 'card_manager', 'name': ' 卡片管理', 'icon': 'fa-solid fa-credit-card-alt'}
             ]
         },
         {
@@ -52,7 +53,6 @@ def function_menu(request):
                 {'url': 'inventory_management', 'name': '配菜管理', 'icon': 'fa-solid fa-box-open'},
                 {'url': 'purchase_detail', 'name': '配菜進貨管理', 'icon': 'fa-solid fa-cart-flatbed'},
                 {'url': 'suppliers', 'name': '配菜供應商管理', 'icon': 'fa-solid fa-city'},
-
             ]
         }
     ]

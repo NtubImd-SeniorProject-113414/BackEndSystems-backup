@@ -1,6 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import CourseSides, MainCourse, Patient, Sides, Purchase, PurchaseDetail, Supplier, Bed, MealOrderTimeSlot
+from .models import CourseSides, MainCourse, Patient, Sides, Purchase, PurchaseDetail, Supplier, Bed, RfidCard, MealOrderTimeSlot
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,Group
 
@@ -146,6 +146,10 @@ class BedForm(forms.ModelForm):
         model = Bed
         fields = ['bed_number', 'patient']
 
+class RfidCardForm(forms.ModelForm):
+    class Meta:
+        model = RfidCard
+        fields = ['RfidCard_code', 'patient']
 
 class SupplierForm(forms.ModelForm):
     class Meta:
