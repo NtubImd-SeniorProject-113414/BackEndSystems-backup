@@ -19,9 +19,8 @@ def create_user(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
             messages.success(request, '註冊成功！')
-            return redirect('login')  
+            return redirect('user_manager')
     else:
         form = CustomUserCreationForm()
     return render(request, 'userManagement/add_user.html', {'form': form})
