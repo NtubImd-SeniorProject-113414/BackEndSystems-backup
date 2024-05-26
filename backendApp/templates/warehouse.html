@@ -69,21 +69,3 @@
     </tbody>
 </table>
 {% endblock %}
-
-{% block extra_scripts %}
-<script src="{% static 'js/base.js' %}"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const navLinks = document.querySelectorAll('nav a');
-
-        navLinks.forEach(link => {
-            link.parentNode.classList.remove('active');
-        });
-
-        const addMedicineLink = document.querySelector('nav a[href="{% url 'warehouse' %}"]');
-        if (addMedicineLink) {
-            addMedicineLink.parentNode.classList.add('active');
-        }
-    });
-</script>
-{% endblock %}
