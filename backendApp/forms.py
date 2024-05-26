@@ -92,25 +92,20 @@ class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, help_text='必填，請輸入有效的郵件地址。')
     first_name = forms.CharField(max_length=30, required=True, help_text='必填')
     last_name = forms.CharField(max_length=30, required=True, help_text='必填')
-    is_active = forms.BooleanField(required=False, help_text='選擇是否啟用帳戶')
     groups = forms.ModelChoiceField(
         queryset=Group.objects.all(),
         required=True,
         help_text='選擇用戶所屬的群組'
     )
 
-
-
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'is_active', 'is_superuser', 'groups')
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2', 'groups')
 
     def clean_groups(self):
         groups = self.cleaned_data.get('groups')
         if not groups:
             raise forms.ValidationError("必須選擇一個群組。")
-        if len(groups) != 1:
-            raise forms.ValidationError("只能選擇一個群組。")
         return groups
 
     def save(self, commit=True):
@@ -118,12 +113,12 @@ class CustomUserCreationForm(UserCreationForm):
         user.email = self.cleaned_data['email']
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
-        user.is_active = self.cleaned_data['is_active']
+        user.is_active = 1
         user.is_superuser = 0
         user.is_staff = 0
         if commit:
             user.save()
-            user.groups.set(self.cleaned_data['groups'])
+            user.groups.set([self.cleaned_data['groups']])
         return user
 
 
