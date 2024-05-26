@@ -1,9 +1,9 @@
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import CourseSides, MainCourse, Patient, Sides, Purchase, PurchaseDetail, Supplier, Bed, MealOrderTimeSlot
+from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,Group
-
+from django import forms
 
 # class NewMedicineForm(forms.ModelForm):
 #     class Meta:
@@ -84,9 +84,22 @@ from django.contrib.auth.models import User,Group
 #     )
 #     is_active = forms.BooleanField(label='是否啟用', required=False)
 
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User, Group
+
+class NotifyForm(forms.ModelForm):
+    patients = forms.ModelMultipleChoiceField(
+        queryset=Patient.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control choices'}),
+        required=True,
+        label="選擇發送對象"
+    )
+
+    class Meta:
+        model = Notify
+        fields = ['notify_message', 'patients']
+        widgets = {
+            'notify_message': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+        }
+
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, help_text='必填，請輸入有效的郵件地址。')
@@ -187,7 +200,7 @@ class PurchaseDetailForm(forms.ModelForm):
     def save(self, commit=True):
         sides_id = self.cleaned_data.get('sides_id')
         if sides_id:
-            self.instance.sides = sides_id  # Directly assign the instance
+            self.instance.sides = sides_id
         
         supplier = self.cleaned_data.get('supplier')
         purchase, created = Purchase.objects.get_or_create(supplier=supplier)

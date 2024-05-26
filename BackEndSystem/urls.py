@@ -2,6 +2,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path
 from django.contrib import admin
+from backendApp.views.notify import send_notification
 from backendApp.views.views import index, edit_profile
 from backendApp.login import login_view,logout_view
 from backendApp.caresystem_views import *
@@ -57,6 +58,8 @@ urlpatterns = [
 
     path('course_order/', main_course_bom_settings, name='course_order'), #餐點配送管理
     path('medicine_order/', main_course_bom_settings, name='medicine_order'), #藥物配送管理
+
+    path('send_notification/', send_notification, name='send_notification'),
 
 
     path('linebot', linebot.line_bot_webhook),
