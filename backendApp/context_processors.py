@@ -50,9 +50,8 @@ def function_menu(request):
             'mode': 'multi',
             'items': [
                 {'url': 'inventory_management', 'name': '配菜管理', 'icon': 'fa-solid fa-box-open'},
-                {'url': 'suppliers', 'name': '配菜供應商管理', 'icon': 'fa-solid fa-city'},
                 {'url': 'purchase_detail', 'name': '配菜進貨管理', 'icon': 'fa-solid fa-cart-flatbed'},
-
+                {'url': 'suppliers', 'name': '配菜供應商管理', 'icon': 'fa-solid fa-city'},
             ]
         }
     ]

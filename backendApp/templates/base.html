@@ -28,7 +28,6 @@
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/loading.css' %}">
-    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
 
     {% endblock %}
@@ -118,8 +117,6 @@
 </html>
 <script>
     $(document).ready(function() {
-        $('#preloaderModal').modal('show');
-
         $(window).on('beforeunload', function() {
             $('#preloaderModal').modal('show');
         });
