@@ -59,7 +59,7 @@ urlpatterns = [
     path('course_order/', main_course_bom_settings, name='course_order'), #餐點配送管理
     path('medicine_order/', main_course_bom_settings, name='medicine_order'), #藥物配送管理
 
-    path('send_notification/', send_notification, name='send_notification'),
+    path('notification/send', send_notification, name='send_notification'),
 
 
     path('linebot', linebot.line_bot_webhook),
