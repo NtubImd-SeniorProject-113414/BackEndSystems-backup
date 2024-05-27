@@ -1,5 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Row, Column, Submit
+from .models import CourseSides, MainCourse, Patient, Sides, Purchase, PurchaseDetail, Supplier, Bed, RfidCard, MealOrderTimeSlot
 from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,Group
@@ -154,6 +157,10 @@ class BedForm(forms.ModelForm):
         model = Bed
         fields = ['bed_number', 'patient']
 
+class RfidCardForm(forms.ModelForm):
+    class Meta:
+        model = RfidCard
+        fields = ['RfidCard_code', 'patient']
 
 class SupplierForm(forms.ModelForm):
     class Meta:
@@ -171,6 +178,45 @@ class CourseSidesForm(forms.ModelForm):
     class Meta:
         model = CourseSides
         fields = ['course', 'sides', 'quantity']
+        
+    def __init__(self, *args, **kwargs):
+        super(CourseSidesForm, self).__init__(*args, **kwargs)
+        
+        # 設定自定義標題
+        self.fields['course'].label = "主菜名稱"
+        self.fields['sides'].label = "配菜"
+        self.fields['quantity'].label = "數量"
+
+        # 調整字段的widget
+        self.fields['course'].widget.attrs.update({
+                    'class': 'form-select',
+                    'placeholder': '選擇主菜'
+        })
+        self.fields['sides'].widget.attrs.update({
+            'class': 'form-select',
+            'placeholder': '選擇配菜'
+        })
+        self.fields['quantity'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': '輸入數量'
+        })
+
+        # self.helper = FormHelper()
+        # self.helper.layout = Layout(
+        #     Row(
+        #         Column('course', css_class='form-group col-md-6 mb-0'),
+        #         css_class='row'
+        #     ),
+        #     Row(
+        #         Column('sides', css_class='form-group col-md-6 mb-0'),
+        #         css_class='row'
+        #     ),
+        #     Row(
+        #         Column('quantity', css_class='form-group col-md-6 mb-0'),
+        #         css_class='row'
+        #     ),
+        #     Submit('submit', '保存', css_class='btn btn-primary')
+        # )
 
 class purchaseForm(forms.ModelForm):
     class Meta:

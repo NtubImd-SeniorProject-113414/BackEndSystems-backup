@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
@@ -48,4 +47,7 @@ def getWebPage(request):
         return JsonResponse({'message': '訂單已成功提交'}, status=201)
     
     return HttpResponse("Unsupported HTTP method", status=405)
+
+
+
 
