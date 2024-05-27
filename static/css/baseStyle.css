@@ -191,3 +191,16 @@ main {
 .FunctionMenu-item.active {
     color: cadetblue;
 }
+
+.FunctionMenuBtn {
+    display: block;
+    color: #333;
+    font-weight: bold;
+    margin-left: 10px;
+}
+.FunctionMenuBtn:hover {
+    color: #007bff;
+}
+.modal-backdrop.show {
+    opacity: 0.5;
+}

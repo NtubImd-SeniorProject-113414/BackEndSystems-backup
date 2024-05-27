@@ -12,8 +12,8 @@ def login_view(request):
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            if hasattr(user, 'last_login') and (timezone.now() - user.last_login) < timedelta(seconds=20):
-                return render(request, 'login.html', {'error': '登入嘗試過於頻繁，請稍後再試。'})
+            # if hasattr(user, 'last_login') and (timezone.now() - user.last_login) < timedelta(seconds=20):
+            #     return render(request, 'login.html', {'error': '登入嘗試過於頻繁，請稍後再試。'})
             request.session.flush()
             login(request, user)
             user.fail_count = 0

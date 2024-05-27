@@ -9,14 +9,14 @@ def function_menu(request):
         },
         {
             'name': '用戶管理',
-            'permission': ['admin', 'caregiver', 'pharmacy'],
+            'permission': ['admin'],
             'mode': 'one',
             'url': 'user_manager',
             'icon': 'fa-user-nurse'
         },
         {
             'name': '藥物配送管理',
-            'permission': ['admin', 'caregiver', 'pharmacy'],
+            'permission': ['pharmacy'],
             'mode': 'one',
             'url': 'medicine_order',
             'icon': 'fa-user-nurse'
@@ -24,7 +24,7 @@ def function_menu(request):
         {
             'name': '基本功能',
             'id': 'basicFunctionsMenu',
-            'permission': ['admin', 'caregiver', 'pharmacy'],
+            'permission': ['caregiver'],
             'mode': 'multi',
             'items': [
                 {'url': 'patient_manager', 'name': '被照護者管理', 'icon': 'fa-hospital-user'},
@@ -35,7 +35,7 @@ def function_menu(request):
         {
             'name': '訂單管理功能',
             'id': 'mealsFunctionsMenu',
-            'permission': ['admin', 'caregiver', 'pharmacy'],
+            'permission': ['caregiver'],
             'mode': 'multi',
             'items': [
                 {'url': 'course_order', 'name': '餐點配送管理', 'icon': 'fa-burger'},
@@ -47,7 +47,7 @@ def function_menu(request):
         {
             'name': '進銷存管理功能',
             'id': 'stockFunctionsMenu',
-            'permission': ['admin', 'caregiver', 'pharmacy'],
+            'permission': ['caregiver'],
             'mode': 'multi',
             'items': [
                 {'url': 'inventory_management', 'name': '配菜管理', 'icon': 'fa-solid fa-box-open'},

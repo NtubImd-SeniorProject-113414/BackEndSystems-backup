@@ -3,7 +3,7 @@ from backendApp.decorator import group_required
 from backendApp.middleware import login_required
 from ..forms import UserProfileForm
 
-@group_required('caregiver', 'admin','pharmacy_admin')
+@group_required('caregiver', 'admin', 'pharmacy')
 @login_required
 def index(request):
     first_name = request.user.first_name

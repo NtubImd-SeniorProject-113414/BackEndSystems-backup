@@ -13,7 +13,7 @@ from backendApp.middleware import login_required
 from backendApp.module.sideStock import getSideStockBySidesId
 from .models import Bed, CourseSides, MainCourse, Patient, Sides, PurchaseDetail, Supplier
 
-@group_required('admin','caregiver')
+@group_required('caregiver')
 @login_required
 def patient_manager(request):
     query = request.GET.get('search', '')
@@ -36,7 +36,7 @@ def patient_manager(request):
     return render(request, 'patient_manager.html', {'page_obj': page_obj})
 
 
-@group_required('admin','caregiver')
+@group_required('caregiver')
 @login_required
 def add_patient(request):
     if request.method == 'POST':
@@ -49,7 +49,7 @@ def add_patient(request):
         form = PatientForm()
     return render(request, 'add_patient.html', {'form': form})
 
-@group_required('admin','caregiver')
+@group_required('caregiver')
 @login_required
 def edit_patient(request, patient_id):
     patient = get_object_or_404(Patient, patient_id=patient_id)
@@ -63,7 +63,7 @@ def edit_patient(request, patient_id):
         form = PatientForm(instance=patient)
     return render(request, 'edit_patient.html', {'form': form, 'patient': patient})
 
-@group_required('admin','caregiver')
+@group_required('caregiver')
 @login_required
 def delete_patient(request, patient_id):
     patient = get_object_or_404(Patient, patient_id=patient_id)
@@ -71,7 +71,7 @@ def delete_patient(request, patient_id):
     messages.success(request, '被照護者已刪除。')
     return redirect('patient_manager')
 
-@group_required('admin','caregiver')
+@group_required('caregiver')
 @login_required
 def bed_manager(request):
     beds = Bed.objects.all().order_by('bed_number')
@@ -88,7 +88,7 @@ def bed_manager(request):
 
     return render(request, 'bed_manager.html', {'page_obj': page_obj})
 
-@group_required('admin','caregiver')
+@group_required('caregiver')
 @login_required
 def add_bed(request):
     if request.method == 'POST':
@@ -107,7 +107,7 @@ def add_bed(request):
         form = BedForm()
     return render(request, 'add_bed.html', {'form': form, 'operation': '添加'})
 
-@group_required('admin','caregiver')
+@group_required('caregiver')
 @login_required
 def edit_bed(request, bed_id):
     bed = get_object_or_404(Bed, bed_id=bed_id)
@@ -120,14 +120,14 @@ def edit_bed(request, bed_id):
         form = BedForm(instance=bed)
     return render(request, 'edit_bed.html', {'form': form})
 
-@group_required('admin','caregiver')
+@group_required('caregiver')
 @login_required
 def delete_bed(request, bed_id):
     bed = get_object_or_404(Bed, bed_id=bed_id)
     bed.delete()
     return redirect('bed_manager')
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def supplier_list(request):
     query = request.GET.get('q')
@@ -142,7 +142,7 @@ def supplier_list(request):
 
     return render(request, 'supplier_list.html', {'page_obj': page_obj, 'query': query})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def add_supplier(request):
     if request.method == 'POST':
@@ -154,7 +154,7 @@ def add_supplier(request):
         form = SupplierForm()
     return render(request, 'add_supplier.html', {'form': form})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def edit_supplier(request, supplier_id):
     supplier = get_object_or_404(Supplier, supplier_id=supplier_id)
@@ -167,14 +167,14 @@ def edit_supplier(request, supplier_id):
         form = SupplierForm(instance=supplier)
     return render(request, 'edit_supplier.html', {'form': form})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def delete_supplier(request, supplier_id):
     supplier = get_object_or_404(Supplier, supplier_id=supplier_id)
     supplier.delete()
     return redirect('supplierts')
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def main_course_list(request):
     query = request.GET.get('query', '')
@@ -190,7 +190,7 @@ def main_course_list(request):
 
     return render(request, 'main_course_list.html', {'main_courses': page_obj, 'query': query})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def add_main_course(request):
     if request.method == 'POST':
@@ -202,7 +202,7 @@ def add_main_course(request):
         form = MainCourseForm()
     return render(request, 'add_main_course.html', {'form': form})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def edit_main_course(request, course_id):
     course = get_object_or_404(MainCourse, course_id=course_id)
@@ -220,14 +220,14 @@ def edit_main_course(request, course_id):
         form = MainCourseForm(instance=course)
     return render(request, 'edit_main_course.html', {'form': form})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def delete_main_course(request, course_id):
     course = get_object_or_404(MainCourse, course_id=course_id)
     course.delete()
     return redirect('main_course')
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def purchase_detail_list(request):
     query = request.GET.get('query', '')
@@ -243,7 +243,7 @@ def purchase_detail_list(request):
 
     return render(request, 'purchase/detail_list.html', {'details': page_obj, 'query': query})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def purchase_detail_create(request):
     if request.method == 'POST':
@@ -255,7 +255,7 @@ def purchase_detail_create(request):
         form = PurchaseDetailForm()
     return render(request, 'purchase/detail_form.html', {'form': form})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def purchase_detail_update(request, pk):
     detail = get_object_or_404(PurchaseDetail, pk=pk)
@@ -269,14 +269,14 @@ def purchase_detail_update(request, pk):
         form = PurchaseDetailForm(instance=detail)
     return render(request, 'purchase/detail_form.html', {'form': form})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def purchase_detail_delete(request, pk):
     detail = get_object_or_404(PurchaseDetail, pk=pk)
     detail.delete()
     return redirect('purchase_detail')
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def main_course_bom_settings(request):
     if request.method == 'POST':
@@ -294,7 +294,7 @@ def main_course_bom_settings(request):
         'course_sides': course_sides
     })
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def edit_course_sides(request, pk):
     cs = get_object_or_404(CourseSides, pk=pk)
@@ -309,14 +309,14 @@ def edit_course_sides(request, pk):
         'form': form
     })
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def delete_course_sides(request, pk):
     cs = get_object_or_404(CourseSides, pk=pk)
     cs.delete()
     return redirect('bom_settings')
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def edit_course_sides(request, pk):
     cs = get_object_or_404(CourseSides, pk=pk)
@@ -329,14 +329,14 @@ def edit_course_sides(request, pk):
         form = CourseSidesForm(instance=cs)
     return render(request, 'course_sides_form.html', {'form': form})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def delete_course_sides(request, pk):
     cs = get_object_or_404(CourseSides, pk=pk)
     cs.delete()
     return redirect('bom_settings')
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def inventory_management(request):
     total_patients = Patient.objects.count()

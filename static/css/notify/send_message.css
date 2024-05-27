@@ -1,0 +1,21 @@
+.choices {
+    width: 100%;
+    margin: 1vw 0;
+}
+.input-group-append {
+    display: flex;
+}
+.input-group-append .btn {
+    margin-left: 5px;
+}
+.form-main{
+    display: flex;
+    flex-direction: row;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    row-gap: 1vw;
+    padding: 0.8vw;
+}
