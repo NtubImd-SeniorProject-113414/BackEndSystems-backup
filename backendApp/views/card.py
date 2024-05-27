@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 
 from ..models import RfidCard
 from ..module import mqtt
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def card_list(request):
     query = request.GET.get('query', '')
@@ -21,14 +21,14 @@ def card_list(request):
 
     return render(request, 'card/card_manager.html', {'page_obj': page_obj, 'query': query})
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def add_card(request):
     if request.method == 'POST':
         mqtt.send_mqtt_message('signup', topic='/signup')
     return redirect('card_manager')
 
-@group_required('admin')
+@group_required('caregiver')
 @login_required
 def delete_card(request, card_code):
     card = get_object_or_404(RfidCard, RfidCard_code=card_code)
