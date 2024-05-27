@@ -38,7 +38,7 @@
                     <td>{{ detail.purchase_quantity }}</td>
                     <td>{{ detail.purchase_date }}</td>
                     <td>
-                        <a href="{% url 'purchase_detail_delete' detail.pk %}" class="btn btn-danger">刪除</a>
+                        <a href="{% url 'purchase_detail_delete' detail.pk %}" class="btn btn-danger" onclick="return confirm('確定要刪除這筆進貨嗎？');">刪除</a>
                     </td>
                 </tr>
                 {% endfor %}
