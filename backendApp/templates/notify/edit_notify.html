@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>發送通知</title>
+    <title>編輯通知</title>
     <link href="{% static 'css/notify/send_message.css' %}" rel="stylesheet">
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'model/choices/choices.min.css' %}" rel="stylesheet">
@@ -17,21 +17,22 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="mb-4">發送通知</h2>
+        <h2 class="mb-4">編輯通知</h2>
         {% if message %}
         <div class="{{ css }}" role="alert">
             {{ message }}
         </div>
         {% endif %}
+
         <form method="post" id="notification-form" novalidate>
             {% csrf_token %}
             <div class="form-main">
                 <div class="form-group">
-                    <label for="{{ form.notify_message.id_for_label }}">請輸入要發送的訊息</label>
+                    <label for="{{ form.notify_message.id_for_label }}">編輯要發送的訊息</label>
                     {{ form.notify_message }}
                 </div>
                 <div class="form-group">
-                    <label for="{{ form.patients.id_for_label }}">選擇發送對象</label>
+                    <label for="{{ form.patients.id_for_label }}">編輯發送對象</label>
                     <div class="input-group">
                         <div class="input-group-append">
                             <button type="button" class="btn btn-secondary" id="select-all-btn">全選</button>
@@ -42,10 +43,11 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">發送</button>
+            <button type="submit" class="btn btn-primary">進行更改</button>
+            <a href="{% url 'notify_manager' %}" class="btn btn-secondary">返回通知管理</a>
         </form>
     </div>
-    <script src="{% static 'js/notify/send_message.js' %}"></script>
+    <script src="{% static 'js/notify/main.js' %}"></script>
 </body>
 </html>
 {% endblock %}
