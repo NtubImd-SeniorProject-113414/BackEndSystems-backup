@@ -10,12 +10,11 @@ from ..module import mqtt
 @login_required
 def card_list(request):
     query = request.GET.get('query', '')
-
     if query:
         cards = RfidCard.objects.filter(RfidCard_code__icontains=query)
     else:
         cards = RfidCard.objects.all().order_by('created_time')
-    print(cards)
+    
     paginator = Paginator(cards, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -27,18 +26,11 @@ def card_list(request):
 def add_card(request):
     if request.method == 'POST':
         mqtt.send_mqtt_message('signup', topic='/signup')
-    return redirect('card/card_manager.html')
+    return redirect('card_manager')
 
 @group_required('admin')
 @login_required
 def delete_card(request, card_code):
     card = get_object_or_404(RfidCard, RfidCard_code=card_code)
     card.delete()
-    return redirect('card/card_manager.html')
-
-@group_required('admin')
-@login_required
-def edit_card(request, card_code):
-    card = get_object_or_404(RfidCard, RfidCard_code=card_code)
-    card.delete()
-    return redirect('card/card_manager.html')
+    return redirect('card_manager')

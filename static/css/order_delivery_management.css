@@ -1,0 +1,51 @@
+.title{
+  display: flex;
+  justify-content:space-between;
+  align-items: center;
+}
+
+.orderTime{
+  color: chocolate;
+  font-size:1.5rem;
+  margin:8% 0 1% 0;
+}
+
+.table{
+  text-align: center;
+  
+}
+
+.un-delivery{
+  font-size: 1rem;
+  background: #e6b46a;
+  border: none;
+  border-radius: 0.3rem;
+  color: rgb(51, 47, 47);
+  margin-top: 2px;
+}
+
+.delivering{
+  font-size: 1rem;
+  background: #C79FB7;
+  border: none;
+  border-radius: 0.3rem;
+  color: rgb(75, 75, 75);
+}
+
+.complete{
+  font-size: 1rem;
+  background: #77C67F;
+  border: none;
+  border-radius: 0.3rem;
+  color: rgb(51, 47, 47);
+  margin-top: 2px;
+}
+
+.cancel{
+  font-size: 1rem;
+  background: #D65437;
+  border: none;
+  border-radius: 0.3rem;
+  color: rgb(255, 255, 255);
+  margin-top: 2px;
+}

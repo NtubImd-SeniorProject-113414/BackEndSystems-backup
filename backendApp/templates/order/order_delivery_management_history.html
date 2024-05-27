@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/order_delivery_management.css' %}">
+
+<div class="container mt-4">
+  <div class="title">
+    <h2>查詢歷史訂單</h2>
+    <a href="{% url 'order_delivery_management' %}" class="btn btn-sm btn-info" style="font-size:15px; padding:0.5rem 1rem; color:rgb(234, 245, 245);">返回</a>
+  </div>
+
+  <table class="table table-striped" class="table" style="margin-top: 10%;">
+    <thead>
+      <tr>
+        <th>序號</th>
+        <th>餐點及數量</th>
+        <th>點餐時間</th>
+        <th>訂餐人</th>
+        <th>床位</th>
+        <th>訂單狀態</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in page_obj %}
+      <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ order.course.course_name }} x {{ order.order_quantity }}</td>
+        <td>{{ order.order_time }}</td>
+        <td>{{ order.patient.patient_name }}</td>
+        <td>{{ order.first_bed_number }}</td>
+        {% if order.orderState.OrderState_code == 3 %}
+          <td><p class="complete">{{ order.orderState.OrderState_name }}</p></td>
+        {% elif order.orderState.OrderState_code == 4 %}
+          <td><p class="cancel">{{ order.orderState.OrderState_name }}</p></td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

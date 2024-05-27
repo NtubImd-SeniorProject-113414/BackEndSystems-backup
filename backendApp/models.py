@@ -217,7 +217,9 @@ class CourseSides(models.Model):
             for order in orders:
                 total_quantity += course_side.quantity * order.order_quantity
         return total_quantity
-
+    
+    def __str__(self):
+        return self.course
 
 #床位
 class Bed(models.Model):

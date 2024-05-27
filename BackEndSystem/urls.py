@@ -6,7 +6,7 @@ from backendApp.views.notify import send_notification
 from backendApp.views.views import index, edit_profile
 from backendApp.login import login_view,logout_view
 from backendApp.caresystem_views import *
-from backendApp.views import userManagement, card
+from backendApp.views import userManagement, card, order_backend
 from lineIntegrations.views import linebot, verify, order, medicament, notify
 
 urlpatterns = [
@@ -54,10 +54,6 @@ urlpatterns = [
     # path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     # path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     
-
-    path('course_order/', main_course_bom_settings, name='course_order'), #餐點配送管理
-    path('medicine_order/', main_course_bom_settings, name='medicine_order'), #藥物配送管理
-
     path('send_notification/', send_notification, name='send_notification'),
 
 
@@ -81,7 +77,14 @@ urlpatterns = [
 
     path('card_manager/', card.card_list, name='card_manager'),
     path('card_manager/add', card.add_card, name='add_card'),
-    path('card_manager/delete_card/<str:RfidCode_code>', card.delete_card, name='delete_card'),
-    path('card_manager/edit_card/<str:RfidCode_code>', card.edit_card, name='edit_card'),
-
+    path('card_manager/delete_card/<str:card_code>', card.delete_card, name='delete_card'),
+    
+    path('order_delivery_management/', order_backend.order_list, name='order_delivery_management'),
+    path('order_delivery_management/history', order_backend.order_list_history, name='history'),
+    path('order_deliver_management/delivery/<str:card_code>', order_backend.delivery_order, name='delivery_order'),
+    path('order_deliver_management/finish/<int:order_id>', order_backend.finish_order, name='finish_order'),
+    path('order_deliver_management/cancel/<int:order_id>', order_backend.cancel_order, name='cancel_order'),
+    
+    path('medicine_order/', main_course_bom_settings, name='medicine_order'), #藥物配送管理
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

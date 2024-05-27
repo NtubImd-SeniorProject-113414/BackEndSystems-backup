@@ -38,7 +38,7 @@ def function_menu(request):
             'permission': ['caregiver'],
             'mode': 'multi',
             'items': [
-                {'url': 'course_order', 'name': '餐點配送管理', 'icon': 'fa-burger'},
+                {'url': 'order_delivery_management', 'name': '餐點配送管理', 'icon': 'fa-truck'},
                 {'url': 'main_course', 'name': '餐點管理', 'icon': 'fa-burger'},
                 {'url': 'bom_settings', 'name': '餐點配菜管理', 'icon': 'fa-solid fa-egg'},
 
