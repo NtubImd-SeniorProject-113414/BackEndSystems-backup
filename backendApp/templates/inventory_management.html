@@ -2,15 +2,14 @@
 {% load static %}
 
 {% block content %}
-<h2>庫存管理</h2>
+<div class="container">
+<h2  class="text-center mb-4">食材庫存管理</h2>
 
-<!-- 引入 Bootstrap CSS -->
 <head>
   <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
   <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </head>
 
-<!-- Bootstrap 表单样式 -->
 <form method="get" class="mb-4">
     <div class="mb-3">
         <label for="days" class="form-label">計算天數:</label>
@@ -19,11 +18,10 @@
     <button type="submit" class="btn btn-primary">更新</button>
 </form>
 
-<!-- Bootstrap 表格样式 -->
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>配菜名稱</th>
+            <th>食材名稱</th>
             <th>目前數量</th>
             <th>最低庫存量</th>
         </tr>
@@ -38,4 +36,22 @@
         {% endfor %}
     </tbody>
 </table>
+
+<div class="pagination justify-content-center">
+  {% if inventory_data.has_previous %}
+  <a class="page-link" href="{% url 'inventory_management' %}?page=1&days={{ days }}">&laquo; 最前頁</a>
+  <a class="page-link" href="{% url 'inventory_management' %}?page={{ inventory_data.previous_page_number }}&days={{ days }}">上一頁</a>
+  {% endif %}
+
+  <span class="page-link disabled">
+      第 {{ inventory_data.number }} 頁，共 {{ inventory_data.paginator.num_pages }} 頁
+  </span>
+
+  {% if inventory_data.has_next %}
+  <a class="page-link" href="{% url 'inventory_management' %}?page={{ inventory_data.next_page_number }}&days={{ days }}">下一頁</a>
+  <a class="page-link" href="{% url 'inventory_management' %}?page={{ inventory_data.paginator.num_pages }}&days={{ days }}">最後頁 &raquo;</a>
+  {% endif %}
+</div>
+
+</div>
 {% endblock %}

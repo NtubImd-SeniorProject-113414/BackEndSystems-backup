@@ -43,7 +43,7 @@ def function_menu(request):
             'items': [
                 {'url': 'order_delivery_management', 'name': '餐點配送管理', 'icon': 'fa-truck'},
                 {'url': 'main_course', 'name': '餐點管理', 'icon': 'fa-burger'},
-                {'url': 'bom_settings', 'name': '餐點配菜管理', 'icon': 'fa-solid fa-egg'},
+                {'url': 'bom_settings', 'name': '餐點食材管理', 'icon': 'fa-solid fa-egg'},
 
             ]
         },
@@ -54,9 +54,9 @@ def function_menu(request):
             'icon': 'fa-solid fa-truck-moving',
             'mode': 'multi',
             'items': [
-                {'url': 'inventory_management', 'name': '配菜管理', 'icon': 'fa-solid fa-box-open'},
-                {'url': 'purchase_detail', 'name': '配菜進貨管理', 'icon': 'fa-solid fa-cart-flatbed'},
-                {'url': 'suppliers', 'name': '配菜供應商管理', 'icon': 'fa-solid fa-city'},
+                {'url': 'inventory_management', 'name': '食材庫存管理', 'icon': 'fa-solid fa-box-open'},
+                {'url': 'purchase_detail', 'name': '食材進貨管理', 'icon': 'fa-solid fa-cart-flatbed'},
+                {'url': 'suppliers', 'name': '食材供應商管理', 'icon': 'fa-solid fa-city'},
             ]
         }
     ]

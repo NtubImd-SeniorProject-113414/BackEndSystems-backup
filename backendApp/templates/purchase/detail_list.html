@@ -5,19 +5,16 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <title>進貨列表</title>
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </head>
 <body>
     <div class="container">
-        <h1>進貨列表</h1>
-
+        <h2  class="text-center mb-4">食材進貨列表</h2>
         <form method="get" class="mb-3">
             <div class="input-group">
-                <input type="text" name="query" class="form-control" placeholder="搜索配菜" value="{{ query }}">
-                <button class="btn btn-outline-secondary" type="submit">搜索</button>
+                <input type="text" name="query" class="form-control" placeholder="搜尋食材" value="{{ query }}">
+                <button class="btn btn-outline-secondary" type="submit">搜尋</button>
             </div>
         </form>
 
@@ -25,9 +22,9 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>配菜</th>
+                    <th>食材名稱</th>
                     <th>數量</th>
-                    <th>訂貨日期</th>
+                    <th>最新訂貨日期</th>
                     <th>操作</th>
                 </tr>
             </thead>
@@ -44,31 +41,20 @@
                 {% endfor %}
             </tbody>
         </table>
-
-        <div class="d-flex justify-content-center">
-            <ul class="pagination">
-                {% if details.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ details.previous_page_number }}{% if query %}&query={{ query }}{% endif %}">上一頁</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled"><span class="page-link">上一頁</span></li>
-                {% endif %}
-                {% for num in details.paginator.page_range %}
-                    {% if details.number == num %}
-                        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="?page={{ num }}{% if query %}&query={{ query }}{% endif %}">{{ num }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                {% if details.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ details.next_page_number }}{% if query %}&query={{ query }}{% endif %}">下一頁</a>
-                    </li>
-                {% else %}
-                    <li class="page-item disabled"><span class="page-link">下一頁</span></li>
-                {% endif %}
-            </ul>
+        <div class="pagination justify-content-center">
+            {% if details.has_previous %}
+            <a class="page-link" href="{% url 'purchase_details' %}?page=1&query={{ query }}">&laquo; 最前頁</a>
+            <a class="page-link" href="{% url 'purchase_details' %}?page={{ details.previous_page_number }}&query={{ query }}">上一頁</a>
+            {% endif %}
+    
+            <span class="page-link disabled">
+                第 {{ details.number }} 頁，共 {{ details.paginator.num_pages }} 頁
+            </span>
+    
+            {% if details.has_next %}
+            <a class="page-link" href="{% url 'purchase_details' %}?page={{ details.next_page_number }}&query={{ query }}">下一頁</a>
+            <a class="page-link" href="{% url 'purchase_details' %}?page={{ details.paginator.num_pages }}&query={{ query }}">最後頁 &raquo;</a>
+            {% endif %}
         </div>
     </div>
 </body>

@@ -8,9 +8,8 @@
 </head>
 
 <div class="container">
-    <h2>主菜管理</h2>
+    <h2 class="text-center mb-4">主菜管理</h2>
 
-    <!-- 查询表单 -->
     <form method="get" class="mb-3">
         <div class="input-group">
             <input type="text" name="query" class="form-control" placeholder="搜索主菜" value="{{ query }}">
@@ -24,6 +23,7 @@
             <tr>
                 <th>主菜名稱</th>
                 <th>價格</th>
+                <th>估計最低庫存</th>
                 <th>操作</th>
             </tr>
         </thead>
@@ -44,32 +44,20 @@
             {% endfor %}
         </tbody>
     </table>
+</div>
+<div class="pagination justify-content-center">
+    {% if main_courses.has_previous %}
+    <a class="page-link" href="{% url 'main_courses' %}?page=1{% if query %}&query={{ query }}{% endif %}">&laquo; 最前頁</a>
+    <a class="page-link" href="{% url 'main_courses' %}?page={{ main_courses.previous_page_number }}{% if query %}&query={{ query }}{% endif %}">上一頁</a>
+    {% endif %}
 
-    <!-- 分页控件 -->
-    <div class="d-flex justify-content-center">
-        <ul class="pagination">
-            {% if main_courses.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ main_courses.previous_page_number }}{% if query %}&query={{ query }}{% endif %}">上一頁</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">上一頁</span></li>
-            {% endif %}
-            {% for num in main_courses.paginator.page_range %}
-                {% if main_courses.number == num %}
-                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
-                {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{ num }}{% if query %}&query={{ query }}{% endif %}">{{ num }}</a></li>
-                {% endif %}
-            {% endfor %}
-            {% if main_courses.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ main_courses.next_page_number }}{% if query %}&query={{ query }}{% endif %}">下一頁</a>
-                </li>
-            {% else %}
-                <li class="page-item disabled"><span class="page-link">下一頁</span></li>
-            {% endif %}
-        </ul>
-    </div>
+    <span class="page-link disabled">
+        第 {{ main_courses.number }} 頁，共 {{ main_courses.paginator.num_pages }} 頁
+    </span>
+
+    {% if main_courses.has_next %}
+    <a class="page-link" href="{% url 'main_courses' %}?page={{ main_courses.next_page_number }}{% if query %}&query={{ query }}{% endif %}">下一頁</a>
+    <a class="page-link" href="{% url 'main_courses' %}?page={{ main_courses.paginator.num_pages }}{% if query %}&query={{ query }}{% endif %}">最後頁 &raquo;</a>
+    {% endif %}
 </div>
 {% endblock %}

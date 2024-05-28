@@ -8,7 +8,7 @@
     <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </head>
 <div class="container">
-    <h2>床位管理</h2>
+    <h2  class="text-center mb-4">床位管理</h2>
     <a href="{% url 'add_bed' %}" class="btn btn-primary mb-3">新增床位</a>
     <form method="get">
         <div class="input-group mb-3">
@@ -50,8 +50,8 @@
 </div>
 <div class="pagination justify-content-center">
     {% if page_obj.has_previous %}
-    <a class="page-link" href="?page=1">&laquo; 最前頁</a>
-    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">上一頁</a>
+    <a class="page-link" href="{% url 'bed_manager' %}?page=1">&laquo; 最前頁</a>
+    <a class="page-link" href="{% url 'bed_manager' %}?page={{ page_obj.previous_page_number }}">上一頁</a>
     {% endif %}
 
     <span class="page-link disabled">
@@ -59,8 +59,8 @@
     </span>
 
     {% if page_obj.has_next %}
-    <a class="page-link" href="?page={{ page_obj.next_page_number }}">下一頁</a>
-    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">最後頁 &raquo;</a>
+    <a class="page-link" href="{% url 'bed_manager' %}?page={{ page_obj.next_page_number }}">下一頁</a>
+    <a class="page-link" href="{% url 'bed_manager' %}?page={{ page_obj.paginator.num_pages }}">最後頁 &raquo;</a>
     {% endif %}
 </div>
 {% endblock %}

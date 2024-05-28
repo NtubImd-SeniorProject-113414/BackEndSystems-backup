@@ -2,22 +2,23 @@
 {% load static %}
 
 {% block content %}
+
 <head>
-<link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
-<script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+  <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+  <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </head>
 
-<div class="container mt-4">
+<div class="container">
   <h2 class="text-center mb-4">用戶管理</h2>
   <form method="get" class="row g-3 mb-4">
     <div class="col-md-6">
-      <input type="text" name="search" class="form-control" placeholder="搜尋用戶">
+      <input type="text" name="search" class="form-control" placeholder="搜尋用戶" value="{{ query }}">
     </div>
     <div class="col-md-4">
       <select name="group" class="form-select">
         <option value="">選擇群組</option>
         {% for group in groups %}
-        <option value="{{ group.id }}" {% if request.GET.group == group.id|stringformat:"s" %}selected{% endif %}>
+        <option value="{{ group.id }}" {% if group_id|stringformat:"s" == group.id|stringformat:"s" %}selected{% endif %}>
           {{ group.display }}
         </option>
         {% endfor %}
@@ -29,7 +30,6 @@
   </form>
   <a href="{% url 'add_user' %}" class="btn btn-primary mb-3">新增用戶</a>
 
-
   <table class="table table-striped">
     <thead class="table-dark">
       <tr>
@@ -37,16 +37,15 @@
         <th>姓名</th>
         <th>Email</th>
         <th>權限組</th>
-        <th>Actions</th>
+        <th>操作</th>
       </tr>
     </thead>
     <tbody>
-      {% for user in users %}
+      {% for user in page_obj %}
       <tr>
         <td>{{ user.username }}</td>
         <td>{{ user.first_name }}{{ user.last_name }}</td>
         <td>{{ user.email }}</td>
-        
         <td>
           {% for group in user.groups.all %}
           {{ group.display }}
@@ -63,5 +62,20 @@
       {% endfor %}
     </tbody>
   </table>
+</div>
+<div class="pagination justify-content-center">
+  {% if page_obj.has_previous %}
+  <a class="page-link" href="{% url 'user_manager' %}?page=1">&laquo; 最前頁</a>
+  <a class="page-link" href="{% url 'user_manager' %}?page={{ page_obj.previous_page_number }}">上一頁</a>
+  {% endif %}
+
+  <span class="page-link disabled">
+      第 {{ page_obj.number }} 頁，共 {{ page_obj.paginator.num_pages }} 頁
+  </span>
+
+  {% if page_obj.has_next %}
+  <a class="page-link" href="{% url 'user_manager' %}?page={{ page_obj.next_page_number }}">下一頁</a>
+  <a class="page-link" href="{% url 'user_manager' %}?page={{ page_obj.paginator.num_pages }}">最後頁 &raquo;</a>
+  {% endif %}
 </div>
 {% endblock %}
