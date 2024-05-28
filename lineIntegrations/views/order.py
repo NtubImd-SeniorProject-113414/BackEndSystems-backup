@@ -9,7 +9,7 @@ from lineIntegrations.module.lineVerify import getLineUserUidByToken
 
 @csrf_exempt
 @line_verify
-def getWebPage(request):
+def getWebPage(request, *args, **kwargs):
     nowTime = datetime.now()
     formatted_time = nowTime.strftime("%H:%M")
     #formatted_time = "19:31" #測試用
@@ -17,9 +17,7 @@ def getWebPage(request):
     nextTimeSlot = MealOrderTimeSlot.find_nearest_time_slot(nowTimeSlot, formatted_time)
     next_time_slot_str = f"{nextTimeSlot.startTime.strftime('%H:%M')} 至 {nextTimeSlot.deadlineTime.strftime('%H:%M')}"
 
-    access_token = request.session.get('line_access_token')
-    LineUid = getLineUserUidByToken(access_token)
-    patient_id = Patient.getpatientIdByLineUid(LineUid)
+    patient_id = kwargs.get('patient_id')
 
     #這時段是否點餐了
     if nowTimeSlot!= None:

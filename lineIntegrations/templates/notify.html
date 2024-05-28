@@ -1,97 +1,121 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>通知欄</title>
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
-    
-    <style>
-        .notify {
-            margin-bottom: 15px;
-        }
-        .notify.unread {
-            background-color: #f8f9fa;
-            border-left: 5px solid #007bff;
-        }
-    </style>
+    <link href="{% static 'lineIntegrations/css/notify.css' %}" rel="stylesheet">
 </head>
+
 <body>
-<div class="container mt-5">
-    <h1 class="mb-4">通知面板</h1>
-    <div class="btn-group mb-3" role="group" aria-label="篩選器">
-        <button type="button" class="btn btn-secondary" id="show-unread">未讀訊息 (<span id="unread-count"></span>)</button>
-        <button type="button" class="btn btn-secondary" id="show-read">已讀訊息</button>
-    </div>
-    <div id="notifies">
-       
-    </div>
-</div>
-<script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
-<script>
-    const notifies = [
-        { id: 1, text: '這是未讀訊息 1', read: false },
-        { id: 2, text: '這是已讀訊息 1', read: true },
-        { id: 3, text: '這是未讀訊息 2', read: false },
-        { id: 4, text: '這是已讀訊息 2', read: true }
-    ];
+    <div class="container mt-5">
+        <div class="btn-group mb-3" role="group" aria-label="篩選器">
+            <button type="button" class="btn btn-secondary active" id="show-unread">未讀訊息 (<span
+                    id="unread-count"></span>)</button>
+            <button type="button" class="btn btn-secondary" id="show-read">已讀訊息</button>
+        </div>
+        <div id="notifys">
 
-    function renderNotifies(filter) {
-        const container = $('#notifies');
-        container.empty();
-        const filteredNotifies = notifies.filter(notify => {
-            if (filter === 'unread') return !notify.read;
-            if (filter === 'read') return notify.read;
-            return true;
-        });
+        </div>
+    </div>
+    <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+    <script>
+        let notifys = [];
 
-        filteredNotifies.forEach(notify => {
-            const notifyElement = $('<div></div>', {
-                class: 'notify p-3 border rounded'
+        function fetchNotifyDatas() {
+            $.ajax({
+                url: "{% url 'userNotifyList' %}",
+                method: 'GET',
+                success: function (data) {
+                    notifys = data.notifys;
+                    rendernotifys(currentFilter);
+                },
+                error: function (err) {
+                    console.error('Failed to fetch notifications:', err);
+                }
             });
-            if (!notify.read) notifyElement.addClass('unread');
-            notifyElement.html(`
-                <div class="d-flex justify-content-between align-items-center">
-                    <span>${notify.text}</span>
-                    ${!notify.read ? `<button class="btn btn-sm btn-primary mark-read" data-id="${notify.id}">標記為已讀</button>` : ''}
-                </div>
-            `);
-            container.append(notifyElement);
-        });
-
-        $('.mark-read').on('click', function() {
-            const id = $(this).data('id');
-            markAsRead(id);
-        });
-
-        updateUnreadCount();
-    }
-
-    function markAsRead(id) {
-        const notify = notifies.find(notify => notify.id == id);
-        if (notify) {
-            notify.read = true;
-            renderNotifies(currentFilter);
         }
-    }
 
-    function updateUnreadCount() {
-        const unreadCount = notifies.filter(notify => !notify.read).length;
-        $('#unread-count').text(unreadCount);
-    }
+        function rendernotifys(filter) {
+            const container = $('#notifys');
+            container.empty();
+            const filterednotifys = notifys.filter(notify => {
+                if (filter === 'unread') return !notify.is_read;
+                if (filter === 'read') return notify.is_read;
+                return true;
+            });
 
-    let currentFilter = 'unread';
-    $('#show-unread').on('click', function() {
-        currentFilter = 'unread';
-        renderNotifies(currentFilter);
-    });
-    $('#show-read').on('click', function() {
-        currentFilter = 'read';
-        renderNotifies(currentFilter);
-    });
+            filterednotifys.forEach(notify => {
+                const notifyElement = $('<div></div>', {
+                    class: 'notify p-3 border rounded'
+                });
+                if (!notify.is_read) notifyElement.addClass('unread');
+                notifyElement.html(`
+            <div>
+                <div class="notify_message">${notify.notify_message}</div>
+                <div class="info">
+                    <div class="createTime">
+                        <h6>發送時間：</h6>
+                        <span>${notify.created_time}</span>
+                    </div>
+                    ${!notify.is_read ? `<button class="btn btn-sm btn-primary mark-read" data-id="${notify.notify_id}">標記為已讀</button>` : ''}
+                </div>
+            </div>
+        `);
+                container.append(notifyElement);
+            });
 
-    renderNotifies(currentFilter);
-</script>
+            $('.mark-read').on('click', function () {
+                const id = $(this).data('id');
+                markAsRead(id);
+            });
+
+            updateUnreadCount();
+        }
+
+        function markAsRead(notify_id) {
+            $.ajax({
+                url: "{% url 'userReadNotify' %}",
+                method: 'POST',
+                data: {
+                    'notify_id': notify_id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function (data) {
+                    fetchNotifyDatas();
+                },
+                error: function (err) {
+                    console.error('Failed to mark as read:', err);
+                }
+            });
+        }
+
+        function updateUnreadCount() {
+            const unreadCount = notifys.filter(notify => !notify.is_read).length;
+            $('#unread-count').text(unreadCount);
+        }
+
+        let currentFilter = 'unread';
+        $('#show-unread').on('click', function() {
+            currentFilter = 'unread';
+            $('#show-read').removeClass('active');
+            $(this).addClass('active');
+            rendernotifys(currentFilter);
+        });
+        $('#show-read').on('click', function() {
+            currentFilter = 'read';
+            $('#show-unread').removeClass('active');
+            $(this).addClass('active');
+            rendernotifys(currentFilter);
+        });
+
+        fetchNotifyDatas();
+        setInterval(fetchNotifyDatas, 5000);
+        rendernotifys(currentFilter);
+    </script>
 </body>
+
 </html>
