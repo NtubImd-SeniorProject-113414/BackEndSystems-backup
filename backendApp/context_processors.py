@@ -58,6 +58,17 @@ def function_menu(request):
                 {'url': 'purchase_detail', 'name': '配菜進貨管理', 'icon': 'fa-solid fa-cart-flatbed'},
                 {'url': 'suppliers', 'name': '配菜供應商管理', 'icon': 'fa-solid fa-city'},
             ]
+        },
+        {
+            'name': '藥品管理',
+            'id': 'medicineFunctionsMenu',
+            'permission': ['caregiver'],
+            'icon': 'fa-solid fa-tablets',
+            'mode': 'multi',
+            'items': [
+                {'url': 'medicine_order_review', 'name': '臨時用藥審核', 'icon': 'fa-solid fa-square-check'},
+                {'url': 'medicine_order_delivery', 'name': '臨時用藥配送', 'icon': 'fa-solid fa-stethoscope'},
+            ]
         }
     ]
     return {'function_menu': function_menu}

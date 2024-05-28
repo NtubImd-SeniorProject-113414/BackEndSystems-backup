@@ -291,25 +291,25 @@ class ChatLogs(models.Model):
 
 #用藥需求狀態
 class MedicineDemandState(models.Model):
-    MedicineDemandState_code = models.AutoField(primary_key=True)
-    OrderState_name = models.CharField(max_length=10)
+    medicineDemandState_code = models.AutoField(primary_key=True)
+    medicineState_name = models.CharField(max_length=10)
 
 #用藥需求
 class MedicineDemand(models.Model):
     medicineDemand_id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     patient_demand = models.CharField(max_length=300)
-    MedicineDemandState = models.ForeignKey(MedicineDemandState, on_delete=models.CASCADE, db_column='MedicineDemandState_code')
-    review_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
+    medicineDemandState = models.ForeignKey(MedicineDemandState, on_delete=models.CASCADE, db_column='medicineDemandState_code')
+    review_time = models.DateTimeField(null=True, blank=True)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #車子
 class Vehicle(models.Model):
-    Vehicle_id = models.AutoField(primary_key=True)
-    Vehicle_status = models.ForeignKey(MedicineDemandState, on_delete=models.CASCADE, db_column='VehicleStatus_code')
+    vehicle_id = models.AutoField(primary_key=True)
+    vehicle_status = models.ForeignKey(MedicineDemandState, on_delete=models.CASCADE, db_column='vehicleStatus_code')
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #車子狀態
 class VehicleStatus(models.Model):
-    VehicleStatus_code = models.AutoField(primary_key=True)
-    VehicleStatus_name = models.CharField(max_length=10)
+    vehicleStatus_code = models.AutoField(primary_key=True)
+    vehicleStatus_name = models.CharField(max_length=10)

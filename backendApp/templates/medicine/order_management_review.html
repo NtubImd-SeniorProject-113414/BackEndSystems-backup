@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/medicine_delivery_management.css' %}">
+  <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</head>
+
+<div class="container mt-4">
+  <div class="title">
+    <h2>管理未審核之配藥</h2>
+    <a href="{% url 'medicine_order_delivery' %}" class="btn btn-sm btn-info" style="font-size:15px; padding:0.5rem 1rem; color:rgb(234, 245, 245);">配送審核後的藥品</a>
+  </div>
+
+  <table class="table table-striped" class="table" style="margin-top: 10%;">
+    <thead>
+      <tr>
+        <th>號碼</th>
+        <th>症狀描述</th>
+        <th>通知發送時間</th>
+        <th>患者</th>
+        <th>床位</th>
+        <th>審核狀態</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for medicine in page_obj %}
+      <tr>
+        <td>{{ medicine.medicineDemand_id }}</td>
+        <td>{{ medicine.patient_demand }}</td>
+        <td>{{ medicine.created_time }}</td>
+        <td>{{ medicine.patient.patient_name }}</td>
+        <td>{{ medicine.first_bed_number }}</td>
+        <td><p class="stateColor">{{ medicine.medicineDemandState.medicineState_name }}</p></td>
+        <td>
+          <a href="{% url 'accept_medicine' medicine.medicineDemand_id %}" class="btn btn-sm btn-success">審核</a>
+          <a href="{% url 'reject_medicine' medicine.medicineDemand_id %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要取消嗎？')">拒絕</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

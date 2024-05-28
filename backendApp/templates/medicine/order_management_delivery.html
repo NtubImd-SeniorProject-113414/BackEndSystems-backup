@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/medicine_delivery_management.css' %}">
+  <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</head>
+
+<div class="container mt-4">
+  <div class="title">
+    <h2>配送臨時配藥</h2>
+    <div>
+      <a href="{% url 'medicine_order_review' %}" class="btn btn-sm btn-info" style="font-size:15px; padding:0.5rem 0.5rem; color:rgb(234, 245, 245); margin-right: 10px;">審核臨時用藥</a>
+      <a href="{% url 'medicine_order_history' %}" class="btn btn-sm btn-info" style="font-size:15px; padding:0.5rem 0.5rem; color:rgb(234, 245, 245);">查詢歷史用藥</a>
+    </div>
+  </div>
+
+  <table class="table table-striped" style="margin-top: 10%;">
+    <thead>
+      <tr>
+        <th>號碼</th>
+        <th>症狀描述</th>
+        <th>審核時間</th>
+        <th>患者</th>
+        <th>床位</th>
+        <th>送藥狀態</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for medicine in page_obj %}
+      <tr>
+        <td>{{ medicine.medicineDemand_id }}</td>
+        <td>{{ medicine.patient_demand }}</td>
+        <td>{{ medicine.review_time }}</td>
+        <td>{{ medicine.patient.patient_name }}</td>
+        <td>{{ medicine.first_bed_number }}</td>
+        {% if medicine.medicineDemandState.medicineDemandState_code == 2 %}
+          <td><p class="un-delivery">{{ medicine.medicineDemandState.medicineState_name }}</p></td>
+        {% elif medicine.medicineDemandState.medicineDemandState_code == 3 %}
+          <td><p class="delivering">{{ medicine.medicineDemandState.medicineState_name }}</p></td>
+        {% endif %}
+
+        <td>
+          <a href="{% url 'delivery_medicine' medicine.medicineDemand_id %}" class="btn btn-sm btn-success">配送</a>
+          
+          {% if medicine.medicineDemandState.medicineDemandState_code == 2 %}
+            <a href="{% url 'cancel_medicine' medicine.medicineDemand_id %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要取消訂單嗎？');">取消</a>
+          {% elif medicine.medicineDemandState.medicineDemandState_code == 3 %}
+            <a href="medicine_order_management/delivery" class="btn btn-sm btn-danger" onclick="return alert('配送中請勿取消訂單！');" style="background-color: darkgray; border:none">取消</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

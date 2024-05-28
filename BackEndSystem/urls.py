@@ -6,7 +6,7 @@ from backendApp.views.notify import edit_notify, notify_manager, send_notify, de
 from backendApp.views.views import index, edit_profile
 from backendApp.login import login_view,logout_view
 from backendApp.caresystem_views import *
-from backendApp.views import userManagement, card, order_backend
+from backendApp.views import userManagement, card, order_backend, medicine
 from lineIntegrations.views import linebot, verify, order, medicament, notify
 
 urlpatterns = [
@@ -85,9 +85,18 @@ urlpatterns = [
     path('order_delivery_management/', order_backend.order_list, name='order_delivery_management'),
     path('order_delivery_management/history', order_backend.order_list_history, name='history'),
     path('order_deliver_management/delivery/<str:card_code>', order_backend.delivery_order, name='delivery_order'),
-    path('order_deliver_management/finish/<int:order_id>', order_backend.finish_order, name='finish_order'),
     path('order_deliver_management/cancel/<int:order_id>', order_backend.cancel_order, name='cancel_order'),
+    # for nodeRed
+    path('order_deliver_management/finish/<str:card_code>', order_backend.finish_order, name='finish_order'),
     
-    path('medicine_order/', main_course_bom_settings, name='medicine_order'), #藥物配送管理
+    path('medicine_order_management/review', medicine.medicine_review_list, name='medicine_order_review'), 
+    path('medicine_order_management/delivery', medicine.medicine_delivery_list, name='medicine_order_delivery'), 
+    path('medicine_order_management/history', medicine.medicine_history_list, name='medicine_order_history'),
+    path('medicine_order_management/accept/<int:medicineDemand_id>', medicine.accept_medicine_demand, name='accept_medicine'), 
+    path('medicine_order_management/reject/<int:medicineDemand_id>', medicine.reject_medicine_demand, name='reject_medicine'), 
+    path('medicine_order_management/cancel/<int:medicineDemand_id>', medicine.cancel_medicine_demand, name='cancel_medicine'), 
+    path('medicine_order_management/delivery/<int:medicineDemand_id>', medicine.delivery_medicine, name='delivery_medicine'),
     
+    # for nodeRed
+    path('medicine_order_management/finish/<str:card_code>', medicine.finish_medicine_demand, name='finish_medicine'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

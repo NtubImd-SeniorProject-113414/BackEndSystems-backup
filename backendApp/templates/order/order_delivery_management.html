@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load static %}
-{% load crispy_forms_tags %}
 {% block content %}
 <head>
   <link rel="stylesheet" type="text/css" href="{% static 'css/order_delivery_management.css' %}">
@@ -23,7 +22,7 @@
   <table class="table table-striped" class="table">
     <thead>
       <tr>
-        <th>序號</th>
+        <th>號碼</th>
         <th>餐點及數量</th>
         <th>點餐時間</th>
         <th>訂餐人</th>
@@ -35,7 +34,7 @@
     <tbody>
       {% for order in page_obj %}
       <tr>
-        <td>{{ forloop.counter }}</td>
+        <td>{{ order.order_id }}</td>
         <td>{{ order.course.course_name }} x {{ order.order_quantity }}</td>
         <td>{{ order.order_time }}</td>
         <td>{{ order.patient.patient_name }}</td>
@@ -47,7 +46,11 @@
         {% endif %}
         <td>
           <a href="{% url 'delivery_order' order.order_id %}" class="btn btn-sm btn-success">送餐</a>
-          <a href="{% url 'cancel_order' order.order_id %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要取消訂單嗎？');">取消</a>
+          {% if order.orderState.OrderState_code == 1 %}
+            <a href="{% url 'cancel_order' order.order_id %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要取消訂單嗎？');">取消</a>
+          {% elif order.orderState.OrderState_code == 2 %}
+            <a href="order_delivery_management" class="btn btn-sm btn-danger" onclick="return alert('配送中請勿取消訂單！');" style="background-color: darkgray; border:none">取消</a>
+          {% endif %}
         </td>
       </tr>
       {% endfor %}
