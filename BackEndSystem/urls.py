@@ -2,7 +2,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.urls import path
 from django.contrib import admin
-from backendApp.views.notify import send_notification
+from backendApp.views.notify import edit_notify, notify_manager, send_notify, delete_notify
 from backendApp.views.views import index, edit_profile
 from backendApp.login import login_view,logout_view
 from backendApp.caresystem_views import *
@@ -54,7 +54,10 @@ urlpatterns = [
     # path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     # path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     
-    path('send_notification/', send_notification, name='send_notification'),
+    path('notify_manager', notify_manager, name='notify_manager'),
+    path('notify_manager/send', send_notify, name='send_notify'),
+    path('notify_manager/edit/<int:notify_id>/', edit_notify, name='edit_notify'),
+    path('notify_manager/delete/<int:notify_id>/', delete_notify, name='delete_notify'),
 
 
     path('linebot', linebot.line_bot_webhook),
@@ -62,7 +65,8 @@ urlpatterns = [
     path('linebot/order', order.getWebPage),
     path('linebot/medicament', medicament.getWebPage),
     path('linebot/notify', notify.getWebPage),
-    path('linebot/api/notifyList', notify.getPatientNotifyList),
+    path('linebot/api/readNotify', notify.userReadNotify, name='userReadNotify'),
+    path('linebot/api/notifyList', notify.getPatientNotifyList, name='userNotifyList'),
 
 
     # path('add_purchase/', add_purchase, name='add_purchase'),

@@ -29,7 +29,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/loading.css' %}">
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
-    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
 
     {% endblock %}
@@ -90,9 +89,8 @@
                         {% elif menu.mode == "multi" %}
                         <li>
                             <div class="FunctionMenuBtn" data-bs-toggle="collapse" data-bs-target="#{{ menu.id }}" aria-expanded="{% for item in menu.items %}{% if item.url in request.path %}true{% endif %}{% endfor %}" aria-controls="{{ menu.id }}">
-                                {{ menu.name }}
-                            </div>
-                            
+                                <i class="fa-solid {{ menu.icon }}"></i>{{ menu.name }}
+                            </div>   
                             <div class="collapse multi-collapse ms-1 {% for item in menu.items %}{% if item.url in request.path %}show{% endif %}{% endfor %}" id="{{ menu.id }}">
                                 <div class="list-group">
                                     

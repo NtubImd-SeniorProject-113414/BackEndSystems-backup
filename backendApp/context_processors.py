@@ -25,17 +25,20 @@ def function_menu(request):
             'name': '基本功能',
             'id': 'basicFunctionsMenu',
             'permission': ['caregiver'],
+            'icon': 'fa-solid fa-vr-cardboard',
             'mode': 'multi',
             'items': [
                 {'url': 'patient_manager', 'name': '被照護者管理', 'icon': 'fa-hospital-user'},
                 {'url': 'bed_manager', 'name': ' 床位管理', 'icon': 'fa-solid fa-bed'},
-                {'url': 'card_manager', 'name': ' 卡片管理', 'icon': 'fa-solid fa-credit-card-alt'}
+                {'url': 'card_manager', 'name': ' 卡片管理', 'icon': 'fa-solid fa-credit-card-alt'},
+                {'url': 'notify_manager', 'name': ' 通知管理', 'icon': 'fa-solid fa-volume-high'},
             ]
         },
         {
             'name': '訂單管理功能',
             'id': 'mealsFunctionsMenu',
             'permission': ['caregiver'],
+            'icon': 'fa-solid fa-utensils',
             'mode': 'multi',
             'items': [
                 {'url': 'order_delivery_management', 'name': '餐點配送管理', 'icon': 'fa-truck'},
@@ -48,6 +51,7 @@ def function_menu(request):
             'name': '進銷存管理功能',
             'id': 'stockFunctionsMenu',
             'permission': ['caregiver'],
+            'icon': 'fa-solid fa-truck-moving',
             'mode': 'multi',
             'items': [
                 {'url': 'inventory_management', 'name': '配菜管理', 'icon': 'fa-solid fa-box-open'},

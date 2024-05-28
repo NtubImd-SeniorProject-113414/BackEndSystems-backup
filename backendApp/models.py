@@ -87,6 +87,19 @@ class Patient(models.Model):
     def __str__(self):
         return self.patient_name
 
+#通知
+class Notify(models.Model):
+    notify_id = models.AutoField(primary_key=True)
+    notify_message = models.CharField(max_length=1000)
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
+
+#通知與被照護者關係表
+class PatientNotifys(models.Model):
+    patientNotifys_id = models.AutoField(primary_key=True)
+    notify = models.ForeignKey(Notify, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    is_read = models.BooleanField(default=False)
+
 #RFID卡片
 class RfidCard(models.Model):
     RfidCard_code = models.CharField(primary_key=True, max_length=50)
@@ -267,14 +280,6 @@ class Supplier(models.Model):
 
     def __str__(self):
         return self.supplier_name
-
-#通知
-class Notify(models.Model):
-    notify_id = models.AutoField(primary_key=True)
-    notify_message = models.CharField(max_length=1000)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    is_read = models.BooleanField(default=False)
-    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #虛擬人聊天紀錄
 class ChatLogs(models.Model):

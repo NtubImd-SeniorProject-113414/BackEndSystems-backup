@@ -11,6 +11,7 @@ from ..models import Order, OrderState, Bed, MealOrderTimeSlot
 from ..module import mqtt
 
 @login_required
+@group_required('caregiver')
 def order_list(request):
     current_time = datetime.now().strftime('%H:%M')
     date = timezone.now().date()
@@ -34,6 +35,7 @@ def order_list(request):
     })
     
 @login_required
+@group_required('caregiver')
 def order_list_history(request):
     current_time = datetime.now().strftime('%H:%M')
     date = timezone.now().date()
@@ -53,15 +55,18 @@ def order_list_history(request):
     return render(request, 'order/order_delivery_management_history.html', {'page_obj': page_obj,})
 
 @login_required
+@group_required('caregiver')
 def delivery_order(request, card_code):
     if request.method == 'POST':
         mqtt.send_mqtt_message(card_code, topic='/delivery')
     return redirect('order_delivery_management')
 
 @login_required
+@group_required('caregiver')
 def cancel_order(request, order_id):
     return redirect('order_delivery_management')
 
 @login_required
+@group_required('caregiver')
 def finish_order(request, order_id):
     return redirect('order_delivery_management')

@@ -1,0 +1,26 @@
+.notify {
+    margin-bottom: 15px;
+}
+.notify.unread {
+    background-color: #f8f9fa;
+    border-left: 5px solid #007bff;
+}
+.notify_message {
+    padding: 10px;
+    border: #626161 solid 0.8px;
+    border-radius: 5px;
+    font-size: 8vw;
+}
+.info {
+    display: flex;
+    justify-content: space-between;
+    padding: 4vw 0;
+    font-size: 4vw;
+}
+.createTime {
+    display: flex;
+    flex-direction: column;
+}
+.mark-read {
+    font-size: 4vw;
+}

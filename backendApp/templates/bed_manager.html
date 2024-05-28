@@ -12,7 +12,7 @@
     <a href="{% url 'add_bed' %}" class="btn btn-primary mb-3">新增床位</a>
     <form method="get">
         <div class="input-group mb-3">
-            <input type="text" class="form-control" placeholder="搜索床位或病患姓名" name="q" value="{{ request.GET.q }}">
+            <input type="text" class="form-control" placeholder="搜索床位或被照護者姓名" name="q" value="{{ request.GET.q }}">
             <button class="btn btn-outline-secondary" type="submit">搜索</button>
         </div>
     </form>
@@ -20,7 +20,7 @@
         <thead class="thead-dark">
             <tr>
                 <th>床位編號</th>
-                <th>病患姓名</th>
+                <th>被照護者姓名</th>
                 <th>操作</th>
             </tr>
         </thead>
