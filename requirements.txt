@@ -1,0 +1,5 @@
+crispy_forms
+django-crispy-forms
+crispy-bootstrap5
+paho-mqtt
+line-bot-sdk
