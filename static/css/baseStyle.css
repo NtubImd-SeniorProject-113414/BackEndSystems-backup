@@ -51,7 +51,7 @@ header img {
 .account a {
     color: #fff;
     text-decoration: none;
-    margin-left: 10px;
+    width: auto;
 }
 
 .account li i {
@@ -62,16 +62,26 @@ header img {
     position: absolute;
     font-size: 14px;
     font-family: sans-serif;
-    top: calc(100% + 5px);
+    top: calc(100%);
     right: 0;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: none;
-    width: 120px;
     max-height: 200px;
     overflow-y: auto;
+    border-radius: 0.5rem;
 }
 
+.dropdown-div{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.url-container{
+    width: 100%;
+}
 .account-dropdown.show {
     display: block;
 }
@@ -82,7 +92,7 @@ header img {
 
 .account-dropdown a {
     display: block;
-    padding: 10px 20px;
+    padding: 10px 25px;
     text-decoration: none;
     color: #333;
     line-height: 1.5;

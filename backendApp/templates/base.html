@@ -65,10 +65,16 @@
             {% endif %}
         </a>
         <div class="account">
-            <a href="#"><i class="fas fa-user-circle"></i> {{ request.user.username }}</a>
+            <a href="#"><i class="fas fa-user-circle" style="margin-right:5px"></i> {{ request.user.username }}</a>
             <div class="account-dropdown" id="account-dropdown">
-                <a href="{% url 'edit_profile' %}">修改資訊</a>
-                <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i> 登出</a>
+                <div class="dropdown-div">
+                    <div class="url-container">
+                        <a href="{% url 'edit_profile' %}">修改資訊</a>
+                    </div>
+                    <div class="url-container">
+                        <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i>登出</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
