@@ -67,8 +67,8 @@ def function_menu(request):
             'icon': 'fa-solid fa-tablets',
             'mode': 'multi',
             'items': [
-                {'url': 'medicine_order_review', 'name': '臨時用藥審核', 'icon': 'fa-solid fa-square-check'},
-                {'url': 'medicine_order_delivery', 'name': '臨時用藥配送', 'icon': 'fa-solid fa-stethoscope'},
+                {'url': 'medicine_order_management_review', 'name': '臨時用藥審核', 'icon': 'fa-solid fa-square-check'},
+                {'url': 'medicine_order_management_delivery', 'name': '臨時用藥配送', 'icon': 'fa-solid fa-stethoscope'},
             ]
         }
     ]

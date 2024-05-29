@@ -97,9 +97,9 @@ urlpatterns = [
     # for nodeRed
     path('order_deliver_management/finish/<str:card_code>', order_backend.finish_order, name='finish_order'),
     
-    path('medicine_order_management/review', medicine.medicine_review_list, name='medicine_order_review'), 
-    path('medicine_order_management/delivery', medicine.medicine_delivery_list, name='medicine_order_delivery'), 
-    path('medicine_order_management/history', medicine.medicine_history_list, name='medicine_order_history'),
+    path('medicine_order_management_review/', medicine.medicine_review_list, name='medicine_order_management_review'), 
+    path('medicine_order_management_delivery/', medicine.medicine_delivery_list, name='medicine_order_management_delivery'), 
+    path('medicine_order_management_history/', medicine.medicine_history_list, name='medicine_order_management_history'),
     path('medicine_order_management/accept/<int:medicineDemand_id>', medicine.accept_medicine_demand, name='accept_medicine'), 
     path('medicine_order_management/reject/<int:medicineDemand_id>', medicine.reject_medicine_demand, name='reject_medicine'), 
     path('medicine_order_management/cancel/<int:medicineDemand_id>', medicine.cancel_medicine_demand, name='cancel_medicine'), 
