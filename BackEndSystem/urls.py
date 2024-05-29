@@ -65,7 +65,8 @@ urlpatterns = [
     path('linebot/order', order.getWebPage),
     path('linebot/medicament', medicament.getWebPage),
     path('linebot/notify', notify.getWebPage),
-    path('linebot/api/notifyList', notify.getPatientNotifyList),
+    path('linebot/api/readNotify', notify.userReadNotify, name='userReadNotify'),
+    path('linebot/api/notifyList', notify.getPatientNotifyList, name='userNotifyList'),
 
 
     # path('add_purchase/', add_purchase, name='add_purchase'),

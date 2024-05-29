@@ -26,5 +26,6 @@ def line_verify(view_func):
         patient_id = Patient.getpatientIdByLineUid(lineUid)
         if patient_id == None:
             return render(request, 'deny.html')
+        kwargs['patient_id'] = patient_id
         return view_func(request, *args, **kwargs)
     return wrapper
