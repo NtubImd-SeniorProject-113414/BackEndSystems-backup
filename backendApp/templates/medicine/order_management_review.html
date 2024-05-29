@@ -8,8 +8,11 @@
 
 <div class="container mt-4">
   <div class="title">
-    <h2>管理未審核之配藥</h2>
-    <a href="{% url 'medicine_order_delivery' %}" class="btn btn-sm btn-info" style="font-size:15px; padding:0.5rem 1rem; color:rgb(234, 245, 245);">配送審核後的藥品</a>
+    <h2>審核臨時配藥</h2>
+    <div>
+      <a href="{% url 'medicine_order_management_delivery' %}" class="btn btn-sm btn-info" style="background:#02be5a; font-size:15px; padding:0.5rem 0.5rem; color:#e6efec; margin-right: 10px; border:none;">配送審核藥品</a>
+      <a href="{% url 'medicine_order_management_history' %}" class="btn btn-sm btn-info" style="background:#2f69fd; font-size:15px; padding:0.5rem 0.5rem; color:#e6efec; border:none;">查詢歷史用藥</a>
+    </div>
   </div>
 
   <table class="table table-striped" class="table" style="margin-top: 10%;">

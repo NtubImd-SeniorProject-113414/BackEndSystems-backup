@@ -43,10 +43,10 @@ def medicine_delivery_list(request):
     for medicine in medicines:
         medicine.first_bed_number = medicine.patient.bed_set.first().bed_number if medicine.patient.bed_set.exists() else "未分配"
 
-
     paginator = Paginator(medicines, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
 
     return render(request, 'medicine/order_management_delivery.html', {'page_obj': page_obj,})
 
@@ -54,8 +54,11 @@ def medicine_delivery_list(request):
 @group_required('caregiver')
 def medicine_history_list(request):
     medicines = MedicineDemand.objects.filter(
-        (Q(MedicineDemandState__medicineDemandState_code=4) | Q(medicineDemandState__MedicineDemandState_code=5))
+        (Q(medicineDemandState__medicineDemandState_code=4) | Q(medicineDemandState__medicineDemandState_code=5))
     )
+    
+    for medicine in medicines:
+        medicine.first_bed_number = medicine.patient.bed_set.first().bed_number if medicine.patient.bed_set.exists() else "未分配"
 
     paginator = Paginator(medicines, 10)
     page_number = request.GET.get('page')
