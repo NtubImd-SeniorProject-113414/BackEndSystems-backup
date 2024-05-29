@@ -3,6 +3,7 @@ from django.conf import settings
 from django.urls import path
 from django.contrib import admin
 from backendApp.views.notify import edit_notify, notify_manager, send_notify, delete_notify
+from backendApp.views.order_timeSlot import timeSlots_manager, create_timeSlot, edit_timeSlot, delete_timeSlot
 from backendApp.views.views import index, edit_profile
 from backendApp.login import login_view,logout_view
 from backendApp.caresystem_views import *
@@ -58,6 +59,12 @@ urlpatterns = [
     path('notify_manager/send', send_notify, name='send_notify'),
     path('notify_manager/edit/<int:notify_id>/', edit_notify, name='edit_notify'),
     path('notify_manager/delete/<int:notify_id>/', delete_notify, name='delete_notify'),
+
+    path('timeslot_manager', timeSlots_manager, name='timeslot_manager'),
+    path('timeslot_manager/add', create_timeSlot, name='create_timeSlot'),
+    path('timeslot_manager/edit/<int:time_slot_id>/', edit_timeSlot, name='update_timeSlot'),
+    path('timeslot_manager/delete/<int:time_slot_id>/', delete_timeSlot, name='delete_timeSlot'),
+
 
 
     path('linebot', linebot.line_bot_webhook),

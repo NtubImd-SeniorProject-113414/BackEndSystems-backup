@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用餐時段管理</title>
+    <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <style>
+        .card {
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-weight: bolder;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">用餐時段管理</h1>
+        <a href="{% url 'create_timeSlot' %}" class="btn btn-primary">新增用餐時段</a>
+        <br><br>
+        <h2 class="mb-4">已新增的時段：</h2>
+        <div id="timeSlots" class="row">
+            {% for timeSlot in timeSlots %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{timeSlot.timeSlot_name}}</h5>
+                        <p class="card-text">時段開始時間: {{timeSlot.startTime}}</p>
+                        <p class="card-text">點餐截止時間: {{timeSlot.deadlineTime}}</p>
+                        <p class="card-text">時段結束時間: {{timeSlot.endTimes}}</p>
+                        <a href="{% url 'update_timeSlot' timeSlot.timeSlot_id %}" class="btn btn-primary">編輯</a>
+                        <form action="{% url 'delete_timeSlot' timeSlot.timeSlot_id %}" method="post"  class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" name="delete" class="btn btn-danger" onclick="return confirm('確定要刪除這個時段嗎？');">刪除</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</body>
+
+</html>
+
+{% endblock %}

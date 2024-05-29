@@ -201,7 +201,7 @@ class CourseSidesForm(forms.ModelForm):
             'placeholder': '輸入數量'
         })
 
-        # self.helper = FormHelper()
+                # self.helper = FormHelper()
         # self.helper.layout = Layout(
         #     Row(
         #         Column('course', css_class='form-group col-md-6 mb-0'),
@@ -216,7 +216,55 @@ class CourseSidesForm(forms.ModelForm):
         #         css_class='row'
         #     ),
         #     Submit('submit', '保存', css_class='btn btn-primary')
-        # )
+
+class MealOrderTimeSlotForm(forms.ModelForm):
+    class Meta:
+        model = MealOrderTimeSlot
+        fields = ['timeSlot_name', 'startTime', 'deadlineTime', 'endTimes']
+        widgets = {
+            'timeSlot_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'startTime': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'deadlineTime': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+            'endTimes': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
+        }
+        labels = {
+            'timeSlot_name': '時段名稱',
+            'startTime': '開始時間',
+            'deadlineTime': '點餐截止時間',
+            'endTimes': '結束時間',
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get('startTime')
+        deadline_time = cleaned_data.get('deadlineTime')
+        end_time = cleaned_data.get('endTimes')
+        
+        errors = []
+
+        if start_time and deadline_time and end_time:
+            if not (start_time < deadline_time < end_time):
+                errors.append(ValidationError('時間順序不正確: 結束時間必須大於點餐截止時間，且點餐截止時間必須大於開始時間'))
+            
+            formatted_time_1 = start_time.strftime("%H:%M")
+            formatted_time_2 = deadline_time.strftime("%H:%M")
+            formatted_time_3 = end_time.strftime("%H:%M")
+            
+            overlapping_slot_check1 = MealOrderTimeSlot.objects.filter(startTime__lte=start_time, endTimes__gte=start_time).exclude(pk=self.instance.pk).exists()
+            overlapping_slot_check2 = MealOrderTimeSlot.objects.filter(startTime__lte=deadline_time, endTimes__gte=deadline_time).exclude(pk=self.instance.pk).exists()
+            overlapping_slot_check3 = MealOrderTimeSlot.objects.filter(startTime__lte=end_time, endTimes__gte=end_time).exclude(pk=self.instance.pk).exists()
+            
+            if overlapping_slot_check1:
+                errors.append(ValidationError(f'開始時段 {formatted_time_1} 與其他時段重疊，請選擇其他時間範圍'))
+            if overlapping_slot_check2:
+                errors.append(ValidationError(f'點餐結束時段 {formatted_time_2} 與其他時段重疊，請選擇其他時間範圍'))
+            if overlapping_slot_check3:
+                errors.append(ValidationError(f'結束時段 {formatted_time_3} 與其他時段重疊，請選擇其他時間範圍'))
+
+        if errors:
+            raise ValidationError(errors)
+
+        return cleaned_data
 
 class purchaseForm(forms.ModelForm):
     class Meta:

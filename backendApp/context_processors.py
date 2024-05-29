@@ -44,6 +44,7 @@ def function_menu(request):
                 {'url': 'order_delivery_management', 'name': '餐點配送管理', 'icon': 'fa-truck'},
                 {'url': 'main_course', 'name': '餐點管理', 'icon': 'fa-burger'},
                 {'url': 'bom_settings', 'name': '餐點食材管理', 'icon': 'fa-solid fa-egg'},
+                {'url': 'timeslot_manager', 'name': '用餐時段管理', 'icon': 'fa-solid fa-clock'},
 
             ]
         },

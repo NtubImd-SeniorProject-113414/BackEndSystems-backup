@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>編輯時段</title>
+    <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">編輯時段</h2>
+        {% if message %}
+        <div class="{{ css }}">
+            {{ message }}
+        </div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">儲存</button>
+            <a href="{% url 'timeslot_manager' %}" class="btn btn-secondary">取消</a>
+        </form>
+    </div>
+</body>
+
+</html>
+{% endblock %}
