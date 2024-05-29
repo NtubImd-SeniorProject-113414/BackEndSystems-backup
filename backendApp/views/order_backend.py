@@ -32,7 +32,7 @@ def order_list(request):
 
     return render(request, 'order/order_delivery_management.html', {
         'page_obj': page_obj,
-        'current_time_period': mealTime  # 将当前时段状态传递到模板
+        'current_time_period': mealTime
     })
     
 @login_required

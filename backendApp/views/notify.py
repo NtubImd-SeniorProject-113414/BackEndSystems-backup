@@ -30,9 +30,9 @@ def send_notify(request):
                     )
                 notify_id = notify.notify_id
                 form = NotifyForm()
-                return render(request, 'notify/send_notify.html', {'message': "訊息發送成功", "css": "alert alert-success", 'form': form, "notify_id": notify_id})
+                return render(request, 'notify/send_notify.html', {'form': form, 'message': "訊息發送成功", "css": "alert alert-success", "notify_id": notify_id})
             except:
-                return render(request, 'notify/send_notify.html', {'message': "訊息發送失敗", "css": "alert alert-danger", 'form': form})
+                return render(request, 'notify/send_notify.html', {'form': form, 'message': "訊息發送失敗", "css": "alert alert-danger"})
     else:
         form = NotifyForm()
     return render(request, 'notify/send_notify.html', {'form': form})
