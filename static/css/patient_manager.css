@@ -8,14 +8,6 @@
     border-radius: 8px; /* 圓角邊框 */
 }
 
-#patient-manager h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333; /* 標題顏色 */
-    font-size: 2em; /* 標題大小 */
-    font-weight: bold; /* 字體加粗 */
-}
-
 #patient-manager .input-group {
     margin-bottom: 1rem;
 }

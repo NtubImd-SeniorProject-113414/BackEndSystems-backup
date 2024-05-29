@@ -286,12 +286,16 @@ def main_course_bom_settings(request):
             return redirect('bom_settings')
     else:
         form = CourseSidesForm()
-        courses = MainCourse.objects.all()
-        course_sides = CourseSides.objects.select_related('course', 'sides').all()
+
+    course_sides_list = CourseSides.objects.select_related('course', 'sides').all()
+    paginator = Paginator(course_sides_list, 10)
+    page_number = request.GET.get('page')
+    course_sides = paginator.get_page(page_number)
+
     return render(request, 'main_course_bom_form.html', {
         'form': form,
-        'courses': courses,
-        'course_sides': course_sides
+        'course_sides': course_sides,
+        'paginator': paginator,
     })
 
 @group_required('caregiver')
@@ -349,7 +353,7 @@ def inventory_management(request):
     for side in sides:
         total_needed = 0
         SideStock = getSideStockBySidesId(side.sides_id)
-        SideStock = SideStock if SideStock >=0 else 0
+        SideStock = SideStock if SideStock >= 0 else 0
         total_needed = SideStock * total_patients * days
         inventory_data.append({
             'sides_name': side.sides_name,
@@ -357,4 +361,11 @@ def inventory_management(request):
             'minimum_required': total_needed,
         })
 
-    return render(request, 'inventory_management.html', {'inventory_data': inventory_data, 'days': days})
+    paginator = Paginator(inventory_data, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'inventory_management.html', {
+        'inventory_data': page_obj,
+        'days': days
+    })

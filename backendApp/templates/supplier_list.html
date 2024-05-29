@@ -8,7 +8,7 @@
 </head>
 
 <div class="container">
-    <h2>供應商管理</h2>
+    <h2 class="text-center mb-4">供應商管理</h2>
     <form method="get" action="{% url 'suppliers' %}" class="input-group mb-3">
         <input type="text" class="form-control" placeholder="搜尋供應商" aria-label="搜尋供應商" aria-describedby="button-search" name="q" value="{{ request.GET.q }}">
         <button class="btn btn-outline-success" type="submit" id="button-search">搜尋</button>
@@ -38,31 +38,24 @@
             {% endfor %}
         </tbody>
     </table>
-    <div class="d-flex justify-content-center">
-        <ul class="pagination">
-            {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1{% if query %}&q={{ query }}{% endif %}">&laquo; 最前頁</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">上一頁</a>
-                </li>
-            {% endif %}
+    <div class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+        <a class="page-link" href="{% url 'suppliers' %}?page=1&q={{ request.GET.q }}">&laquo; 最前頁</a>
+        <a class="page-link" href="{% url 'suppliers' %}?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}">上一頁</a>
+        {% endif %}
 
-            <li class="page-item disabled">
-                <span class="page-link">第 {{ page_obj.number }} 頁，共 {{ page_obj.paginator.num_pages }} 頁</span>
-            </li>
+        <span class="page-link disabled">
+            第 {{ page_obj.number }} 頁，共 {{ page_obj.paginator.num_pages }} 頁
+        </span>
 
-            {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}">下一頁</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">最後頁 &raquo;</a>
-                </li>
-            {% endif %}
-        </ul>
+        {% if page_obj.has_next %}
+        <a class="page-link" href="{% url 'suppliers' %}?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}">下一頁</a>
+        <a class="page-link" href="{% url 'suppliers' %}?page={{ page_obj.paginator.num_pages }}&q={{ request.GET.q }}">最後頁 &raquo;</a>
+        {% endif %}
     </div>
 
 </div>
 {% endblock %}
+
+suppliers
+

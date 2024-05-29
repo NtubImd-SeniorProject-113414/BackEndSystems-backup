@@ -12,8 +12,8 @@
 </head>
 
 <body>
-  <div id="patient-manager" class="container mt-4">
-    <h2>被照護者管理</h2>
+  <div id="patient-manager" class="container">
+    <h2 class="text-center mb-4">被照護者管理</h2>
     <form action="{% url 'add_patient' %}" method="get">
       <button type="submit" class="btn btn-primary mb-3">新增被照護者</button>
     </form>
@@ -57,43 +57,24 @@
       </tbody>
 
     </table>
-    <div class="pagination">
-      {% if page_obj.has_previous %}
-      <a href="?page=1&search={{ request.GET.search }}">« 第一頁</a>
-      <a href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}">上一頁</a>
-      {% endif %}
-  
-      <span class="current">
-        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
-      </span>
-  
-      {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}">下一頁</a>
-      <a href="?page={{ page_obj.paginator.num_pages }}&search={{ request.GET.search }}">最後一頁 »</a>
-      {% endif %}
-    </div>
-
   </div>
+  <div class="pagination justify-content-center">
+    {% if page_obj.has_previous %}
+    <a class="page-link" href="{% url 'patient_manager' %}?page=1&search={{ request.GET.search }}">&laquo; 最前頁</a>
+    <a class="page-link" href="{% url 'patient_manager' %}?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}">上一頁</a>
+    {% endif %}
 
+    <span class="page-link disabled">
+        第 {{ page_obj.number }} 頁，共 {{ page_obj.paginator.num_pages }} 頁
+    </span>
+
+    {% if page_obj.has_next %}
+    <a class="page-link" href="{% url 'patient_manager' %}?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}">下一頁</a>
+    <a class="page-link" href="{% url 'patient_manager' %}?page={{ page_obj.paginator.num_pages }}&search={{ request.GET.search }}">最後頁 &raquo;</a>
+    {% endif %}
+  </div>
 
 </body>
 
 </html>
-{% endblock %}
-{% block extra_scripts %}
-<script src="{% static 'js/base.js' %}"></script>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const navLinks = document.querySelectorAll('nav a');
-
-    navLinks.forEach(link => {
-      link.parentNode.classList.remove('active');
-    });
-
-    const addMedicineLink = document.querySelector('nav a[href="{% url 'patient_manager' %}"]');
-    if (addMedicineLink) {
-      addMedicineLink.parentNode.classList.add('active');
-    }
-  });
-</script>
 {% endblock %}

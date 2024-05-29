@@ -3,10 +3,11 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <head>
+  <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
   <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </head>
-<div class="container mt-4">
-  <h2 class="mb-4">設定主餐的配菜及數量</h2>
+<div class="container">
+  <h2 class="text-center mb-4">設定主餐的配菜及數量</h2>
 
   <form method="post">
     {% csrf_token %}
@@ -20,7 +21,6 @@
 
   <h3 class="mb-4">已設定的主餐配菜</h3>
   
-  <!-- 表格样式 -->
   <table class="table table-striped">
     <thead>
       <tr>
@@ -44,5 +44,21 @@
       {% endfor %}
     </tbody>
   </table>
+  <div class="pagination justify-content-center">
+    {% if course_sides.has_previous %}
+    <a class="page-link" href="{% url 'bom_settings' %}?page=1">&laquo; 最前頁</a>
+    <a class="page-link" href="{% url 'bom_settings' %}?page={{ course_sides.previous_page_number }}">上一頁</a>
+    {% endif %}
+
+    <span class="page-link disabled">
+        第 {{ course_sides.number }} 頁，共 {{ course_sides.paginator.num_pages }} 頁
+    </span>
+
+    {% if course_sides.has_next %}
+    <a class="page-link" href="{% url 'bom_settings' %}?page={{ course_sides.next_page_number }}">下一頁</a>
+    <a class="page-link" href="{% url 'bom_settings' %}?page={{ course_sides.paginator.num_pages }}">最後頁 &raquo;</a>
+    {% endif %}
+  </div>
 </div>
+
 {% endblock %}

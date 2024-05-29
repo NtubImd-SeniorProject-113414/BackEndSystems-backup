@@ -7,7 +7,7 @@ from django.contrib.auth.models import User, Group
 from backendApp.middleware import login_required
 from backendApp.decorator import group_required
 from backendApp.forms import UserProfileForm, CustomUserCreationForm
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def is_superuser(user):
     return user.is_authenticated and user.is_superuser
@@ -35,13 +35,13 @@ def user_manager(request):
 
     if query:
         users = User.objects.all().annotate(
-            full_name=Concat('first_name','last_name')
+            full_name=Concat('first_name', 'last_name')
         ).filter(
             Q(username__icontains=query) |
             Q(email__icontains=query) |
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query) |
-            Q(full_name__icontains=query)  
+            Q(full_name__icontains=query)
         )
 
     if group_id:
@@ -59,7 +59,21 @@ def user_manager(request):
                 form.save()
                 return redirect('user_manager')
 
-    return render(request, 'userManagement/user_list.html', {'users': users, 'groups':groups})
+    paginator = Paginator(users, 10)
+    page = request.GET.get('page')
+    try:
+        users = paginator.page(page)
+    except PageNotAnInteger:
+        users = paginator.page(1)
+    except EmptyPage:
+        users = paginator.page(paginator.num_pages)
+
+    return render(request, 'userManagement/user_list.html', {
+        'page_obj': users,
+        'groups': groups,
+        'query': query,
+        'group_id': group_id
+    })
 
 @login_required
 @group_required('admin')
