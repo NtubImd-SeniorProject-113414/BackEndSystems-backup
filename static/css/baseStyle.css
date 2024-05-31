@@ -51,7 +51,7 @@ header img {
 .account a {
     color: #fff;
     text-decoration: none;
-    width: auto;
+    width: 160px;
 }
 
 .account li i {
@@ -63,7 +63,7 @@ header img {
     font-size: 14px;
     font-family: sans-serif;
     top: calc(100%);
-    right: 0;
+    left: -25px;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     display: none;
@@ -81,6 +81,7 @@ header img {
 
 .url-container{
     width: 100%;
+    min-width: 120px;
 }
 .account-dropdown.show {
     display: block;
@@ -152,8 +153,6 @@ main.slide-out {
 nav li i {
     margin-right: 10px;
 }
-
-
 
 main {
     flex: 1;
