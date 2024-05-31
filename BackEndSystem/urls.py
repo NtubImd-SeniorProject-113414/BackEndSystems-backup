@@ -70,10 +70,12 @@ urlpatterns = [
     path('linebot', linebot.line_bot_webhook),
     path('linebot/verify', verify.getWebPage),
     path('linebot/order', order.getWebPage),
-    path('linebot/medicament', medicament.getWebPage),
     path('linebot/notify', notify.getWebPage),
     path('linebot/api/readNotify', notify.userReadNotify, name='userReadNotify'),
     path('linebot/api/notifyList', notify.getPatientNotifyList, name='userNotifyList'),
+
+    path('linebot/medicament', medicament.getVerifyPage),
+    path('medicament/api/openAi', medicament.sendMessageToOpenAi),
 
 
     # path('add_purchase/', add_purchase, name='add_purchase'),

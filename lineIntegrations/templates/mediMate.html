@@ -1,0 +1,47 @@
+{% load static %}
+
+
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>身分驗證</title>
+    <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    test
+</body>
+<script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+    liff.init({ liffId: '2005031361-pzzY92g5' })
+        .then(() => {
+            alert(liff.getAccessToken());
+            console.log('LIFF initialization successful');
+            liff.openWindow({
+                url: "https://os-django.leedong.work/",
+                external: true
+            });
+        })
+        .catch(err => {
+            console.error('LIFF initialization failed', err);
+        });
+    </script>
+
+
+<!-- // liff.init({ liffId: '2005031361-pzzY92g5', withLoginOnExternalBrowser: true})
+// .then(async () => {
+//     if (liff.isLoggedIn()) {
+//         liff.openWindow({
+//             url: "https://os-django.leedong.work/",
+//             external: true
+//         });
+//     } else {
+//         liff.login();
+//     }
+// })
+// .catch((err) => {
+//     console.log(err);
+//     alert(err);
+// }) -->

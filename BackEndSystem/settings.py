@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'lineIntegrations',
     'crispy_forms',
     'crispy_bootstrap5',
+    'corsheaders',
     'channels',
 ]
 
@@ -64,7 +65,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'backendApp.middleware.AuthenticationMiddleware'
+    'backendApp.middleware.AuthenticationMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'BackEndSystem.urls'
@@ -92,6 +94,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'BackEndSystem.wsgi.application'
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
