@@ -102,8 +102,8 @@ class PatientNotifys(models.Model):
 
 #RFID卡片
 class RfidCard(models.Model):
-    RfidCard_code = models.CharField(primary_key=True, max_length=50)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    rfidCard_code = models.CharField(primary_key=True, max_length=50)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, null=True)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #點餐時段
