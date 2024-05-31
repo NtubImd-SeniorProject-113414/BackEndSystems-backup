@@ -87,7 +87,10 @@ urlpatterns = [
     # path('purchase/delete/<int:order_id>/', delete_purchase, name='delete_purchase'),
 
     path('card_manager/', card.card_list, name='card_manager'),
+    path('card_manager/call_sensor', card.call_card_sensor, name='call_sensor'),
+    # for nodeRed
     path('card_manager/add', card.add_card, name='add_card'),
+    path('card_manager/edit/<str:card_code>', card.edit_card, name='edit_card'),
     path('card_manager/delete_card/<str:card_code>', card.delete_card, name='delete_card'),
     
     path('order_delivery_management/', order_backend.order_list, name='order_delivery_management'),
@@ -106,5 +109,5 @@ urlpatterns = [
     path('medicine_order_management/delivery/<int:medicineDemand_id>', medicine.delivery_medicine, name='delivery_medicine'),
     
     # for nodeRed
-    path('medicine_order_management/finish/<str:card_code>', medicine.finish_medicine_demand, name='finish_medicine'),
+    path('medicine_order_management/finish/<str:card_code>', medicine.finish_medicine_demand, name='finish_medicine_order'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

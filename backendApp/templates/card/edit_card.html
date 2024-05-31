@@ -14,8 +14,8 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button href="{% url 'bed_manager' %}" type="submit" class="btn btn-primary">儲存更改</button>
-        <a href="{% url 'bed_manager' %}" class="btn btn-secondary">取消更改</a>
+        <button href="{% url 'card_manager' %}" type="submit" class="btn btn-primary">儲存更改</button>
+        <a href="{% url 'card_manager' %}" class="btn btn-secondary">取消更改</a>
     </form>
 </div>
 {% endblock %}

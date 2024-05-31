@@ -7,21 +7,44 @@
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
     <script>
+        var socket = new WebSocket('ws://' + window.location.host + '/ws/cards/');
+
+        socket.onopen = function(e) {
+            console.log('WebSocket Connection established');
+        };
+
+        socket.onmessage = function(e) {
+            var data = JSON.parse(e.data);
+            var message = data.message;
+            console.log("Received message: ", message);
+            // 这里可以触发某些UI更新
+            alert("通知：" + message);
+        };
+
+        socket.onerror = function(e) {
+            console.error('WebSocket error: ', e);
+        };
+
+        socket.onclose = function(e) {
+            console.log('WebSocket connection closed: ', e);
+        };
+
         function addCard() {
             alert("請在30秒內，將新的卡片於卡機感應");
-    
+            
             $.ajax({
-                url: "{% url 'add_card' %}",
+                url: "{% url 'call_sensor' %}",
                 method: 'POST',
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}'
                 },
-                complete: function() {
-                    console.log("Request complete. Reloading page.");
-                    location.reload();
+                success: function(response) {
+                    socket.send(JSON.stringify({ message: "新卡片已添加" }));
+                },
+                error: function() {
+                    console.log("API 调用失败");
                 }
             });
-            console.log(url)
         }
     </script>
 </head>
@@ -49,7 +72,7 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
 
-                <td>{{ card.RfidCard_code }}</td>
+                <td>{{ card.rfidCard_code }}</td>
                 <td>
                     {% if card.patient %}
                         {{ card.patient.patient_name }}
@@ -65,8 +88,8 @@
                     {% endif %}
                 </td>
                 <td>
-                    <form action="{% url 'delete_card' card.RfidCard_code %}" method="post" style="display: inline;">
-                        {% csrf_token %}
+                    <a href="{% url 'edit_card' card.rfidCard_code %}" class="btn btn-primary">編輯</a>
+                    <form action="{% url 'delete_card' card.rfidCard_code %}" method="post" style="display: inline;">
                         <button type="submit" class="btn btn-danger" onclick="return confirm('確定要刪除這個卡片嗎？');">刪除</button>
                     </form>
                 </td>

@@ -160,7 +160,15 @@ class BedForm(forms.ModelForm):
 class RfidCardForm(forms.ModelForm):
     class Meta:
         model = RfidCard
-        fields = ['RfidCard_code', 'patient']
+        fields = ['rfidCard_code', 'patient']
+        
+    def __init__(self, *args, **kwargs):
+        super(RfidCardForm, self).__init__(*args, **kwargs)
+    
+        self.fields['rfidCard_code'].label = "卡片內碼"
+        self.fields['patient'].label = "被照護者"
+
+        self.fields['rfidCard_code'].disabled = True
 
 class SupplierForm(forms.ModelForm):
     class Meta:
@@ -182,7 +190,6 @@ class CourseSidesForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CourseSidesForm, self).__init__(*args, **kwargs)
         
-        # 設定自定義標題
         self.fields['course'].label = "主菜名稱"
         self.fields['sides'].label = "配菜"
         self.fields['quantity'].label = "數量"
