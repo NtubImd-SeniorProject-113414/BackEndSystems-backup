@@ -4,6 +4,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import JsonResponse
 from backendApp.middleware import line_verify
+from backendApp.models import Patient
+from lineIntegrations.module.lineVerify import getLineUserUidByToken
+
+@line_verify
 
 @csrf_exempt
 def sendMessageToOpenAi(request):
@@ -30,6 +34,19 @@ def sendMessageToOpenAi(request):
         return JsonResponse({'response': response_text, 'role': response_role})
     else:
         return JsonResponse({'error': 'Unsupported HTTP method'}, status=405)
+
+@csrf_exempt
+def setSessionByToken(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        access_token = data.get('token', '')
+        print(access_token)
+        lineUid = getLineUserUidByToken(access_token)
+        patient_id = Patient.getpatientIdByLineUid(lineUid)
+        if patient_id != None:
+            request.session['line_access_token'] = access_token
+        else:
+            return JsonResponse({'error': 'token error'}, status=405)
 
 @csrf_exempt
 def getVerifyPage(request):

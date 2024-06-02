@@ -75,6 +75,7 @@ urlpatterns = [
     path('linebot/api/notifyList', notify.getPatientNotifyList, name='userNotifyList'),
 
     path('linebot/medicament', medicament.getVerifyPage),
+    path('medicament/api/verify', medicament.setSessionByToken),
     path('medicament/api/openAi', medicament.sendMessageToOpenAi),
 
 
