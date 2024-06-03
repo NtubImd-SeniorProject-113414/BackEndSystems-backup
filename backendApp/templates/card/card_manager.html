@@ -6,50 +6,74 @@
 <head>
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        var socket = new WebSocket('ws://' + window.location.host + '/ws/cards/');
-
-        socket.onopen = function(e) {
-            console.log('WebSocket Connection established');
-        };
-
-        socket.onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            var message = data.message;
-            console.log("Received message: ", message);
-            // 这里可以触发某些UI更新
-            alert("通知：" + message);
-        };
-
-        socket.onerror = function(e) {
-            console.error('WebSocket error: ', e);
-        };
-
-        socket.onclose = function(e) {
-            console.log('WebSocket connection closed: ', e);
-        };
-
+        let countdown;
+        let mqttClient;
+        let modal;
         function addCard() {
-            alert("請在30秒內，將新的卡片於卡機感應");
-            
-            $.ajax({
-                url: "{% url 'call_sensor' %}",
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                success: function(response) {
-                    socket.send(JSON.stringify({ message: "新卡片已添加" }));
-                },
-                error: function() {
-                    console.log("API 调用失败");
+            if (countdown) {
+                clearInterval(countdown);
+            }
+            modal = new bootstrap.Modal(document.getElementById('addCardModal'), {
+                keyboard: false
+            });
+            modal.show();
+
+            let timer = 30;
+            document.getElementById('countdown').innerText = timer;
+            countdown = setInterval(() => {
+                timer--;
+                document.getElementById('countdown').innerText = timer;
+                if (timer <= 0) {
+                    clearInterval(countdown);
+                    modal.hide();
+                }
+            }, 1000);
+
+            mqttClient = new Paho.MQTT.Client("wss://broker.mqttgo.io:8084/mqtt", "clientId-" + parseInt(Math.random() * 100, 10));
+            mqttClient.onMessageArrived = onMessageArrived;
+            mqttClient.connect({
+                onSuccess: () => {
+                    mqttClient.subscribe("ntubimd/addCard/success");
+                    let message = new Paho.MQTT.Message("Add new card");
+                    message.destinationName = "ntubimd/registerCard";
+                    mqttClient.send(message);
                 }
             });
+        }
+
+        function onMessageArrived(message) {
+            const payload = message.payloadString;
+            clearInterval(countdown);
+            mqttClient.disconnect();
+            modal.hide();
+            if (payload === '新增成功') {
+                Swal.fire({
+                    title: '新增成功',
+                    text: '卡片已成功新增。',
+                    icon: 'success',
+                    confirmButtonText: '確認'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        location.reload();
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: '新增失敗',
+                    text: payload,
+                    icon: 'error',
+                    confirmButtonText: '確認'
+                });
+            }
+            console.log("Message received: " + message.payloadString);
         }
     </script>
 </head>
 <div class="container">
-    <h2  class="text-center mb-4">卡片管理</h2>
+    <h2 class="text-center mb-4">卡片管理</h2>
     <button id="add-card-button" class="btn btn-primary mb-3" onclick='addCard()'>新增卡片</button>
     <form method="get">
         <div class="input-group mb-3">
@@ -71,7 +95,6 @@
             {% for card in page_obj %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-
                 <td>{{ card.rfidCard_code }}</td>
                 <td>
                     {% if card.patient %}
@@ -95,10 +118,28 @@
                 </td>
             </tr>
             {% endfor %}
-
         </tbody>
     </table>
 </div>
+
+<!-- 添加模态框 -->
+<div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCardModalLabel">新增卡片</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>請在 <span id="countdown">30</span> 秒內，將新的卡片於卡機感應。</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="pagination justify-content-center">
     {% if page_obj.has_previous %}
     <a class="page-link" href="{% url 'card_manager' %}?page=1">&laquo; 最前頁</a>
