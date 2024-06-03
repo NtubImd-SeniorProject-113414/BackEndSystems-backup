@@ -1,3 +1,23 @@
+.FunctionMenuBtn {
+    display: flex; 
+    justify-content: start;
+    align-items: center;
+    width: 100%; /
+}
+
+.arrow-icon {
+    margin-left: auto; 
+    transition: transform 0.3s ease;
+    font-size: 12px; 
+}
+
+.arrow-right {
+    transform: rotate(0deg);
+}
+
+.arrow-down {
+    transform: rotate(90deg);
+}
 body, html {
     margin: 0;
     padding: 0;
@@ -55,7 +75,7 @@ header img {
 }
 
 .account li i {
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
 .account-dropdown {
@@ -63,15 +83,21 @@ header img {
     font-size: 14px;
     font-family: sans-serif;
     top: calc(100%);
-    left: -25px;
+    transform: translateX(0%); /* 使用 transform 來精確定位 */
+    left: -40px;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: none;
-    max-height: 200px;
-    overflow-y: auto;
+    max-height: 100px;
+    overflow-x: hidden;
+    overflow-y: auto; 
     border-radius: 0.5rem;
+    border: 1px solid #ddd; 
+    width: 150px;
 }
-
+.account-dropdown .url-container {
+    white-space: nowrap; 
+}
 .dropdown-div{
     display: flex;
     flex-direction: column;
@@ -183,6 +209,14 @@ main {
         display: flex;
         flex-direction: column;
         height: 100%;
+    }
+    .account-dropdown {
+        width: 100%; /* 小屏幕上選單寬度為全屏 */
+        left: 0; /* 左對齊 */
+        transform: none; /* 不需要水平位移 */
+    }
+    .account-dropdown .url-container {
+        padding: 10px 15px; /* 增加填充，使觸控更容易 */
     }
 }
 

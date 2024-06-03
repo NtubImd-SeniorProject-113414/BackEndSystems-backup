@@ -313,3 +313,4 @@ class Vehicle(models.Model):
 class VehicleStatus(models.Model):
     vehicleStatus_code = models.AutoField(primary_key=True)
     vehicleStatus_name = models.CharField(max_length=10)
+

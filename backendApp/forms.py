@@ -143,7 +143,33 @@ class UserProfileForm(forms.ModelForm):
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
 
+class UserEditForm(forms.ModelForm):
+    groups = forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        help_text="請選擇該用戶的群組。",
+        empty_label="無群組"
+    )
 
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name', 'groups']
+
+    def __init__(self, *args, **kwargs):
+        super(UserEditForm, self).__init__(*args, **kwargs)
+        self.fields['groups'].label_from_instance = self.label_from_instance
+        if self.instance and self.instance.pk and self.instance.groups.exists():
+            self.fields['groups'].initial = self.instance.groups.first()
+
+        self.fields['first_name'].label = "姓氏"
+        self.fields['last_name'].label = "名字"
+        self.fields['groups'].label = "權限"
+
+    def label_from_instance(self, obj):
+        # 返回 Group 对象的 display 属性作为选项标签
+        return obj.display
+    
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
