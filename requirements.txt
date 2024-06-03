@@ -3,5 +3,3 @@ django-crispy-forms
 crispy-bootstrap5
 paho-mqtt
 line-bot-sdk
-channels
-uvicorn

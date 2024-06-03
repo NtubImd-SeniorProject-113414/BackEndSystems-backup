@@ -9,6 +9,9 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from ..models import RfidCard
 from ..module import mqtt
+import json
+from django.http import JsonResponse
+
 @group_required('caregiver')
 @login_required
 def card_list(request):
@@ -31,33 +34,24 @@ def call_card_sensor(request):
         mqtt.send_mqtt_message('addCard', topic='registerCard')
     return redirect('card_manager')
 
-@group_required('caregiver')
-@login_required
+# @group_required('caregiver')
+# @login_required
 def add_card(request):
-    if request.method == 'POST':
-        # 从 POST 数据中获取 card_code
-        card_code = request.POST.get('card_code')
-        if card_code:  # 检查 card_code 是否存在
-            create_time = timezone.now()
-            RfidCard.objects.create(card_code=card_code, create_time=create_time)
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                "card_updates_group",
-                {
-                    "type": "card.message",
-                    "message": "新卡片已添加"
-                }
-            )
-            return HttpResponse("OK")
-        else:
-            return HttpResponse("Card code is missing", status=400)
-    return HttpResponse("Invalid request", status=405)
+    try:
+        card_code = str(request.body).replace("'","").replace("b","")
+        if card_code:
+            RfidCard.objects.create(rfidCard_code=card_code)
+            return HttpResponse("新增成功")
+    except Exception as e: 
+        return HttpResponse("卡號已存在")
+
+
+
 
 @group_required('caregiver')
 @login_required
 def edit_card(request, card_code):
     card = get_object_or_404(RfidCard, rfidCard_code=card_code)
-    
     if request.method == 'POST':
         form = RfidCardForm(request.POST, instance=card)
         if form.is_valid():
@@ -71,6 +65,6 @@ def edit_card(request, card_code):
 @group_required('caregiver')
 @login_required
 def delete_card(request, card_code):
-    card = get_object_or_404(RfidCard, RfidCard_code=card_code)
+    card = get_object_or_404(RfidCard, rfidCard_code=card_code)
     card.delete()
     return redirect('card_manager')
