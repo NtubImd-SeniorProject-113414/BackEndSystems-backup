@@ -1,5 +1,10 @@
-crispy_forms
+uvicorn
+jsonschema
+line-bot-sdk
+paho-mqtt
+django-bootstrap4
 django-crispy-forms
 crispy-bootstrap5
-paho-mqtt
-line-bot-sdk
+openai
+django-cors-headers
+channels
