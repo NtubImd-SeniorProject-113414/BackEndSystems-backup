@@ -45,7 +45,7 @@
           <td><p class="delivering">{{ order.orderState.OrderState_name }}</p></td>
         {% endif %}
         <td>
-          <a href="{% url 'delivery_order' order.order_id %}" class="btn btn-sm btn-success">送餐</a>
+          <a href="{% url 'delivery_order' order.rfidCard_code %}" class="btn btn-sm btn-success">送餐</a>
           {% if order.orderState.OrderState_code == 1 %}
             <a href="{% url 'cancel_order' order.order_id %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要取消訂單嗎？');">取消</a>
           {% elif order.orderState.OrderState_code == 2 %}
