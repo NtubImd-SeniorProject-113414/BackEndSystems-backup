@@ -1,11 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from backendApp.decorator import group_required
-from backendApp.forms import RfidCardForm
 from backendApp.middleware import login_required
 from django.core.paginator import Paginator
 from django.db.models import Prefetch, Q
 from django.utils import timezone
-from datetime import datetime
 
 from ..models import MedicineDemand, MedicineDemandState, RfidCard
 from ..module import mqtt
@@ -101,7 +99,7 @@ def delivery_medicine(request, medicineDemand_id):
     medicineDemand = get_object_or_404(MedicineDemand, pk=medicineDemand_id)
     patient_id = medicineDemand.patient_id
     card = get_object_or_404(RfidCard, patient_id=patient_id)
-    mqtt.send_mqtt_message(card.RfidCard_code, topic='/delivery/medicine')
+    mqtt.send_mqtt_message(card.RfidCard_code, topic='ntubimd/nodeRed/delivery/medicine')
     
     delivering_State = get_object_or_404(MedicineDemandState, pk=3)
     medicineDemand.medicineDemandState = delivering_State

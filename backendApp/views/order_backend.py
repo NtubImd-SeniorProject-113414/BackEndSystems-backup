@@ -51,11 +51,10 @@ def order_list_history(request):
 
     return render(request, 'order/order_delivery_management_history.html', {'page_obj': page_obj,})
 
-@login_required
-@group_required('caregiver')
+# @login_required
+# @group_required('caregiver')
 def delivery_order(request, card_code):
-    if request.method == 'POST':
-        mqtt.send_mqtt_message(card_code, topic='/delivery/order')
+    mqtt.send_mqtt_message(card_code, topic='ntubimd/nodeRed/delivery/order')
     return redirect('order_delivery_management')
 
 # 當車送達且拿取後 => 發mqtt給nodeRed => 發此API 改狀態
