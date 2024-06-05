@@ -142,6 +142,11 @@ class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
+        
+    def __init__(self, *args, **kwargs):
+        super(UserProfileForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].label = "姓氏"
+        self.fields['last_name'].label = "名字"
 
 class UserEditForm(forms.ModelForm):
     groups = forms.ModelChoiceField(
@@ -177,6 +182,30 @@ class PatientForm(forms.ModelForm):
         widgets = {
             'patient_birth': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
         }
+        
+    def __init__(self, *args, **kwargs):
+        super(PatientForm, self).__init__(*args, **kwargs)
+        self.fields['patient_name'].label = "被照護者姓名"
+        self.fields['patient_birth'].label = "出生年月日"
+        self.fields['patient_number'].label = "電話號碼"
+        self.fields['patient_idcard'].label = "身分證字號"
+        
+class PatientFormEdit(forms.ModelForm):
+    class Meta:
+        model = Patient
+        fields = ['patient_name', 'patient_birth', 'patient_number','patient_idcard','line_id']
+        widgets = {
+            'patient_birth': forms.DateInput(format='%Y-%m-%d', attrs={'type': 'date'}),
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super(PatientFormEdit, self).__init__(*args, **kwargs)
+        self.fields['patient_name'].label = "被照護者姓名"
+        self.fields['patient_birth'].label = "出生年月日"
+        self.fields['patient_number'].label = "電話號碼"
+        self.fields['patient_idcard'].label = "身分證字號"
+        self.fields['line_id'].label = "LineUID"
+
 
 class BedForm(forms.ModelForm):
     class Meta:
