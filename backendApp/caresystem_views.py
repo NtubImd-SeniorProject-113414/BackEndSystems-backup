@@ -8,7 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.db.models.functions import Concat
 from backendApp.decorator import group_required
-from backendApp.forms import  BedForm, CourseSidesForm, MainCourseForm, PatientForm, PurchaseDetailForm, SupplierForm, UserProfileForm
+from backendApp.forms import  BedForm, CourseSidesForm, MainCourseForm, PatientForm, PatientFormEdit, PurchaseDetailForm, SupplierForm, UserProfileForm
 from backendApp.middleware import login_required
 from backendApp.module.sideStock import getSideStockBySidesId
 from .models import Bed, CourseSides, MainCourse, Patient, Sides, PurchaseDetail, Supplier
@@ -54,13 +54,13 @@ def add_patient(request):
 def edit_patient(request, patient_id):
     patient = get_object_or_404(Patient, patient_id=patient_id)
     if request.method == 'POST':
-        form = PatientForm(request.POST, instance=patient)
+        form = PatientFormEdit(request.POST, instance=patient)
         if form.is_valid():
             form.save()
             messages.success(request, '被照護者資訊更新成功。')
             return redirect('patient_manager')
     else:
-        form = PatientForm(instance=patient)
+        form = PatientFormEdit(instance=patient)
     return render(request, 'edit_patient.html', {'form': form, 'patient': patient})
 
 @group_required('caregiver')
