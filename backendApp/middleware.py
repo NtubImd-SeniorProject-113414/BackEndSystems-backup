@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from backendApp.models import Patient
 from lineIntegrations.module.lineVerify import getLineUserUidByToken, getLineTokenByRequest
@@ -22,6 +23,18 @@ def line_verify(view_func):
     def wrapper(request, *args, **kwargs):
         getLineTokenByRequest(request)
         access_token = request.session.get('line_access_token')
+        lineUid = getLineUserUidByToken(access_token)
+        patient_id = Patient.getpatientIdByLineUid(lineUid)
+        if patient_id == None:
+            return render(request, 'deny.html')
+        kwargs['patient_id'] = patient_id
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def line_verify_2(view_func):
+    def wrapper(request, *args, **kwargs):
+        data = json.loads(request.body)
+        access_token = data.get('token', '')
         lineUid = getLineUserUidByToken(access_token)
         patient_id = Patient.getpatientIdByLineUid(lineUid)
         if patient_id == None:
