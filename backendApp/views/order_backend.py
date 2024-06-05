@@ -24,8 +24,9 @@ def order_list(request):
     
     for order in orders:
         order.first_bed_number = order.patient.bed_set.first().bed_number if order.patient.bed_set.exists() else "未分配"
-        order.rfidCard_code = get_object_or_404(RfidCard, patient_id=order.patient_id).rfidCard_code
-
+        rfid_card = RfidCard.objects.filter(patient_id=order.patient_id).first()
+        order.rfidCard_code = rfid_card.rfidCard_code if rfid_card else "未綁定"
+    
     paginator = Paginator(orders, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
