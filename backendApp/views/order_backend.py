@@ -55,7 +55,13 @@ def order_list_history(request):
 # @login_required
 # @group_required('caregiver')
 def delivery_order(request, card_code):
-    mqtt.send_mqtt_message(card_code, topic='ntubimd/nodeRed/delivery/order')
+    print(card_code)
+    mqtt.send_mqtt_message(card_code, topic='ntubimd/car/delivery/order')
+    patient_id = get_object_or_404(RfidCard, pk=card_code).patient
+    order = Order.objects.filter(patient_id=patient_id).order_by('order_time').first()
+    delivery_state = get_object_or_404(OrderState, pk=2)
+    order.orderState = delivery_state
+    order.save()
     return redirect('order_delivery_management')
 
 # 當車送達且拿取後 => 發mqtt給nodeRed => 發此API 改狀態

@@ -99,7 +99,7 @@ def delivery_medicine(request, medicineDemand_id):
     medicineDemand = get_object_or_404(MedicineDemand, pk=medicineDemand_id)
     patient_id = medicineDemand.patient_id
     card = get_object_or_404(RfidCard, patient_id=patient_id)
-    mqtt.send_mqtt_message(card.RfidCard_code, topic='ntubimd/nodeRed/delivery/medicine')
+    mqtt.send_mqtt_message(card.RfidCard_code, topic='ntubimd/car/delivery/medicine')
     
     delivering_State = get_object_or_404(MedicineDemandState, pk=3)
     medicineDemand.medicineDemandState = delivering_State
