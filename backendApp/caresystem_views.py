@@ -197,7 +197,7 @@ def add_main_course(request):
         form = MainCourseForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('main_course_list')
+            return redirect('main_courses')
     else:
         form = MainCourseForm()
     return render(request, 'add_main_course.html', {'form': form})

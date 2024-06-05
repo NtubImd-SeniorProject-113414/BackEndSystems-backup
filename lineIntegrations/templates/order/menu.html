@@ -5,21 +5,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>點餐頁面</title>
-    <link rel="stylesheet" href="{% static 'lineIntegrations/css/order/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'model/bootstrap/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'lineIntegrations/css/order/menuV7.css' %}">
 </head>
 <body>
-    <div class="menu-container">
-        <h2 class="card-title">點餐時段：{{ timeSlotName }}</h2>
-        {% for course in courses %}
-        <div class="menu-item">
-            <img src="{{ course.course_image.url }}" alt="{{ course.course_name }}">
-            <h2>{{ course.course_name }}</h2>
-            <p>價格: {{ course.course_price }}</p>
-            <button class="order-button" onclick="submitOrder('{{ course.course_name }}','{{ course.course_id }}')">選擇</button>
+    <div class="container-fluid">
+        <div class="order-time-slot">
+            <h2>當前點餐時段</h2>
+            <h2>{{ timeSlotName }}</h2>
         </div>
-        {% endfor %}
+        <div class="row">
+            {% for course_with_sides in courses_with_sides %}
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card menu-item">
+                    <img src="{{ course_with_sides.course.course_image.url }}" class="card-img-top" alt="{{ course_with_sides.course.course_name }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ course_with_sides.course.course_name }}</h5>
+                        <span class="collapse-button ingredients-title" data-toggle="collapse" data-target="#ingredients-{{ course_with_sides.course.course_id }}">顯示/隱藏食材</span>
+                        <div id="ingredients-{{ course_with_sides.course.course_id }}" class="collapse ingredients">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>食材名稱</th>
+                                        <th>數量</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for side in course_with_sides.sides %}
+                                    <tr>
+                                        <td>{{ side.sides.sides_name }} </td>
+                                        <td>{{ side.quantity }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn-primary order-button" onclick="submitOrder('{{ course_with_sides.course.course_name }}','{{ course_with_sides.course.course_id }}')">選擇</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
     <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+    <script src="{% static 'model/bootstrap/bootstrap.min.js' %}"></script>
     <script src="{% static 'lineIntegrations/js/orderV3.js' %}"></script>
 </body>
 </html>
