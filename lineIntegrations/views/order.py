@@ -2,18 +2,19 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
-from backendApp.models import MainCourse, MealOrderTimeSlot, OrderState, Patient, Order
+from backendApp.models import CourseSides, MainCourse, MealOrderTimeSlot, OrderState, Patient, Order
 from backendApp.middleware import line_verify
 from lineIntegrations.module.lineVerify import getLineUserUidByToken
 
 
 @csrf_exempt
-@line_verify
+# @line_verify
 def getWebPage(request, *args, **kwargs):
     nowTime = datetime.now()
     formatted_time = nowTime.strftime("%H:%M")
     #formatted_time = "19:31" #測試用
     nowTimeSlot = MealOrderTimeSlot.find_time_slot(formatted_time)
+    now_time_slot_str = f"{nowTimeSlot.startTime.strftime('%H:%M')} 至 {nowTimeSlot.deadlineTime.strftime('%H:%M')}"
     nextTimeSlot = MealOrderTimeSlot.find_nearest_time_slot(nowTimeSlot, formatted_time)
     next_time_slot_str = f"{nextTimeSlot.startTime.strftime('%H:%M')} 至 {nextTimeSlot.deadlineTime.strftime('%H:%M')}"
 
@@ -35,7 +36,14 @@ def getWebPage(request, *args, **kwargs):
 
     if request.method == 'GET':
         courses = MainCourse.objects.filter(timeSlot=nowTimeSlot)
-        return render(request, 'order/menu.html', {'timeSlotName': nowTimeSlot.timeSlot_name, 'courses': courses})
+        courses_with_sides = []
+        for course in courses:
+            sides = CourseSides.objects.filter(course=course)
+            courses_with_sides.append({
+                'course': course,
+                'sides': sides
+            })
+        return render(request, 'order/menu.html', {'timeSlotName': f"{nowTimeSlot.timeSlot_name} - {now_time_slot_str}", 'courses_with_sides': courses_with_sides})
     elif request.method == 'POST':
         course_id = request.POST.get('courseId')
         defaultState = OrderState.objects.get(OrderState_code=1)
