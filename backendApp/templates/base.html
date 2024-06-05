@@ -26,7 +26,6 @@
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/loading.css' %}">
-    <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
 
     {% endblock %}
@@ -128,6 +127,12 @@
 </html>
 <script>
     $(document).ready(function () {
+        $(window).on('beforeunload', function () {
+            $('#preloaderModal').modal('show');
+        });
+        $(window).on('load', function () {
+            $('#preloaderModal').modal('hide');
+        });
         $('.FunctionMenuBtn').click(function (e) {
 
             var currentMenuId = $(this).data('bs-target');

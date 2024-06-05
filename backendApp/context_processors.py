@@ -18,7 +18,7 @@ def function_menu(request):
             'name': '藥物配送管理',
             'permission': ['pharmacy'],
             'mode': 'one',
-            'url': 'medicine_order',
+            'url': 'medicine_order_management_review',
             'icon': 'fa-user-nurse'
         },
         {
@@ -63,7 +63,7 @@ def function_menu(request):
         {
             'name': '藥品管理',
             'id': 'medicineFunctionsMenu',
-            'permission': ['caregiver'],
+            'permission': ['pharmacy'],
             'icon': 'fa-solid fa-tablets',
             'mode': 'multi',
             'items': [
