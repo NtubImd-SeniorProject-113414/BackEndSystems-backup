@@ -8,3 +8,5 @@ crispy-bootstrap5
 openai
 django-cors-headers
 channels
+mysqlclient
+Pillow
