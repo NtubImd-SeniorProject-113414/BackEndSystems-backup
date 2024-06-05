@@ -38,8 +38,8 @@ def call_card_sensor(request):
 # @login_required
 def add_card(request):
     try:
-        print(card_code)
         card_code = str(request.body).replace("'","").replace("b","")
+        print(card_code)
         if card_code:
             RfidCard.objects.create(rfidCard_code=card_code)
             return HttpResponse("新增成功")

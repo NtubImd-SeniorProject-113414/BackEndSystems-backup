@@ -33,7 +33,6 @@
         liff.init({ liffId: '2005031361-pzzY92g5' })
             .then(() => {
                 console.log('LIFF initialization successful');
-                alert(liff.getAccessToken());
                 liff.openWindow({
                     url: "https://vtber.leedong.work/receive-token?token=" + liff.getAccessToken(),
                     external: true
