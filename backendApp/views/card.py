@@ -31,13 +31,14 @@ def card_list(request):
 @login_required
 def call_card_sensor(request):
     if request.method == 'POST':
-        mqtt.send_mqtt_message('addCard', topic='registerCard')
+        mqtt.send_mqtt_message('addCard', topic='ntubimd/registerCard')
     return redirect('card_manager')
 
 # @group_required('caregiver')
 # @login_required
 def add_card(request):
     try:
+        print(card_code)
         card_code = str(request.body).replace("'","").replace("b","")
         if card_code:
             RfidCard.objects.create(rfidCard_code=card_code)

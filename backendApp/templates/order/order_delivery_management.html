@@ -45,10 +45,11 @@
           <td><p class="delivering">{{ order.orderState.OrderState_name }}</p></td>
         {% endif %}
         <td>
-          <a href="{% url 'delivery_order' order.rfidCard_code %}" class="btn btn-sm btn-success">送餐</a>
           {% if order.orderState.OrderState_code == 1 %}
+            <a href="{% url 'delivery_order' order.rfidCard_code %}" class="btn btn-sm btn-success">送餐</a>
             <a href="{% url 'cancel_order' order.order_id %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要取消訂單嗎？');">取消</a>
           {% elif order.orderState.OrderState_code == 2 %}
+            <a href="{% url 'delivery_order' order.rfidCard_code %}" class="btn btn-sm btn-success" style="background-color: #a9a9a9; border:none">送餐</a>
             <a href="order_delivery_management" class="btn btn-sm btn-danger" onclick="return alert('配送中請勿取消訂單！');" style="background-color: darkgray; border:none">取消</a>
           {% endif %}
         </td>
