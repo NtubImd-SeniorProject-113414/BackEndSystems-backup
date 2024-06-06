@@ -27,14 +27,14 @@
                                 <thead>
                                     <tr>
                                         <th>食材名稱</th>
-                                        <th>數量</th>
+                                        <th>用量</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for side in course_with_sides.sides %}
                                     <tr>
                                         <td>{{ side.sides.sides_name }} </td>
-                                        <td>{{ side.quantity }}</td>
+                                        <td>{{ side.quantity }}{{ side.sides.sides_unit }}</td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
