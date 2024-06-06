@@ -46,6 +46,7 @@ urlpatterns = [
     path('purchase_details/delete/<int:pk>/', purchase_detail_delete, name='purchase_detail_delete'),
 
     path('bom_settings/', main_course_bom_settings, name='bom_settings'),
+    path('bom_settings/add', sides_create, name='sides_create'),
 
     path('edit_course_sides/<int:pk>/', edit_course_sides, name='edit_course_sides'),
     path('delete_course_sides/<int:pk>/', delete_course_sides, name='delete_course_sides'),
