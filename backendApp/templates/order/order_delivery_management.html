@@ -13,8 +13,8 @@
   </div>
 
   <h2 class="orderTime">點餐時段：
-    {% if mealTime != None %}
-      {{ orderstate.OrderState_name }}
+    {% if current_time_period %}
+      {{ current_time_period.timeSlot_name }} ({{ current_time_period.startTime|date:"H:i" }} - {{ current_time_period.endTimes|date:"H:i" }})
     {% else %}
       目前非點餐時段
     {% endif %}
