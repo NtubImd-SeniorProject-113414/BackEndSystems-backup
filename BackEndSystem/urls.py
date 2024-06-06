@@ -39,7 +39,7 @@ urlpatterns = [
     path('main_courses/edit/<int:course_id>/', edit_main_course, name='edit_main_course'),
     path('main_courses/delete/<int:course_id>/', delete_main_course, name='delete_main_course'),
 
-
+    path('get-sides-unit/<int:sides_id>/', get_sides_unit, name='get-sides-unit'),
     path('purchase_details/', purchase_detail_list, name='purchase_detail'),
     path('purchase_details/create/', purchase_detail_create, name='purchase_detail_create'),
     path('purchase_details/update/<int:pk>/', purchase_detail_update, name='purchase_detail_update'),

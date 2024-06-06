@@ -1,6 +1,7 @@
 import os
 import uuid
 from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
@@ -369,6 +370,13 @@ def inventory_management(request):
         'inventory_data': page_obj,
         'days': days
     })
+
+def get_sides_unit(request, sides_id):
+    sides = Sides.objects.filter(sides_id=sides_id).first()
+    if sides:
+        return JsonResponse({'sides_unit': sides.sides_unit})
+    else:
+        return JsonResponse({'sides_unit': ''})
 
 
 @group_required('caregiver')
