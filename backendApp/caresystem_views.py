@@ -1,6 +1,7 @@
 import os
 import uuid
 from django.contrib import messages
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Q
@@ -8,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.models import User
 from django.db.models.functions import Concat
 from backendApp.decorator import group_required
-from backendApp.forms import  BedForm, CourseSidesForm, MainCourseForm, PatientForm, PatientFormEdit, PurchaseDetailForm, SupplierForm, UserProfileForm
+from backendApp.forms import  AddSides, BedForm, CourseSidesForm, MainCourseForm, PatientForm, PatientFormEdit, PurchaseDetailForm, SupplierForm, UserProfileForm
 from backendApp.middleware import login_required
 from backendApp.module.sideStock import getSideStockBySidesId
 from .models import Bed, CourseSides, MainCourse, Patient, Sides, PurchaseDetail, Supplier
@@ -369,3 +370,23 @@ def inventory_management(request):
         'inventory_data': page_obj,
         'days': days
     })
+
+def get_sides_unit(request, sides_id):
+    sides = Sides.objects.filter(sides_id=sides_id).first()
+    if sides:
+        return JsonResponse({'sides_unit': sides.sides_unit})
+    else:
+        return JsonResponse({'sides_unit': ''})
+
+
+@group_required('caregiver')
+@login_required
+def sides_create(request):
+    if request.method == 'POST':
+        form = AddSides(request.POST)
+        if form.is_valid():
+            new_detail = form.save()
+            return redirect('bom_settings')
+    else:
+        form = AddSides()
+    return render(request, 'add_sides.html', {'form': form})

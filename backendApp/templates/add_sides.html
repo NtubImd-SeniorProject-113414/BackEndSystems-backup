@@ -5,19 +5,18 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
   <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </head>
 <body>
-<div class="container mt-5">
-  <h2>新增後台用戶</h2>
+<div class="container">
+  <h2 class="text mb-4">新增食材</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-success">註冊</button>
-    <a href="{% url 'user_manager' %}" class="btn btn-secondary">取消</a>
+    <button type="submit" class="btn btn-success">新增食材</button>
+    <a href="{% url 'bom_settings' %}" class="btn btn-secondary" >取消</a>
   </form>
 </div>
 

@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from django import forms
 from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
@@ -172,7 +173,6 @@ class UserEditForm(forms.ModelForm):
         self.fields['groups'].label = "權限"
 
     def label_from_instance(self, obj):
-        # 返回 Group 对象的 display 属性作为选项标签
         return obj.display
     
 class PatientForm(forms.ModelForm):
@@ -236,6 +236,11 @@ class SupplierForm(forms.ModelForm):
         model = Supplier
         fields = ['supplier_name', 'supplier_number']
 
+    def __init__(self, *args, **kwargs):
+        super(SupplierForm, self).__init__(*args, **kwargs)
+
+        self.fields['supplier_name'].label = "供應商名稱"
+        self.fields['supplier_number'].label = "供應商電話"
 
 class MainCourseForm(forms.ModelForm):
     timeSlot = forms.ModelChoiceField(queryset=MealOrderTimeSlot.objects.all(), empty_label=None)
@@ -342,30 +347,48 @@ class MealOrderTimeSlotForm(forms.ModelForm):
 
         return cleaned_data
 
-class purchaseForm(forms.ModelForm):
-    class Meta:
-        model = Purchase
-        fields = ['supplier']
-
 class PurchaseDetailForm(forms.ModelForm):
     sides_id = forms.ModelChoiceField(
         queryset=Sides.objects.all(),
         required=False,
+        label='食材選擇',
         help_text='選擇新的食材'
     )
     supplier = forms.ModelChoiceField(
         queryset=Supplier.objects.all(),
         required=True,
+        label='供應商選擇',
         help_text='選擇供應商'
     )
     purchase_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}),
+        label='進貨日期',
         help_text='選擇進貨日期'
     )
+    # sides_unit = forms.CharField(
+    #     max_length=45, 
+    #     required=False, 
+    #     label='單位', 
+    #     disabled=True  # 這個字段僅用於顯示，不用於提交
+    # )
 
     class Meta:
         model = PurchaseDetail
         fields = ['purchase_quantity', 'purchase_date']
+
+    def __init__(self, *args, **kwargs):
+        super(PurchaseDetailForm, self).__init__(*args, **kwargs)
+        
+        self.fields['purchase_quantity'].label = "進貨數量"
+
+        # 定義欄位順序
+        new_order = OrderedDict()
+        new_order['sides_id'] = self.fields['sides_id']
+        new_order['supplier'] = self.fields['supplier']
+        new_order['purchase_date'] = self.fields['purchase_date']
+        new_order['purchase_quantity'] = self.fields['purchase_quantity']
+        # new_order['sides_unit'] = self.fields['sides_unit']
+        self.fields = new_order
 
     def save(self, commit=True):
         sides_id = self.cleaned_data.get('sides_id')
@@ -377,3 +400,17 @@ class PurchaseDetailForm(forms.ModelForm):
         self.instance.purchase = purchase
         
         return super().save(commit=commit)
+
+
+
+
+class AddSides(forms.ModelForm):
+    class Meta:
+        model = Sides
+        fields = ['sides_name', 'sides_unit']
+
+    def __init__(self, *args, **kwargs):
+        super(AddSides, self).__init__(*args, **kwargs)
+
+        self.fields['sides_name'].label = "食材名稱"
+        self.fields['sides_unit'].label = "單位"
