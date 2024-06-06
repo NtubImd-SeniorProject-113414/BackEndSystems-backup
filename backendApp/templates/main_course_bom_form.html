@@ -20,14 +20,14 @@
 
   <hr>
 
-  <h3 class="mb-4">已設定的主餐配菜</h3>
+  <h3 class="mb-4">已設定的主餐食材</h3>
   
   <table class="table table-striped">
     <thead>
       <tr>
         <th>主餐名稱</th>
-        <th>配菜名稱</th>
-        <th>數量</th>
+        <th>食材名稱</th>
+        <th>用量</th>
         <th>操作</th>
       </tr>
     </thead>
@@ -36,7 +36,7 @@
       <tr>
         <td>{{ cs.course.course_name }}</td>
         <td>{{ cs.sides.sides_name }}</td>
-        <td>{{ cs.quantity }}</td>
+        <td>{{ cs.quantity }}{{ cs.sides.sides_unit }}</td>
         <td>
           <a href="{% url 'edit_course_sides' cs.pk %}" class="btn btn-sm btn-info">編輯</a>
           <a href="{% url 'delete_course_sides' cs.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要刪除嗎？');">刪除</a>

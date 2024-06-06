@@ -260,7 +260,7 @@ class CourseSidesForm(forms.ModelForm):
         super(CourseSidesForm, self).__init__(*args, **kwargs)
         
         self.fields['course'].label = "主菜名稱"
-        self.fields['sides'].label = "配菜"
+        self.fields['sides'].label = "食材"
         self.fields['quantity'].label = "數量"
 
         # 調整字段的widget
@@ -270,7 +270,7 @@ class CourseSidesForm(forms.ModelForm):
         })
         self.fields['sides'].widget.attrs.update({
             'class': 'form-select',
-            'placeholder': '選擇配菜'
+            'placeholder': '選擇食材'
         })
         self.fields['quantity'].widget.attrs.update({
             'class': 'form-control',
@@ -351,7 +351,7 @@ class PurchaseDetailForm(forms.ModelForm):
     sides_id = forms.ModelChoiceField(
         queryset=Sides.objects.all(),
         required=False,
-        help_text='選擇新的配菜'
+        help_text='選擇新的食材'
     )
     supplier = forms.ModelChoiceField(
         queryset=Supplier.objects.all(),
