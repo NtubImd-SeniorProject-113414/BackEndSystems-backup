@@ -4,6 +4,8 @@
 {% block content %}
 <html>
 <link rel="stylesheet" type="text/css" href="{% static 'css/add_purchase.css' %}">
+<link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+<script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
 
 <div class="add-medicine-container">
     <h1>進貨填寫單</h1>
@@ -96,4 +98,19 @@
 <script>
     var addMedicineUrl = "{% url 'add_purchase' %}"; 
 </script>
+<script>
+    document.getElementById('id_sides_id').addEventListener('change', function() {
+        var sidesId = this.value;
+        if (sidesId) {
+            fetch(`/get-sides-unit/${sidesId}/`)  // 假設您有一個路徑來獲取單位
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('id_sides_unit').value = data.sides_unit;
+                })
+                .catch(error => console.error('Error:', error));
+        } else {
+            document.getElementById('id_sides_unit').value = '';  // 清空單位欄位
+        }
+    });
+    </script>
 {% endblock %}
