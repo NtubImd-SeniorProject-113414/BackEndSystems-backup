@@ -8,6 +8,7 @@
 </head>
 <div class="container">
   <h2 class="text-center mb-4">設定主餐的配菜及數量</h2>
+  <a href="{% url 'sides_create' %}" class="btn btn-primary mb-3">新增食材</a>
 
   <form method="post">
     {% csrf_token %}

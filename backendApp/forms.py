@@ -377,3 +377,15 @@ class PurchaseDetailForm(forms.ModelForm):
         self.instance.purchase = purchase
         
         return super().save(commit=commit)
+
+
+class AddSides(forms.ModelForm):
+    class Meta:
+        model = Sides
+        fields = ['sides_name', 'sides_unit']
+
+    def __init__(self, *args, **kwargs):
+        super(AddSides, self).__init__(*args, **kwargs)
+
+        self.fields['sides_name'].label = "食材名稱"
+        self.fields['sides_unit'].label = "單位"
