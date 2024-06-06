@@ -172,7 +172,6 @@ class UserEditForm(forms.ModelForm):
         self.fields['groups'].label = "權限"
 
     def label_from_instance(self, obj):
-        # 返回 Group 对象的 display 属性作为选项标签
         return obj.display
     
 class PatientForm(forms.ModelForm):
@@ -236,6 +235,11 @@ class SupplierForm(forms.ModelForm):
         model = Supplier
         fields = ['supplier_name', 'supplier_number']
 
+    def __init__(self, *args, **kwargs):
+        super(SupplierForm, self).__init__(*args, **kwargs)
+
+        self.fields['supplier_name'].label = "供應商名稱"
+        self.fields['supplier_number'].label = "供應商電話"
 
 class MainCourseForm(forms.ModelForm):
     timeSlot = forms.ModelChoiceField(queryset=MealOrderTimeSlot.objects.all(), empty_label=None)
@@ -351,21 +355,29 @@ class PurchaseDetailForm(forms.ModelForm):
     sides_id = forms.ModelChoiceField(
         queryset=Sides.objects.all(),
         required=False,
+        label='食材選擇',  # Custom label
         help_text='選擇新的食材'
     )
     supplier = forms.ModelChoiceField(
         queryset=Supplier.objects.all(),
         required=True,
+        label='供應商選擇',  # Custom label
         help_text='選擇供應商'
     )
     purchase_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date'}),
+        label='進貨日期',  # Custom label
         help_text='選擇進貨日期'
     )
 
     class Meta:
         model = PurchaseDetail
         fields = ['purchase_quantity', 'purchase_date']
+
+    def __init__(self, *args, **kwargs):
+        super(PurchaseDetailForm, self).__init__(*args, **kwargs)
+        
+        self.fields['purchase_quantity'].label = "進貨數量"
 
     def save(self, commit=True):
         sides_id = self.cleaned_data.get('sides_id')
@@ -377,6 +389,8 @@ class PurchaseDetailForm(forms.ModelForm):
         self.instance.purchase = purchase
         
         return super().save(commit=commit)
+
+
 
 
 class AddSides(forms.ModelForm):
