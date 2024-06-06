@@ -149,7 +149,7 @@ def add_supplier(request):
         form = SupplierForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('supplierts')
+            return redirect('suppliers')
     else:
         form = SupplierForm()
     return render(request, 'add_supplier.html', {'form': form})
@@ -162,7 +162,7 @@ def edit_supplier(request, supplier_id):
         form = SupplierForm(request.POST, instance=supplier)
         if form.is_valid():
             form.save()
-            return redirect('supplierts')
+            return redirect('suppliers')
     else:
         form = SupplierForm(instance=supplier)
     return render(request, 'edit_supplier.html', {'form': form})
@@ -197,7 +197,7 @@ def add_main_course(request):
         form = MainCourseForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('main_courses')
+            return redirect('main_course')
     else:
         form = MainCourseForm()
     return render(request, 'add_main_course.html', {'form': form})
