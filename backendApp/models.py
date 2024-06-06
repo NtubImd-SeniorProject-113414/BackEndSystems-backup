@@ -201,7 +201,7 @@ class Order(models.Model):
         end_time = datetime.combine(today, timeSlot.deadlineTime)
         return Order.objects.filter(patient_id=patient_id, order_time__range=(start_time, end_time))
 
-#配菜
+#食材
 class Sides(models.Model):
     sides_id = models.AutoField(primary_key=True)
     sides_name = models.CharField(max_length=45)
@@ -212,7 +212,7 @@ class Sides(models.Model):
         return self.sides_name
 
 
-#主餐與配菜
+#主餐與食材
 class CourseSides(models.Model):
     coursesides_id = models.AutoField(primary_key=True)
     course = models.ForeignKey(MainCourse, related_name='course_sides', on_delete=models.CASCADE, db_column='course_id')
@@ -220,7 +220,7 @@ class CourseSides(models.Model):
     quantity = models.IntegerField() 
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
-    #取得某個配菜已出售的數量
+    #取得某個食材已出售的數量
     @staticmethod
     def calculateTotalQuantityBySideId(sides_id):
         sides = Sides.objects.get(sides_id=sides_id)
