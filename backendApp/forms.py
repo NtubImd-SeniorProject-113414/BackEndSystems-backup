@@ -212,6 +212,12 @@ class BedForm(forms.ModelForm):
         model = Bed
         fields = ['bed_number', 'patient']
 
+    def __init__(self, *args, **kwargs):
+        super(BedForm, self).__init__(*args, **kwargs)
+        self.fields['bed_number'].label = "床位編號"
+        self.fields['patient'].label = "被照護者姓名"
+    
+
 class RfidCardForm(forms.ModelForm):
     class Meta:
         model = RfidCard
@@ -236,6 +242,14 @@ class MainCourseForm(forms.ModelForm):
     class Meta:
         model = MainCourse
         fields = ['course_name', 'course_price', 'course_image', 'timeSlot']
+
+    def __init__(self, *args, **kwargs):
+        super(MainCourseForm, self).__init__(*args, **kwargs)
+
+        self.fields['course_name'].label = "主餐名稱"
+        self.fields['course_price'].label = "價格"
+        self.fields['course_image'].label = "圖片"
+        self.fields['timeSlot'].label = "開放時段"
 
 class CourseSidesForm(forms.ModelForm):
     class Meta:
