@@ -8,7 +8,7 @@
 </head>
 
 <div class="container mt-4">
-    <h2>{% if supplier %}編輯{% else %}新增{% endif %}供應商</h2>
+    <h2>編輯供應商</h2>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}

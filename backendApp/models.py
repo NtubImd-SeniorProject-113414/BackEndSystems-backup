@@ -205,6 +205,7 @@ class Order(models.Model):
 class Sides(models.Model):
     sides_id = models.AutoField(primary_key=True)
     sides_name = models.CharField(max_length=45)
+    sides_unit = models.CharField(max_length=45)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     def __str__(self):
