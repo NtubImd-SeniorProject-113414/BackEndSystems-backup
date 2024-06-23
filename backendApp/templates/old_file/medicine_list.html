@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/medicine_list.css' %}">
+    
+    
+    <style>
+        /* 定义成功消息的样式 */
+        .success-message {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* 定义错误消息的样式 */
+        .error-message {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+
+        function enableEdit(row) {
+            var cells = row.getElementsByTagName('td');
+            for (var i = 1; i < cells.length - 2; i++) {
+                var input = document.createElement('input');
+                input.value = cells[i].innerText;
+                cells[i].innerText = '';
+                cells[i].appendChild(input);
+            }
+            var editButton = row.querySelector('.edit-button');
+            editButton.style.display = 'none';
+            var saveButton = row.querySelector('.save-button');
+            saveButton.style.display = 'block';
+        }
+
+        function saveChanges(row) {
+            var cells = row.getElementsByTagName('td');
+            var medicineId = cells[0].innerText;
+
+            var medicineData = {
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'medicine_id': medicineId,
+                'medicine_name': cells[1].getElementsByTagName('input')[0].value,
+                'efficacy': cells[2].getElementsByTagName('input')[0].value,
+                'side_effects': cells[3].getElementsByTagName('input')[0].value,
+                'min_stock_level': cells[4].getElementsByTagName('input')[0].value
+            };
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '{% url 'medicine_list' %}', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        if (response.status === 'success') {
+                            alert('修改成功');
+                            window.location.reload();
+                        } else {
+                            alert('修改失敗: ' + response.message);
+                        }
+                    } else {
+                        alert('修改失敗: ' + xhr.statusText);
+                    }
+                }
+            };
+            xhr.send(JSON.stringify(medicineData));
+        }
+    </script>
+</head>
+
+<body>
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="{% if message.tags %}{{ message.tags }}-message{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+
+    <div class="search-section">
+        <form method="get" action="{% url 'medicine_list' %}" class="search-form">
+            <input type="text" name="search" placeholder="搜索藥品..." value="{{ request.GET.search }}">
+            <button type="submit" class="search-button">搜尋</button>
+        </form>
+    </div>
+
+    <div class="sorting-section">
+        <button onclick="window.location.href='?order_by=medicine_name';" class="sort-button">按名稱排序</button>
+        <button onclick="window.location.href='?order_by=min_stock_level';" class="sort-button">按庫存排序</button>
+    </div>
+    <table class="medicine-table">
+        <thead>
+            <tr>
+                <th>藥品 ID</th>
+                <th>藥品名稱</th>
+                <th>功效</th>
+                <th>副作用</th>
+                <th>最小庫存</th>
+                <th>刪除</th>
+                <th>修改</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for medicine in medicines %}
+
+            <tr>
+                <td>{{ medicine.medicine_id }}</td>
+                <td>{{ medicine.medicine_name }}</td>
+                <td>{{ medicine.efficacy }}</td>
+                <td>{{ medicine.side_effects }}</td>
+                <td>{{ medicine.min_stock_level }}</td>
+
+
+                <td>
+                    <form action="{% url 'delete_medicine' medicine.medicine_id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-button">刪除</button>
+
+                    </form>
+                </td>
+                <td>
+                    <button class="edit-button" data-id="{{ medicine.medicine_id }}"
+                        onclick="enableEdit(this.parentNode.parentNode)">修改</button>
+                    <button class="save-button" style="display: none;"
+                        onclick="saveChanges(this.parentNode.parentNode)">保存</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="pagination">
+        {% if medicines.has_previous %}
+        <a href="?page=1&search={{ request.GET.search }}&order_by={{ request.GET.order_by }}">« 第一頁</a>
+        <a
+            href="?page={{ medicines.previous_page_number }}&search={{ request.GET.search }}&order_by={{ request.GET.order_by }}">上一頁</a>
+        {% endif %}
+
+        <span class="current">
+            {{ medicines.number }} / {{ medicines.paginator.num_pages }}
+        </span>
+
+        {% if medicines.has_next %}
+        <a
+            href="?page={{ medicines.next_page_number }}&search={{ request.GET.search }}&order_by={{ request.GET.order_by }}">下一頁</a>
+        <a
+            href="?page={{ medicines.paginator.num_pages }}&search={{ request.GET.search }}&order_by={{ request.GET.order_by }}">最後一頁
+            »</a>
+        {% endif %}
+    </div>
+</body>
+
+</html>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/base.js' %}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('nav a');
+        const table = document.querySelector('.medicine-table');
+        const headers = table.querySelectorAll('th');
+
+        navLinks.forEach(link => {
+            link.parentNode.classList.remove('active');
+        });
+
+        const addMedicineLink = document.querySelector('nav a[href="{% url 'medicine_list' %}"]');
+        if (addMedicineLink) {
+            addMedicineLink.parentNode.classList.add('active');
+        }
+
+        // Adjust table for mobile views
+        function adjustTableForMobile() {
+            const rows = table.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                cells.forEach((cell, index) => {
+                    const headerText = headers[index].textContent;
+                    cell.setAttribute('data-label', headerText);
+                });
+            });
+        }
+
+        // Initial adjustment for mobile
+        if (window.innerWidth < 768) {
+            adjustTableForMobile();
+        }
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth < 768) {
+                adjustTableForMobile();
+            } else {
+                // Implement restoreTableForDesktop if needed
+            }
+        });
+    });
+
+</script>
+
+{% endblock %}
