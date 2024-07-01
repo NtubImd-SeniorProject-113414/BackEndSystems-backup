@@ -1,9 +1,6 @@
 # BackEndSystem
 後台與API
 
-# 前端框架安裝(vue.js)
-npm install -g vue-cli
-
 # 安裝套件指令
 pip install -r requirements.txt
 
