@@ -130,49 +130,38 @@
 </html>
 <script>
     $(document).ready(function () {
-        $(window).on('beforeunload', function () {
-            $('#preloaderModal').modal('show');
-        });
-        $(window).on('load', function () {
-            $('#preloaderModal').modal('hide');
-        });
-        $('.FunctionMenuBtn').click(function (e) {
+        $('.toggle-section').click(function () {
+            var $currentSection = $(this).next('.collapse');
 
-            var currentMenuId = $(this).data('bs-target');
+            // 切換當前選中的選單，並關閉其他選單
+            $('.collapse').not($currentSection).removeClass('show');
 
-            $('.multi-collapse').each(function () {
-                if ($(this).attr('id') !== currentMenuId.substring(1)) {
-                    $(this).collapse('hide');
-                    $('.FunctionMenuBtn[data-bs-target="#' + $(this).attr('id') + '"]').find('.arrow-icon').removeClass('arrow-down').addClass('arrow-right');
-                }
-            });
-
-            $(currentMenuId).collapse('toggle');
-            var arrowIcon = $(this).find('.arrow-icon');
-            if (arrowIcon.hasClass('arrow-right')) {
-                arrowIcon.removeClass('arrow-right').addClass('arrow-down');
+            if ($currentSection.hasClass('show')) {
+                $currentSection.removeClass('show');
             } else {
-                arrowIcon.removeClass('arrow-down').addClass('arrow-right');
+                $currentSection.addClass('show');
+            }
+
+            // 切換圖標方向
+            $(this).find('i').toggleClass('open');
+        });
+
+        // 點擊子選項切換樣式
+        $('.sub-option').click(function () {
+            $('.sub-option').removeClass('active');
+            $(this).addClass('active');
+
+            // 點擊子選項時，保持側邊欄顯示狀態，不收起
+            const isMobile = window.innerWidth <= 768;
+            if (isMobile) {
+                toggleSidebar(); // 手機模式下才關閉選單
             }
         });
-    });
 
-    // 點擊子選項切換樣式
-    $('.sub-option').click(function () {
-        $('.sub-option').removeClass('active');
-        $(this).addClass('active');
-
-        // 點擊子選項時，保持側邊欄顯示狀態，不收起
-        const isMobile = window.innerWidth <= 768;
-        if (isMobile) {
-            toggleSidebar(); // 手機模式下才關閉選單
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
         }
-    });
-
-    function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.querySelector('.overlay');
-        sidebar.classList.toggle('show');
-        overlay.classList.toggle('show');
-    }
 </script>
