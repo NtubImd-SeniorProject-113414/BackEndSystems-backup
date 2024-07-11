@@ -11,7 +11,7 @@
     <base href="/" />
 
     {% if request.user|has_group:"admin" %}
-    <title>後臺系統</title>
+    <title>後臺管理系統</title>
 
     {% elif request.user|has_group:"pharmacy" %}
     <title>智慧藥師後臺系統</title>
