@@ -1,14 +1,14 @@
 .FunctionMenuBtn {
-    display: flex; 
+    display: flex;
     justify-content: start;
     align-items: center;
-    width: 100%; /
+    width: 100%;/
 }
 
 .arrow-icon {
-    margin-left: auto; 
+    margin-left: auto;
     transition: transform 0.3s ease;
-    font-size: 12px; 
+    font-size: 12px;
 }
 
 .arrow-right {
@@ -18,7 +18,9 @@
 .arrow-down {
     transform: rotate(90deg);
 }
-body, html {
+
+body,
+html {
     margin: 0;
     padding: 0;
     height: 100%;
@@ -113,7 +115,7 @@ header img {
     font-weight: bold;
 }
 
-.url-container{
+.url-container {
     width: 100%;
     min-width: 120px;
 }
@@ -140,7 +142,8 @@ nav li {
     cursor: pointer;
 }
 
-nav li a, .FunctionMenu-item {
+nav li a,
+.FunctionMenu-item {
     text-decoration: none;
     margin-left: 10px;
     display: block;
@@ -176,6 +179,7 @@ main {
     height: 100%;
     overflow-y: auto;
 }
+
 .content {
     display: flex;
     flex-direction: row;
@@ -189,38 +193,49 @@ main {
         position: static;
         left: 0;
     }
+
     main {
         flex: 1;
         padding: 20px;
         margin-left: 0;
         height: calc(100vh - 70px);
     }
+
     .content {
         display: flex;
         flex-direction: column;
         height: 100%;
     }
+
     .account-dropdown {
-        width: 100%; /* 小屏幕上選單寬度為全屏 */
-        left: 0; /* 左對齊 */
-        transform: none; /* 不需要水平位移 */
+        width: 100%;
+        /* 小屏幕上選單寬度為全屏 */
+        left: 0;
+        /* 左對齊 */
+        transform: none;
+        /* 不需要水平位移 */
     }
+
     .account-dropdown .url-container {
-        padding: 10px 15px; /* 增加填充，使觸控更容易 */
+        padding: 10px 15px;
+        /* 增加填充，使觸控更容易 */
     }
 }
 
 .FunctionMenuBtn.active {
     color: cadetblue;
 }
+
 .FunctionMenu-item {
     padding: 20px;
     justify-content: center;
 }
+
 .FunctionMenu-item:hover {
     color: #007bff;
     background-color: #e9ecef;
 }
+
 .FunctionMenu-item.active {
     color: cadetblue;
 }
@@ -232,26 +247,49 @@ main {
     margin-left: 10px;
     padding: 5px;
 }
+
 .FunctionMenuBtn:hover {
     color: #007bff;
 }
+
 .modal-backdrop.show {
     opacity: 0.5;
 }
+
 .icon {
-    width: 16px; 
-    height: 24px; 
+    width: 16px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 5px; 
+    margin-right: 5px;
 }
+
 .nav-text {
     display: inline-block;
     line-height: 24px;
 }
-.nav-url-div{
+
+.nav-url-div {
     display: flex;
     align-items: center;
     text-align: center;
+}
+
+/* 漢堡選單樣式 */
+.hamburger-menu {
+    display: none;
+    font-size: 30px;
+    cursor: pointer;
+    padding: 10px;
+    margin-right: 10px;
+    border: none;
+    background: none;
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.hamburger-menu:hover {
+    transform: scale(1.2);
+    /* 放大動畫效果 */
 }
