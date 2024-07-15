@@ -19,14 +19,15 @@
     transform: rotate(90deg);
 }
 
-body,
-html {
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #F4F3EF;
     margin: 0;
-    padding: 0;
-    height: 100%;
+    font-size: 16px;
+    line-height: 1.6;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    overflow-y: hidden;
 }
 
 header {
@@ -265,15 +266,126 @@ main {
     margin-right: 5px;
 }
 
-.nav-text {
-    display: inline-block;
-    line-height: 24px;
+/* Sidebar */
+.sidebar {
+    background-color: white;
+    padding-top: 10px;
+    border-right: 1px solid #ddd;
+    width: 260px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    left: 0;
+    top: 85px;
+    bottom: 0;
+    z-index: 2000;
 }
 
-.nav-url-div {
+.sidebar.show {
+    left: 0;
+}
+
+/* Main content */
+.content {
+    flex: 1;
+    margin-left: 260px;
+    padding: 20px;
+    background-color: #F4F3EF;
+    overflow-y: auto;
+}
+
+/* 主选项样式 */
+.main-option {
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    padding: 12px 20px;
     display: flex;
     align-items: center;
-    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 8px;
+    margin: 10px;
+    border: 1px solid #2D6FA9;
+    background-color: #2D6FA9;
+    transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, left 0.5s ease-in-out;
+    position: relative;
+}
+
+.main-option i {
+    margin-right: 10px;
+}
+
+.main-option:hover {
+    background-color: #1b4f7d;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.main-option.active {
+    color: white;
+    font-weight: bolder;
+    background-color: #1d4f7b;
+    border-color: #1d4f7b;
+}
+
+/* 子选项样式 */
+.sub-option {
+    padding-left: 40px;
+    font-size: 14px;
+    color: #2F2F2F;
+    border: none;
+    padding: 10px;
+    display: block;
+    margin-left: 15px;
+    margin-right: 15px;
+    background-color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.5s ease;
+    visibility: hidden;
+}
+
+.sub-option.active {
+    color: #336699;
+    background-color: #e9f3ff;
+    font-weight: bold;
+    border: 1px solid #9c9c9c;
+}
+
+.sub-option:hover {
+    color: #336699;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+/* 動畫 */
+.sidebar .collapse {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.sidebar .collapse.show {
+    max-height: 500px;
+}
+
+.sidebar .collapse.show .sub-option {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+/* Collapse Icon Animation */
+.fa-chevron-down {
+    transition: transform 0.3s ease;
+    margin-left: auto;
+}
+
+.fa-chevron-down.open {
+    transform: rotate(180deg);
 }
 
 /* 漢堡選單樣式 */
