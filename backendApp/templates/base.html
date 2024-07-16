@@ -66,21 +66,18 @@
             {% endif %}
         </a>
         <div class="account">
-            <a href="#"><i class="fas fa-user-circle"></i> {{ request.user.username }} | 目前：{% for group in user.groups.all %} {{ group.display }} {% endfor %}</a>
+            <a href="#">
+                <i class="fas fa-user-circle"></i>
+                {{ request.user.username }} | 目前：{% for group in user.groups.all %} {{ group.display }} {% endfor %}
+            </a>
             <div class="account-dropdown">
-                <div class="dropdown-div">
-                    <div class="url-container">
-                        <a href="{% url 'edit_profile' %}">修改資訊</a>
-                    </div>
-                    <div class="url-container">
-                        <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i>　登出</a>
-                    </div>
-                </div>
+                <a href="{% url 'edit_profile' %}">修改資訊</a>
+                <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> 登出</a>
             </div>
         </div>
 
     </header>
-    <div class="content">
+    <div class="container-fluid">
         <nav class="sidebar">
             {% for menu in function_menu %}
             {% if user|has_groups:menu.permission %}
@@ -106,7 +103,7 @@
                 {% endif %}
             {% endfor %}
         </nav>
-    <main>
+    <main class="content">
         {% block content %}{% endblock %}
     </main>
     </div>
