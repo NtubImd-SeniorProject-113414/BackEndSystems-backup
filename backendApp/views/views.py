@@ -57,15 +57,21 @@ def patient_manager(request):
     
     paginator = Paginator(patients, 10)  
     page_number = request.GET.get('page', 1)
-
-    try:
-        page_obj = paginator.get_page(page_number)
-    except PageNotAnInteger:
-        page_obj = paginator.get_page(1)
-    except EmptyPage:
-        page_obj = paginator.get_page(paginator.num_pages)
+    page_obj = paginator.get_page(page_number)
     
-    return render(request, 'patientManagement/patient_manager.html', {'page_obj': page_obj})
+    # 构造一个包含患者和表单的列表
+    patients_with_forms = [
+        {
+            'patient': patient,
+            'form': PatientFormEdit(instance=patient)
+        }
+        for patient in page_obj
+    ]
+    
+    return render(request, 'patientManagement/patient_manager.html', {
+        'page_obj': page_obj,
+        'patients_with_forms': patients_with_forms
+    })
 
 #新增被照護者
 @group_required('caregiver')
@@ -94,7 +100,8 @@ def edit_patient(request, patient_id):
             return redirect('patient_manager')
     else:
         form = PatientFormEdit(instance=patient)
-    return render(request, 'patientManagement/edit_patient.html', {'form': form, 'patient': patient})
+    
+    return redirect('patient_manager')
 
 #刪除被照護者
 @group_required('caregiver')

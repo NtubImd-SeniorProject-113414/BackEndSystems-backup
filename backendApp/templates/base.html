@@ -11,7 +11,7 @@
     <base href="/" />
 
     {% if request.user|has_group:"admin" %}
-    <title>後臺系統</title>
+    <title>後臺管理系統</title>
 
     {% elif request.user|has_group:"pharmacy" %}
     <title>智慧藥師後臺系統</title>
@@ -52,6 +52,8 @@
         </div>
     </div>
     <header>
+        <div class="hamburger-menu" onclick="toggleSidebar()">&#9776;</div>
+
         <a href="{% url 'index' %}" class="logo">
             <img src="{% static 'img/logo.png' %}" alt="公司LOGO">
 
@@ -64,61 +66,48 @@
             {% endif %}
         </a>
         <div class="account">
-            <a href="#"><i class="fas fa-user-circle" style="margin-right:5px"></i> {{ request.user.username }}</a>
-            <div class="account-dropdown" id="account-dropdown">
-                <div class="dropdown-div">
-                    <div class="url-container">
-                        <a href="{% url 'edit_profile' %}">修改資訊</a>
-                    </div>
-                    <div class="url-container">
-                        <a href="{% url 'logout' %}"><i class="fa-solid fa-right-from-bracket"></i>登出</a>
-                    </div>
-                </div>
+            <a href="#">
+                <i class="fas fa-user-circle"></i>
+                {{ request.user.username }} | 目前：{% for group in user.groups.all %} {{ group.display }} {% endfor %}
+            </a>
+            <div class="account-dropdown">
+                <a href="{% url 'edit_profile' %}">修改資訊</a>
+                <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> 登出</a>
             </div>
         </div>
+
     </header>
-    <div class="content">
-        <nav id="sidebar">
-            <ul>
-                {% for menu in function_menu %}
-                {% if user|has_groups:menu.permission %}
-                {% if menu.mode == "one" %}
-                <li><a class="FunctionMenuBtn {% if menu.url in request.path %}active{% endif %}"
-                        href="{% url menu.url %}"><i class="fa-solid {{ menu.icon }}"></i> {{ menu.name }}</a></li>
+    <!-- 灰色背景遮罩 -->
+    <div class="overlay" onclick="toggleSidebar()"></div> <!-- 點擊遮罩也可以關閉側邊欄 -->
 
-                {% elif menu.mode == "multi" %}
-                <li>
-                    <div class="FunctionMenuBtn d-flex justify-content-between align-items-center" data-bs-toggle="collapse" data-bs-target="#{{ menu.id }}"
-                        aria-expanded="{% for item in menu.items %}{% if item.url in request.path %}true{% endif %}{% endfor %}"
-                        aria-controls="{{ menu.id }}">
-                        <span>
-                            <i class="fa-solid {{ menu.icon }}"></i>{{ menu.name }}
-                        </span>
-                            <i class="fa fa-chevron-right arrow-icon arrow-right ml-auto"></i>
 
-                    </div>
-                    <div class="collapse multi-collapse ms-1 {% for item in menu.items %}{% if item.url in request.path %}show{% endif %}{% endfor %}"
-                        id="{{ menu.id }}">
-                        <div class="list-group">
-                            {% for item in menu.items %}
-                            <a href="{% url item.url %}"
-                                class="FunctionMenu-item {% if item.url in request.path %}active{% endif %}">
-                                <div class='nav-url-div'>
-                                    <div class='icon'><i class="fa-solid {{ item.icon }}"></i></div>
-                                    <div class='nav-text'>{{ item.name }}</div>
-                                </div>
-                            </a>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </li>
-                {% endif %}
-                {% endif %}
-
+    <div class="container-fluid">
+        <nav class="sidebar">
+            {% for menu in function_menu %}
+            {% if user|has_groups:menu.permission %}
+            {% if menu.mode == 'one' %}
+            <!-- 單項目菜單 -->
+            <a class="d-flex justify-content-between align-items-center toggle-section main-option"
+                href="{% url menu.url %}">
+                <span><i class="{{ menu.icon }}"></i> {{ menu.name }}</span>
+            </a>
+            {% elif menu.mode == "multi" %}
+            <!-- 多項目菜單 -->
+            <a class="d-flex justify-content-between align-items-center toggle-section main-option"
+                href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#{{ menu.id }}">
+                <span><i class="{{ menu.icon }}"></i> {{ menu.name }}</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="collapse" id="{{ menu.id }}">
+                {% for item in menu.items %}
+                <a href="{% url item.url %}" class="sub-option">{{ item.name }}</a>
                 {% endfor %}
-            </ul>
+            </div>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
         </nav>
-        <main>
+        <main class="content">
             {% block content %}{% endblock %}
         </main>
     </div>
@@ -127,30 +116,39 @@
 </html>
 <script>
     $(document).ready(function () {
-        $(window).on('beforeunload', function () {
-            $('#preloaderModal').modal('show');
-        });
-        $(window).on('load', function () {
-            $('#preloaderModal').modal('hide');
-        });
-        $('.FunctionMenuBtn').click(function (e) {
+        $('.toggle-section').click(function () {
+            var $currentSection = $(this).next('.collapse');
 
-            var currentMenuId = $(this).data('bs-target');
+            // 切換當前選中的選單，並關閉其他選單
+            $('.collapse').not($currentSection).removeClass('show');
 
-            $('.multi-collapse').each(function () {
-                if ($(this).attr('id') !== currentMenuId.substring(1)) {
-                    $(this).collapse('hide');
-                    $('.FunctionMenuBtn[data-bs-target="#' + $(this).attr('id') + '"]').find('.arrow-icon').removeClass('arrow-down').addClass('arrow-right');
-                }
-            });
-
-            $(currentMenuId).collapse('toggle');
-            var arrowIcon = $(this).find('.arrow-icon');
-            if (arrowIcon.hasClass('arrow-right')) {
-                arrowIcon.removeClass('arrow-right').addClass('arrow-down');
+            if ($currentSection.hasClass('show')) {
+                $currentSection.removeClass('show');
             } else {
-                arrowIcon.removeClass('arrow-down').addClass('arrow-right');
+                $currentSection.addClass('show');
             }
-        });
+
+            // 切換圖標方向
+            $(this).find('i').toggleClass('open');
+        })
     });
+
+    // 點擊子選項切換樣式
+    $('.sub-option').click(function () {
+        $('.sub-option').removeClass('active');
+        $(this).addClass('active');
+
+        // 點擊子選項時，保持側邊欄顯示狀態，不收起
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile) {
+            toggleSidebar(); // 手機模式下才關閉選單
+        }
+    });
+
+    function toggleSidebar() {
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        sidebar.classList.toggle('show');
+        overlay.classList.toggle('show');
+    }
 </script>
