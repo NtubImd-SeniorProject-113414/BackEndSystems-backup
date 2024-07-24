@@ -32,10 +32,10 @@
         <td>{{ order.order_time }}</td>
         <td>{{ order.patient.patient_name }}</td>
         <td>{{ order.first_bed_number }}</td>
-        {% if order.orderState.OrderState_code == 3 %}
-          <td><p class="complete">{{ order.orderState.OrderState_name }}</p></td>
-        {% elif order.orderState.OrderState_code == 4 %}
-          <td><p class="cancel">{{ order.orderState.OrderState_name }}</p></td>
+        {% if orders.order_state.order_state_code == 3 %}
+          <td><p class="complete">{{ order.order_state.order_state_name }}</p></td>
+        {% elif orders.order_state.order_state_code == 4 %}
+          <td><p class="cancel">{{ order.order_state.order_state_name }}</p></td>
         {% endif %}
       </tr>
       {% endfor %}
