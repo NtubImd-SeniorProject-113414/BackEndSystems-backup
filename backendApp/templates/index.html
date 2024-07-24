@@ -3,10 +3,12 @@
 {% block content %}
 
 <head>
-  <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
   <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
 </head>
-<h1>歡迎，
+
+<div class="container">
+
+  <h1>歡迎，
     {% if user.first_name and user.last_name %}
       {{ user.first_name }}{{ user.last_name }}
     {% else %}
@@ -15,5 +17,9 @@
   ！</h1>
 
 <p>您的目前的身分為：<strong>{% for group in user.groups.all %} {{ group.display }}  {% endfor %}</strong></p>
+
+
+</div>
+
 
 {% endblock %}
