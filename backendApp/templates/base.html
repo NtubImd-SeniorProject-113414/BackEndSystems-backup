@@ -24,9 +24,12 @@
     <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}?v=1.1">
+
     <link rel="stylesheet" type="text/css" href="{% static 'css/loading.css' %}">
     <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.jS' %}"></script>
+
 
     {% endblock %}
 </head>
@@ -116,39 +119,35 @@
 </html>
 <script>
     $(document).ready(function () {
-        $('.toggle-section').click(function () {
-            var $currentSection = $(this).next('.collapse');
+        // 確保 Modal 首先是顯示狀態
+        $('#preloaderModal').modal('show');
 
-            // 切換當前選中的選單，並關閉其他選單
-            $('.collapse').not($currentSection).removeClass('show');
+        // 延遲3秒後隱藏加載動畫
+        setTimeout(function () {
+            $('#preloaderModal').modal('hide');
+        }, 2000);
 
-            if ($currentSection.hasClass('show')) {
-                $currentSection.removeClass('show');
-            } else {
-                $currentSection.addClass('show');
-            }
+        // 控制側邊欄的展開和收縮
+        $('.hamburger-menu').click(function () {
+            $('.sidebar').toggleClass('show');
+            $('.overlay').toggle();
+        });
 
-            // 切換圖標方向
-            $(this).find('i').toggleClass('open');
-        })
-    });
+        $('.overlay').click(function () {
+            $('.sidebar').removeClass('show');
+            $('.overlay').hide();
+        });
 
-    // 點擊子選項切換樣式
-    $('.sub-option').click(function () {
-        $('.sub-option').removeClass('active');
-        $(this).addClass('active');
-
-        // 點擊子選項時，保持側邊欄顯示狀態，不收起
-        const isMobile = window.innerWidth <= 768;
-        if (isMobile) {
-            toggleSidebar(); // 手機模式下才關閉選單
-        }
+        // 針對具有子菜單的主選項控制其展開和收合
+        $('nav a[data-bs-toggle="collapse"]').click(function () {
+            var $target = $($(this).data('bs-target'));
+            $target.collapse('toggle');
+            $(this).find('i.fa-chevron-down').toggleClass('open');  // 切換箭頭方向
+        });
     });
 
     function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.querySelector('.overlay');
-        sidebar.classList.toggle('show');
-        overlay.classList.toggle('show');
+        $('.sidebar').toggleClass('show');
+        $('.overlay').toggle();
     }
 </script>
