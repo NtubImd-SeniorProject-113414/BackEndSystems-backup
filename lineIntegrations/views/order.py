@@ -46,8 +46,8 @@ def getWebPage(request, *args, **kwargs):
         return render(request, 'order/menu.html', {'timeSlotName': f"{nowTimeSlot.timeSlot_name} - {now_time_slot_str}", 'courses_with_sides': courses_with_sides})
     elif request.method == 'POST':
         course_id = request.POST.get('courseId')
-        defaultState = OrderState.objects.get(OrderState_code=1)
-        order = Order.objects.create(patient_id=patient_id, course_id=course_id, order_quantity=1, orderState=defaultState)
+        defaultState = OrderState.objects.get(order_state_code=1)
+        order = Order.objects.create(patient_id=patient_id, course_id=course_id, order_quantity=1, order_state=defaultState)
         order.save()
 
         return JsonResponse({'message': '訂單已成功提交'}, status=201)

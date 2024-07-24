@@ -284,19 +284,16 @@ class MedicineDemand(models.Model):
 
 # 訂單狀態表
 class OrderState(models.Model):
-    OrderState_code = models.AutoField(primary_key=True)
-    OrderState_name = models.CharField(max_length=10)
-    OrderState_htmlStyle = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.OrderState_name
+    order_state_code = models.AutoField(primary_key=True)
+    order_state_name = models.CharField(max_length=10)
+    order_state_html_style = models.CharField(max_length=100)
 
 # 訂單表
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
-    patient = models.ForeignKey('Patient', on_delete=models.CASCADE)
-    course = models.ForeignKey('MainCourse', on_delete=models.CASCADE, db_column='course_id')
-    orderState = models.ForeignKey('OrderState', on_delete=models.CASCADE, db_column='OrderState_code', related_name='orders')
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    course = models.ForeignKey(MainCourse, on_delete=models.CASCADE, db_column='course_id')
+    order_state = models.ForeignKey(OrderState, on_delete=models.CASCADE, db_column='order_state_code')
     order_quantity = models.IntegerField()
     order_time = models.DateTimeField(auto_now_add=True)
     delivery_location = models.ForeignKey('QRCodePoint', on_delete=models.CASCADE, null=True, blank=True)  # 送餐位置
@@ -308,14 +305,21 @@ class Order(models.Model):
         end_time = datetime.combine(today, timeSlot.deadlineTime)
         return Order.objects.filter(patient_id=patient_id, order_time__range=(start_time, end_time))
 
+# 車輛狀態表
+class VehicleStatus(models.Model):
+    vehicle_status_code = models.AutoField(primary_key=True)
+    vehicle_status_name = models.CharField(max_length=10)
+
+# 車輛表
+class Vehicle(models.Model):
+    vehicle_id = models.AutoField(primary_key=True)
+    vehicle_status = models.ForeignKey(VehicleStatus, on_delete=models.CASCADE, db_column='vehicle_status_code')
+    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 # 動作類型表 (例如：左轉、右轉、停靠)
 class ActionType(models.Model):
     action_type_id = models.AutoField(primary_key=True)
     action_type_name = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.action_type_name
 
 # QR Code 掃描點 (停靠點和轉彎點)
 class QRCodePoint(models.Model):
@@ -323,32 +327,26 @@ class QRCodePoint(models.Model):
     location_name = models.CharField(max_length=100)  # 掃描點的名稱
     action_type = models.ForeignKey(ActionType, on_delete=models.CASCADE)  # 關聯到ActionType
 
-    def __str__(self):
-        return self.location_name
-
-# 路線條件表
-class RouteCondition(models.Model):
-    route_condition_id = models.AutoField(primary_key=True)
-    order = models.ForeignKey('Order', on_delete=models.CASCADE)
-    qr_point = models.ForeignKey(QRCodePoint, on_delete=models.CASCADE)
-    
-# 車輛狀態表
-class VehicleStatus(models.Model):
-    vehicleStatus_code = models.AutoField(primary_key=True)
-    vehicleStatus_name = models.CharField(max_length=10)
-
-    def __str__(self):
-        return self.vehicleStatus_name
-
-# 車輛表
-class Vehicle(models.Model):
-    vehicle_id = models.AutoField(primary_key=True)
-    vehicle_status = models.ForeignKey('VehicleStatus', on_delete=models.CASCADE, db_column='vehicleStatus_code')
-    created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
-    current_location = models.ForeignKey('QRCodePoint', on_delete=models.SET_NULL, null=True, blank=True)  # 當前掃描點
-
 # 訂單和車輛之間的中間表
 class DeliveryAssignment(models.Model):
     assignment_id = models.AutoField(primary_key=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='delivery_assignments')
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='delivery_assignments')
+    current_location = models.ForeignKey(QRCodePoint, on_delete=models.SET_NULL, null=True, blank=True)  # 當前掃描點
+    assigned_time = models.DateTimeField(auto_now_add=True)
+
+# 站點表 (表示停靠點)
+class StopPoint(models.Model):
+    stop_point_id = models.AutoField(primary_key=True)
+    qr_point = models.ForeignKey(QRCodePoint, on_delete=models.CASCADE)
+
+# 轉向表 (表示左右轉)
+class TurnPoint(models.Model):
+    turn_point_id = models.AutoField(primary_key=True)
+    qr_point = models.ForeignKey(QRCodePoint, on_delete=models.CASCADE)
+
+# 路線條件表 (記錄某路線的站點和轉向條件)
+class RouteCondition(models.Model):
+    route_condition_id = models.AutoField(primary_key=True)
+    stop_point = models.ForeignKey(StopPoint, on_delete=models.CASCADE)
+    turn_point = models.ForeignKey(TurnPoint, on_delete=models.CASCADE)

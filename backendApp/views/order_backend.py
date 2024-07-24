@@ -18,7 +18,7 @@ def order_list(request):
 
     mealTime = MealOrderTimeSlot.find_time_slot(current_time)
     orders = Order.objects.filter(
-        (Q(orderState__OrderState_code=1) | Q(orderState__OrderState_code=2)) &
+        (Q(order_state__order_state_code=1) | Q(order_state__order_state_code=2)) &
         Q(order_time__date=date)
     )
     
@@ -40,7 +40,7 @@ def order_list(request):
 @group_required('caregiver')
 def order_list_history(request):
     orders = Order.objects.filter(
-        (Q(orderState__OrderState_code=3) | Q(orderState__OrderState_code=4))
+        (Q(order_state__order_state_code=3) | Q(order_state__order_state_code=4))
     )
     for order in orders:
         order.first_bed_number = order.patient.bed_set.first().bed_number if order.patient.bed_set.exists() else "未分配"
@@ -60,7 +60,7 @@ def delivery_order(request, card_code):
     patient_id = get_object_or_404(RfidCard, pk=card_code).patient
     order = Order.objects.filter(patient_id=patient_id).order_by('order_time').first()
     delivery_state = get_object_or_404(OrderState, pk=2)
-    order.orderState = delivery_state
+    order.order_state = delivery_state
     order.save()
     return redirect('order_delivery_management')
 
@@ -71,14 +71,14 @@ def finish_order(request, card_code):
     patient_id = get_object_or_404(RfidCard, pk=card_code).patient_id
     order = Order.objects.filter(patient_id=patient_id).order_by('order_time').first()
     arrived_state = get_object_or_404(OrderState, pk=3)
-    order.orderState = arrived_state
+    order.order_state = arrived_state
     order.save()
 
 @login_required
 def cancel_order(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     canceled_state = get_object_or_404(OrderState, pk=4)
-    order.orderState = canceled_state
+    order.order_state = canceled_state
     order.save()
     return redirect('order_delivery_management')
 
