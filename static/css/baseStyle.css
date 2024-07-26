@@ -27,35 +27,7 @@ header {
     z-index: 3000;
 }
 
-.FunctionMenuBtn {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    width: 100%;/
-}
 
-.arrow-icon {
-    margin-left: auto;
-    transition: transform 0.3s ease;
-    font-size: 12px;
-}
-
-.arrow-right {
-    transform: rotate(0deg);
-}
-
-.arrow-down {
-    transform: rotate(90deg);
-}
-
-
-.fa-chevron-down {
-    transition: transform 0.15s ease; /* 將速度調快 */
-}
-
-.fa-chevron-down.open {
-    transform: rotate(180deg);
-}
 
 .modal-backdrop {
     position: fixed;
@@ -277,28 +249,43 @@ header img {
 }
 
 /* 動畫 */
+.fa-chevron-down {
+    transition: transform 0.2s ease; /* 將速度調快 */
+}
+
+.fa-chevron-down.open {
+    transform: rotate(180deg);
+}
+
+
+
 .sidebar .collapse {
     overflow: hidden;
-    transition: max-height 0.3s ease, opacity 0.3s ease;
-    max-height: 0;
+    transition: height 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
+    opacity: 0;
+    height: 0;
+    transform: translateY(-10px); /* 初始位置稍微上移 */
 }
 
 .sidebar .collapse.show {
     max-height: 500px;
+    height: auto; /* 使用 auto 來動態調整高度 */
     /* 根據需要調整這裡的最大高度 */
     opacity: 1;
     visibility: visible;
+    transform: translateY(0); /* 滑動到原來的位置 */
 }
 
 .sidebar .collapse.collapsing {
-    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transition: height 0.2s ease-in-out, opacity 0.2s ease-in-out;
     opacity: 0;
+    height: 0;
 }
 
 .sub-option {
     opacity: 0;
     transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.4s ease, transform 0.4s ease;
     visibility: hidden;
 }
 
