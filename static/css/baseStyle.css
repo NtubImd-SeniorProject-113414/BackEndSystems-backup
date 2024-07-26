@@ -26,6 +26,13 @@ header {
     z-index: 3000;
 }
 
+.fa-chevron-down {
+    transition: transform 0.3s ease;
+}
+
+.fa-chevron-down.open {
+    transform: rotate(180deg);
+}
 
 .modal-backdrop {
     position: fixed;
@@ -257,15 +264,6 @@ header img {
     visibility: visible;
 }
 
-/* Collapse Icon Animation */
-.fa-chevron-down {
-    transition: transform 0.3s ease;
-    margin-left: auto;
-}
-
-.fa-chevron-down.open {
-    transform: rotate(180deg);
-}
 
 /* 漢堡選單樣式 */
 .hamburger-menu {

@@ -137,21 +137,22 @@
         $('nav a[data-bs-toggle="collapse"]').click(function (e) {
             e.preventDefault();  // 防止默認鏈接行為
             var $target = $($(this).data('bs-target'));
+            var $icon = $(this).find('i.fa-chevron-down');
 
-            // 如果點擊的子選單已經展開，則收合該選單，並更新箭頭方向
+            // 如果點擊的子選單已經展開，則收合該選單
             if ($target.hasClass('show')) {
                 $target.collapse('hide');
-                $(this).find('i.fa-chevron-down').removeClass('open');
+                $icon.removeClass('open');
             } else {
-                // 收合其他已展開的子選單，並更新其箭頭
+                // 收合所有已展開的子選單
                 $('nav .collapse.show').each(function () {
                     $(this).collapse('hide');
                     $(this).siblings('a[data-bs-toggle="collapse"]').find('i.fa-chevron-down').removeClass('open');
                 });
 
-                // 展開當前子選單，並更新箭頭方向
+                // 展開當前子選單並且旋轉箭頭
                 $target.collapse('show');
-                $(this).find('i.fa-chevron-down').addClass('open');
+                $icon.addClass('open');
             }
         });
     });
