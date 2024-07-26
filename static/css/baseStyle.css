@@ -1,4 +1,5 @@
-body, html {
+body,
+html {
     font-family: 'Roboto', sans-serif;
     background-color: #F4F3EF;
     margin: 0;
@@ -22,12 +23,34 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 3000;
 }
 
-.fa-chevron-down {
+.FunctionMenuBtn {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 100%;/
+}
+
+.arrow-icon {
+    margin-left: auto;
     transition: transform 0.3s ease;
+    font-size: 12px;
+}
+
+.arrow-right {
+    transform: rotate(0deg);
+}
+
+.arrow-down {
+    transform: rotate(90deg);
+}
+
+
+.fa-chevron-down {
+    transition: transform 0.15s ease; /* 將速度調快 */
 }
 
 .fa-chevron-down.open {
@@ -43,6 +66,7 @@ header {
     height: 100vh;
     background-color: rgba(0, 0, 0, 0.5);
 }
+
 .modal {
     display: flex;
     align-items: center;
@@ -62,11 +86,14 @@ header {
 
 
 .content {
-    padding-top:90px; /* 增加 padding-top 以避免被 header 遮蓋 */
-    margin-left: 280px; /* 調整左側距離依照 sidebar 的寬度 */
+    padding-top: 90px;
+    /* 增加 padding-top 以避免被 header 遮蓋 */
+    margin-left: 280px;
+    /* 調整左側距離依照 sidebar 的寬度 */
     flex: 1;
     overflow-y: auto;
-    flex-grow: 1; /* 填滿剩餘空間 */
+    flex-grow: 1;
+    /* 填滿剩餘空間 */
 }
 
 
@@ -90,7 +117,8 @@ header img {
     margin-right: 10px;
 }
 
-.logo, .account {
+.logo,
+.account {
     display: flex;
     align-items: center;
     text-decoration: none;
@@ -105,6 +133,7 @@ header img {
 .account {
     position: relative;
 }
+
 .account a {
     color: white;
     text-decoration: none;
@@ -250,15 +279,30 @@ header img {
 /* 動畫 */
 .sidebar .collapse {
     overflow: hidden;
-    max-height: 0;
     transition: max-height 0.3s ease, opacity 0.3s ease;
+    max-height: 0;
 }
 
 .sidebar .collapse.show {
     max-height: 500px;
+    /* 根據需要調整這裡的最大高度 */
+    opacity: 1;
+    visibility: visible;
 }
 
-.sidebar .collapse.show .sub-option {
+.sidebar .collapse.collapsing {
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+}
+
+.sub-option {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    visibility: hidden;
+}
+
+.collapse.show .sub-option {
     opacity: 1;
     transform: translateY(0);
     visibility: visible;
