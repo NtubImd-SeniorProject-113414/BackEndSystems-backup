@@ -4,9 +4,8 @@ from django.urls import path
 from django.contrib import admin
 from backendApp.views.notify import edit_notify, notify_manager, send_notify, delete_notify
 from backendApp.views.order_timeSlot import timeSlots_manager, create_timeSlot, edit_timeSlot, delete_timeSlot
-from backendApp.views.views import index, edit_profile
+from backendApp.views.views import *
 from backendApp.login import login_view,logout_view
-from backendApp.caresystem_views import *
 from backendApp.views import userManagement, card, order_backend, medicine
 from lineIntegrations.views import linebot, verify, order, medicament, notify
 
@@ -19,43 +18,49 @@ urlpatterns = [
     path('user_manager/',userManagement.user_manager, name='user_manager'),
     path('user_manager/create', userManagement.create_user, name='add_user'),
     path('user_manager/edit/<int:user_id>/', userManagement.edit_user, name='edit_user'),
-    
     path('edit_profile/', edit_profile, name='edit_profile'),
+
+    #被照護者管理
     path('patient_manager/', patient_manager, name='patient_manager'),
     path('add_patient/', add_patient, name='add_patient'),
     path('edit_patient/<int:patient_id>/', edit_patient, name='edit_patient'),
     path('delete_patient/<int:patient_id>/', delete_patient, name='delete_patient'),
+
+    #床位管理
     path('bed_manager/', bed_manager, name='bed_manager'),
     path('bed_manager/add/', add_bed, name='add_bed'),
     path('bed_manager/edit/<int:bed_id>/', edit_bed, name='edit_bed'),
     path('bed_manager/delete/<int:bed_id>/', delete_bed, name='delete_bed'),
+
+    #供應商管理
     path('suppliers/', supplier_list, name='suppliers'),
     path('suppliers/add/', add_supplier, name='add_supplier'),
     path('suppliers/edit/<int:supplier_id>/', edit_supplier, name='edit_supplier'),
     path('suppliers/delete/<int:supplier_id>/', delete_supplier, name='delete_supplier'),
 
+    #主餐管理
     path('main_courses/', main_course_list, name='main_course'),
     path('main_courses/add/', add_main_course, name='add_main_course'),
     path('main_courses/edit/<int:course_id>/', edit_main_course, name='edit_main_course'),
     path('main_courses/delete/<int:course_id>/', delete_main_course, name='delete_main_course'),
 
+    #配菜進貨管理
     path('get-sides-unit/<int:sides_id>/', get_sides_unit, name='get-sides-unit'),
     path('purchase_details/', purchase_detail_list, name='purchase_detail'),
     path('purchase_details/create/', purchase_detail_create, name='purchase_detail_create'),
     path('purchase_details/update/<int:pk>/', purchase_detail_update, name='purchase_detail_update'),
     path('purchase_details/delete/<int:pk>/', purchase_detail_delete, name='purchase_detail_delete'),
 
+    #主餐bom表管理(管理主餐內的配菜)
     path('bom_settings/', main_course_bom_settings, name='bom_settings'),
     path('bom_settings/add', sides_create, name='sides_create'),
 
     path('edit_course_sides/<int:pk>/', edit_course_sides, name='edit_course_sides'),
     path('delete_course_sides/<int:pk>/', delete_course_sides, name='delete_course_sides'),
     path('inventory_management/', inventory_management, name='inventory_management'),
-    # path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    # path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    # path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    # path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
     
+
+
     path('notify_manager', notify_manager, name='notify_manager'),
     path('notify_manager/send', send_notify, name='send_notify'),
     path('notify_manager/edit/<int:notify_id>/', edit_notify, name='edit_notify'),
@@ -65,7 +70,6 @@ urlpatterns = [
     path('timeslot_manager/add', create_timeSlot, name='create_timeSlot'),
     path('timeslot_manager/edit/<int:time_slot_id>/', edit_timeSlot, name='update_timeSlot'),
     path('timeslot_manager/delete/<int:time_slot_id>/', delete_timeSlot, name='delete_timeSlot'),
-
 
 
     path('linebot', linebot.line_bot_webhook),
