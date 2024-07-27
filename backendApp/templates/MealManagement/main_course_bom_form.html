@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<head>
+  <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+  <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</head>
+<div class="container">
+  <h2 class="text-center mb-4">設定主餐的配菜及數量</h2>
+  <a href="{% url 'sides_create' %}" class="btn btn-primary mb-3">新增食材</a>
+
+  <form method="post">
+    {% csrf_token %}
+    <div>
+      {{ form|crispy }}
+    </div>
+    <button type="submit" class="btn btn-primary">保存</button>
+  </form>
+
+  <hr>
+
+  <h3 class="mb-4">已設定的主餐食材</h3>
+  
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>主餐名稱</th>
+        <th>食材名稱</th>
+        <th>用量</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cs in course_sides %}
+      <tr>
+        <td>{{ cs.course.course_name }}</td>
+        <td>{{ cs.sides.sides_name }}</td>
+        <td>{{ cs.quantity }}{{ cs.sides.sides_unit }}</td>
+        <td>
+          <a href="{% url 'edit_course_sides' cs.pk %}" class="btn btn-sm btn-info">編輯</a>
+          <a href="{% url 'delete_course_sides' cs.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要刪除嗎？');">刪除</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pagination justify-content-center">
+    {% if course_sides.has_previous %}
+    <a class="page-link" href="{% url 'bom_settings' %}?page=1">&laquo; 最前頁</a>
+    <a class="page-link" href="{% url 'bom_settings' %}?page={{ course_sides.previous_page_number }}">上一頁</a>
+    {% endif %}
+
+    <span class="page-link disabled">
+        第 {{ course_sides.number }} 頁，共 {{ course_sides.paginator.num_pages }} 頁
+    </span>
+
+    {% if course_sides.has_next %}
+    <a class="page-link" href="{% url 'bom_settings' %}?page={{ course_sides.next_page_number }}">下一頁</a>
+    <a class="page-link" href="{% url 'bom_settings' %}?page={{ course_sides.paginator.num_pages }}">最後頁 &raquo;</a>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
