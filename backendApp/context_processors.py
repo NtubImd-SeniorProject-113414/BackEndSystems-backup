@@ -25,13 +25,25 @@ def function_menu(request):
             'name': '基本功能',
             'id': 'basicFunctionsMenu',
             'permission': ['caregiver'],
-            'icon': 'fa-solid fa-vr-cardboard',
+            'icon': 'fa-solid fa-ticket',
             'mode': 'multi',
             'items': [
-                {'url': 'patient_manager', 'name': '被照護者管理', 'icon': 'fa-hospital-user'},
+                {'url': 'patient_manager', 'name': '被照護者管理', 'icon': 'fa-solid fa-hospital-user'},
                 {'url': 'bed_manager', 'name': ' 床位管理', 'icon': 'fa-solid fa-bed'},
                 {'url': 'card_manager', 'name': ' 卡片管理', 'icon': 'fa-solid fa-credit-card-alt'},
                 {'url': 'notify_manager', 'name': ' 通知管理', 'icon': 'fa-solid fa-volume-high'},
+            ]
+        },        
+        {
+            'name': '運輸機器人功能',
+            'id': 'robotFunctionsMenu',
+            'permission': ['caregiver'],
+            'icon': 'fa-solid fa-vr-cardboard',
+            'mode': 'multi',
+            'items': [
+                {'url': 'robot_manager', 'name': '機器人管理', 'icon': 'fa-solid fa-robot'},
+                {'url': 'stop_point_manager', 'name': ' 運送點管理', 'icon': 'fa-solid fa-briefcase'},
+                {'url': 'turn_point_manager', 'name': ' 轉彎點管理', 'icon': 'fa-solid fa-magnet'}
             ]
         },
         {
@@ -41,8 +53,8 @@ def function_menu(request):
             'icon': 'fa-solid fa-utensils',
             'mode': 'multi',
             'items': [
-                {'url': 'order_delivery_management', 'name': '餐點配送管理', 'icon': 'fa-truck'},
-                {'url': 'main_course', 'name': '餐點管理', 'icon': 'fa-burger'},
+                {'url': 'order_delivery_management', 'name': '餐點配送管理', 'icon': 'fa-solid fa-truck'},
+                {'url': 'main_course', 'name': '餐點管理', 'icon': 'fa-solid fa-burger'},
                 {'url': 'bom_settings', 'name': '餐點食材管理', 'icon': 'fa-solid fa-egg'},
                 {'url': 'timeslot_manager', 'name': '用餐時段管理', 'icon': 'fa-solid fa-clock'},
 
