@@ -80,7 +80,6 @@
     <!-- 灰色背景遮罩 -->
     <div class="overlay" onclick="toggleSidebar()"></div> <!-- 點擊遮罩也可以關閉側邊欄 -->
 
-
     <div class="container-fluid">
         <nav class="sidebar">
             {% for menu in function_menu %}
@@ -116,49 +115,68 @@
 </body>
 
 </html>
+
 <script>
     $(document).ready(function () {
-        $('.toggle-section').click(function () {
-            var $currentSection = $(this).next('.collapse');
+        // 顯示預載動畫
+        $('#preloaderModal').modal('show');
+        setTimeout(function () {
+            $('#preloaderModal').modal('hide');
+        }, 2000);
 
-            // 切換當前選中的選單，並關閉其他選單
-            $('.collapse').not($currentSection).removeClass('show');
+        // 切換側邊欄顯示與否
+        $('.hamburger-menu').click(function () {
+            $('.sidebar').toggleClass('show');
+            $('.overlay').toggle();
+        });
 
-            if ($currentSection.hasClass('show')) {
-                $currentSection.removeClass('show');
+        $('.overlay').click(function () {
+            $('.sidebar').removeClass('show');
+            $('.overlay').hide();
+        });
+
+        // 監聽主選項的點擊事件，展開/收合子選項
+        $('.main-option').click(function () {
+            var $submenu = $(this).next('.collapse');  // 找到當前的子菜單
+            var $icon = $(this).find('i.fa-chevron-down');  // 找到當前菜單的箭頭
+
+            // 如果當前子菜單是隱藏的，展開它
+            if (!$submenu.hasClass('show')) {
+                // 收合其他已展開的子菜單，並恢復箭頭狀態
+                $('.collapse.show').collapse('hide').prev('.main-option').find('i.fa-chevron-down').removeClass('open');
+
+                // 展開當前子菜單，並旋轉當前箭頭
+                $submenu.collapse('show');
+                $icon.addClass('open');
             } else {
-                $currentSection.addClass('show');
+                // 如果當前子菜單已展開，則收合它，並恢復箭頭
+                $submenu.collapse('hide');
+                $icon.removeClass('open');
             }
+        });
 
-            // 切換圖標方向
+        // 如果子選單展開時同步更新箭頭
+        $('.collapse').on('shown.bs.collapse', function () {
+            $(this).prev('.main-option').find('i.fa-chevron-down').addClass('open');
+        });
+            // 換圖標方向
             $(this).find('i').toggleClass('open');
         })
-
-        //載入中動畫
-        $(window).on('beforeunload', function () {
-            $('#preloaderModal').modal('show');
-        });
-        $(window).on('load', function () {
-            $('#preloaderModal').modal('hide');
+        // 如果子選單收合時同步更新箭頭
+        $('.collapse').on('hidden.bs.collapse', function () {
+            $(this).prev('.main-option').find('i.fa-chevron-down').removeClass('open');
         });
     });
 
-    // 點擊子選項切換樣式
-    $('.sub-option').click(function () {
-        $('.sub-option').removeClass('active');
-        $(this).addClass('active');
-
-        // 點擊子選項時，保持側邊欄顯示狀態，不收起
-        const isMobile = window.innerWidth <= 768;
-        if (isMobile) {
-            toggleSidebar(); // 手機模式下才關閉選單
-        }
+    // 切換側邊欄顯示與否
+    $('.hamburger-menu').click(function () {
+        $('.sidebar').toggleClass('show');
+        $('.overlay').toggle();
     });
 
+    // 切換側邊欄
     function toggleSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        const overlay = document.querySelector('.overlay');
-        sidebar.classList.toggle('show');
-        overlay.classList.toggle('show');
+        $('.sidebar').toggleClass('show');
+        $('.overlay').toggle();
     }
 </script>
