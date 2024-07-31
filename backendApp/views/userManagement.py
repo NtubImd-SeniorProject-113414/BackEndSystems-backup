@@ -85,21 +85,17 @@ def edit_user(request, user_id):
             edited_user = form.save(commit=False)
             edited_user.save()
 
-            # 获取表单返回的群组对象
             primary_group = form.cleaned_data['primary_group']
             additional_groups = form.cleaned_data['additional_groups']
             
-            # 获取当前用户的所有群组
             current_groups = set(user.groups.all())
 
-            # 创建新的群组集合
             new_groups = set()
             if primary_group:
                 new_groups.add(primary_group)
             if additional_groups:
                 new_groups.update(additional_groups)
 
-            # 如果新旧群组不同，则更新
             if new_groups != current_groups:
                 user.groups.clear()
                 user.groups.add(*new_groups)

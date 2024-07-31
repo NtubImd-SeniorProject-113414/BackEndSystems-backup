@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from backendApp.decorator import group_required
-from backendApp.forms import RfidCardForm
 from backendApp.middleware import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q

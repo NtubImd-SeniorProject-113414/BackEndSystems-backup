@@ -99,7 +99,9 @@
             </a>
             <div class="collapse" id="{{ menu.id }}">
                 {% for item in menu.items %}
-                <a href="{% url item.url %}" class="sub-option">{{ item.name }}</a>
+                <a href="{% url item.url %}" class="sub-option">
+                    <span><i class="{{ item.icon }}"></i> {{ item.name }}</span>
+                </a>
                 {% endfor %}
             </div>
             {% endif %}
@@ -157,7 +159,9 @@
         $('.collapse').on('shown.bs.collapse', function () {
             $(this).prev('.main-option').find('i.fa-chevron-down').addClass('open');
         });
-
+            // 換圖標方向
+            $(this).find('i').toggleClass('open');
+        })
         // 如果子選單收合時同步更新箭頭
         $('.collapse').on('hidden.bs.collapse', function () {
             $(this).prev('.main-option').find('i.fa-chevron-down').removeClass('open');
