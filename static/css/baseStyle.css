@@ -166,7 +166,6 @@ header img {
     border-right: 1px solid #ddd;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    z-index: 2000;
 }
 
 .sidebar a {
@@ -420,4 +419,8 @@ header img {
 
 .FunctionMenuBtn.active {
     color: cadetblue;
+}
+
+#preloaderModal {
+    z-index: 9999;
 }

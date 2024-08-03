@@ -5,6 +5,8 @@ from django.db import models
 from django.db.models import Sum
 from datetime import datetime, time
 from django.contrib.auth.models import Group
+
+from backendApp.module.qrcodeCreate import generate_qr_code
 Group.add_to_class('display', models.CharField(max_length=50))
 
 # class Medicine(models.Model):
@@ -62,10 +64,30 @@ class Patient(models.Model):
     patient_name = models.CharField(max_length=45)
     patient_birth  = models.DateField()
     patient_number = models.CharField(max_length=10)
+    patient_qr_point = models.ForeignKey('QRCodePoint', on_delete=models.CASCADE, blank=True, null=True)
     patient_idcard =models.CharField(max_length=10)
     line_notify = models.CharField(max_length=45, blank=True, null=True, unique=True)
     line_id = models.CharField(max_length=45, blank=True, null=True, unique=True)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        if self.patient_id is None:
+            super(Patient, self).save(*args, **kwargs)
+
+        if not self.patient_qr_point:
+            qr_code_data = f"Patient-{self.patient_id}"
+            qr_code_image_path = generate_qr_code(qr_code_data)
+            try:
+                action_type = ActionType.objects.get(action_type_id=1)
+            except ActionType.DoesNotExist:
+                raise ValueError("ActionType with ID 1 does not exist. Please create it.")
+
+            qr_code_point = QRCodePoint.objects.create(
+                qr_code_image=qr_code_image_path,
+                action_type=action_type
+            )
+            self.patient_qr_point = qr_code_point
+        super(Patient, self).save(*args, **kwargs)
 
     @staticmethod
     def getpatientIdByLineUid(line_uid):
@@ -213,16 +235,6 @@ class CourseSides(models.Model):
     def __str__(self):
         return self.course
 
-#床位
-class Bed(models.Model):
-    bed_id = models.AutoField(primary_key=True)
-    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, blank=True, null=True)
-    bed_number = models.CharField(max_length=5, unique=True, null=True, blank=True)
-    created_time = models.DateTimeField(default=timezone.now)
-    
-    def __str__(self):
-        return self.bed_number
-
 #進貨
 class Purchase(models.Model):
     purchase_id = models.AutoField(primary_key=True)
@@ -254,7 +266,6 @@ class Supplier(models.Model):
     supplier_id = models.AutoField(primary_key=True)
     supplier_name = models.CharField(max_length=45)
     supplier_number = models.CharField(max_length=10, blank=True, null=True)
-    line_notify = models.CharField(max_length=45, blank=True, null=True)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     def __str__(self):
@@ -324,7 +335,7 @@ class ActionType(models.Model):
 # QR Code 掃描點 (停靠點和轉彎點)
 class QRCodePoint(models.Model):
     qr_id = models.AutoField(primary_key=True)
-    location_name = models.CharField(max_length=100)  # 掃描點的名稱
+    qr_code_image = models.CharField(max_length=100)  # 掃描點的名稱
     action_type = models.ForeignKey(ActionType, on_delete=models.CASCADE)  # 關聯到ActionType
 
 # 訂單和車輛之間的中間表
@@ -335,11 +346,6 @@ class DeliveryAssignment(models.Model):
     current_location = models.ForeignKey(QRCodePoint, on_delete=models.SET_NULL, null=True, blank=True)  # 當前掃描點
     assigned_time = models.DateTimeField(auto_now_add=True)
 
-# 站點表 (表示停靠點)
-class StopPoint(models.Model):
-    stop_point_id = models.AutoField(primary_key=True)
-    qr_point = models.ForeignKey(QRCodePoint, on_delete=models.CASCADE)
-
 # 轉向表 (表示左右轉)
 class TurnPoint(models.Model):
     turn_point_id = models.AutoField(primary_key=True)
@@ -348,5 +354,5 @@ class TurnPoint(models.Model):
 # 路線條件表 (記錄某路線的站點和轉向條件)
 class RouteCondition(models.Model):
     route_condition_id = models.AutoField(primary_key=True)
-    stop_point = models.ForeignKey(StopPoint, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     turn_point = models.ForeignKey(TurnPoint, on_delete=models.CASCADE)
