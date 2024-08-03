@@ -19,11 +19,11 @@
   }
 
   .modal-backdrop {
-    z-index: 1050;
+    z-index: 100;
   }
 
   .modal-dialog {
-    z-index: 3000;
+    z-index: 101;
   }
 
   .modal.fade .modal-dialog {
@@ -135,6 +135,11 @@
   .patient-card:hover {
     transform: scale(1.02);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  .no-hover-effect:hover {
+    transform: none !important;
+    box-shadow: none !important;
   }
 
   .patient-header {
@@ -325,28 +330,30 @@
     </div>
 
     <!-- 编辑模态框 -->
-    <div class="modal fade" id="editPatientModal{{ item.patient.patient_id }}" tabindex="-1"
-      aria-labelledby="editPatientModalLabel{{ item.patient.patient_id }}" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="editPatientModalLabel{{ item.patient.patient_id }}">修改被照護者資料</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form method="post" action="{% url 'edit_patient' item.patient.patient_id %}">
-              {% csrf_token %}
-              {{ item.form.as_p }} <!-- 使用对应的表单 -->
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-success">儲存更改</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消更改</button>
-              </div>
-            </form>
-          </div>
+  </div>
+  <div class="modal fade" id="editPatientModal{{ item.patient.patient_id }}" tabindex="-1"
+    aria-labelledby="editPatientModalLabel{{ item.patient.patient_id }}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content no-hover-effect">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editPatientModalLabel{{ item.patient.patient_id }}">修改被照護者資料</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" action="{% url 'edit_patient' item.patient.patient_id %}"
+            id="edit-form-{{ item.patient.patient_id }}" class="edit-form">
+            {% csrf_token %}
+            {{ item.form.as_p }} <!-- 使用對應的表單 -->
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-success save-btn">儲存更改</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消更改</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
+
   {% endfor %}
 
   <div class="pagination justify-content-center">
@@ -376,21 +383,30 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  // 获取所有编辑模态框
-  var modals = document.querySelectorAll('.modal');
+  document.addEventListener('DOMContentLoaded', function () {
+    var saveButtons = document.querySelectorAll('.save-btn');
 
-  // 为每个模态框绑定事件
-  modals.forEach(function(modal) {
-      modal.addEventListener('shown.bs.modal', function() {
-          // 找到模态框中的第一个输入框并聚焦
-          var firstInput = modal.querySelector('input, select, textarea');
-          if (firstInput) {
-              firstInput.focus();
-          }
+    saveButtons.forEach(function (button) {
+      button.addEventListener('click', function (event) {
+        // 找到包含該按鈕的模態框元素
+        var modal = bootstrap.Modal.getInstance(button.closest('.modal'));
+
+        // 關閉模態框
+        modal.hide();
       });
+    });
+    var modals = document.querySelectorAll('.modal');
+
+    modals.forEach(function (modal) {
+      modal.addEventListener('shown.bs.modal', function () {
+        var firstInput = modal.querySelector('input, select, textarea');
+        if (firstInput) {
+          firstInput.focus();
+        }
+      });
+    });
   });
-});
+
 
 </script>
 

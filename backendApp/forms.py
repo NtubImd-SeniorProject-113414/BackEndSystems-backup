@@ -3,7 +3,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Row, Column, Submit
-from .models import CourseSides, MainCourse, Patient, Sides, Purchase, PurchaseDetail, Supplier, Bed, RfidCard, MealOrderTimeSlot
+from .models import CourseSides, MainCourse, Patient, Sides, Purchase, PurchaseDetail, Supplier, RfidCard, MealOrderTimeSlot
 from .models import *
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User,Group
@@ -205,18 +205,6 @@ class PatientFormEdit(forms.ModelForm):
         self.fields['patient_number'].label = "電話號碼"
         self.fields['patient_idcard'].label = "身分證字號"
         self.fields['line_id'].label = "LineUID"
-
-
-class BedForm(forms.ModelForm):
-    class Meta:
-        model = Bed
-        fields = ['bed_number', 'patient']
-
-    def __init__(self, *args, **kwargs):
-        super(BedForm, self).__init__(*args, **kwargs)
-        self.fields['bed_number'].label = "床位編號"
-        self.fields['patient'].label = "被照護者姓名"
-    
 
 class RfidCardForm(forms.ModelForm):
     class Meta:
