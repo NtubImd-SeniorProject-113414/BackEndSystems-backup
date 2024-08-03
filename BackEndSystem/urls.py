@@ -27,12 +27,6 @@ urlpatterns = [
     path('edit_patient/<int:patient_id>/', edit_patient, name='edit_patient'),
     path('delete_patient/<int:patient_id>/', delete_patient, name='delete_patient'),
 
-    #床位管理
-    path('bed_manager/', bed_manager, name='bed_manager'),
-    path('bed_manager/add/', add_bed, name='add_bed'),
-    path('bed_manager/edit/<int:bed_id>/', edit_bed, name='edit_bed'),
-    path('bed_manager/delete/<int:bed_id>/', delete_bed, name='delete_bed'),
-
     #供應商管理
     path('suppliers/', supplier_list, name='suppliers'),
     path('suppliers/add/', add_supplier, name='add_supplier'),

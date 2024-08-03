@@ -12,22 +12,19 @@
 
     {% if request.user|has_group:"admin" %}
     <title>後臺管理系統</title>
-
     {% elif request.user|has_group:"pharmacy" %}
     <title>智慧藥師後臺系統</title>
-
     {% elif request.user|has_group:"caregiver" %}
     <title>智慧照護後臺系統</title>
     {% endif %}
     {% block extra_head %}
-
     <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/loading.css' %}">
     <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
-
+    <script src="{% static 'js/base.js' %}"></script>
     {% endblock %}
 </head>
 
@@ -99,7 +96,9 @@
             </a>
             <div class="collapse" id="{{ menu.id }}">
                 {% for item in menu.items %}
-                <a href="{% url item.url %}" class="sub-option">{{ item.name }}</a>
+                <a href="{% url item.url %}" class="sub-option">
+                    <span><i class="{{ item.icon }}"></i> {{ item.name }}</span>
+                </a>
                 {% endfor %}
             </div>
             {% endif %}
@@ -107,72 +106,9 @@
             {% endfor %}
         </nav>
         <main class="content">
-            {% block content %}{% endblock %}
+            {% block content %}
+            {% endblock %}
         </main>
     </div>
 </body>
-
 </html>
-
-<script>
-    $(document).ready(function () {
-        // 顯示預載動畫
-        $('#preloaderModal').modal('show');
-        setTimeout(function () {
-            $('#preloaderModal').modal('hide');
-        }, 2000);
-
-        // 切換側邊欄顯示與否
-        $('.hamburger-menu').click(function () {
-            $('.sidebar').toggleClass('show');
-            $('.overlay').toggle();
-        });
-
-        $('.overlay').click(function () {
-            $('.sidebar').removeClass('show');
-            $('.overlay').hide();
-        });
-
-        // 監聽主選項的點擊事件，展開/收合子選項
-        $('.main-option').click(function () {
-            var $submenu = $(this).next('.collapse');  // 找到當前的子菜單
-            var $icon = $(this).find('i.fa-chevron-down');  // 找到當前菜單的箭頭
-
-            // 如果當前子菜單是隱藏的，展開它
-            if (!$submenu.hasClass('show')) {
-                // 收合其他已展開的子菜單，並恢復箭頭狀態
-                $('.collapse.show').collapse('hide').prev('.main-option').find('i.fa-chevron-down').removeClass('open');
-
-                // 展開當前子菜單，並旋轉當前箭頭
-                $submenu.collapse('show');
-                $icon.addClass('open');
-            } else {
-                // 如果當前子菜單已展開，則收合它，並恢復箭頭
-                $submenu.collapse('hide');
-                $icon.removeClass('open');
-            }
-        });
-
-        // 如果子選單展開時同步更新箭頭
-        $('.collapse').on('shown.bs.collapse', function () {
-            $(this).prev('.main-option').find('i.fa-chevron-down').addClass('open');
-        });
-
-        // 如果子選單收合時同步更新箭頭
-        $('.collapse').on('hidden.bs.collapse', function () {
-            $(this).prev('.main-option').find('i.fa-chevron-down').removeClass('open');
-        });
-    });
-
-    // 切換側邊欄顯示與否
-    $('.hamburger-menu').click(function () {
-        $('.sidebar').toggleClass('show');
-        $('.overlay').toggle();
-    });
-
-    // 切換側邊欄
-    function toggleSidebar() {
-        $('.sidebar').toggleClass('show');
-        $('.overlay').toggle();
-    }
-</script>
