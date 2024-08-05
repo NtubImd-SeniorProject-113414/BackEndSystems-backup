@@ -1,8 +1,22 @@
 from django.shortcuts import render, redirect
 from backendApp.decorator import group_required
 from backendApp.middleware import login_required
-from ..forms import UserProfileForm
+import os
+from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.models import User
+from django.db.models.functions import Concat
+from backendApp.decorator import group_required
+from backendApp.forms import  *
+from backendApp.middleware import login_required
+from backendApp.module.sideStock import getSideStockBySidesId
+from backendApp.models import *
 
+#首頁
 @group_required('caregiver', 'admin', 'pharmacy')
 @login_required
 def index(request):
@@ -17,6 +31,7 @@ def index(request):
     context = {'username': display_name}
     return render(request, 'index.html', context)
 
+#個人資料編輯
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
@@ -27,214 +42,391 @@ def edit_profile(request):
     else:
         form = UserProfileForm(instance=request.user)
     
-    return render(request, 'edit_profile.html', {'form': form})
+    return render(request, 'userManagement/edit_profile.html', {'form': form})
 
-
-  
-# #藥品管理
-# @csrf_exempt
-# @group_required('pharmacy_admin')
-# @login_required
-# def medicine_list(request):
-#     if request.method == 'POST':
-#         data = json.loads(request.body)
-#         medicine_id = data.get('medicine_id')
-#         medicine_name = data.get('medicine_name')
-#         efficacy = data.get('efficacy')
-#         side_effects = data.get('side_effects')
-#         min_stock_level = data.get('min_stock_level')
-
-#         try:
-#             medicine = Medicine.objects.get(pk=medicine_id)
-#             medicine.medicine_name = medicine_name
-#             medicine.efficacy = efficacy
-#             medicine.side_effects = side_effects
-            
-#             min_stock_level = int(min_stock_level)
-#             if min_stock_level <= 0:
-#                 return JsonResponse({'status': 'error', 'message': '最小庫存不能小於0'})
-#             medicine.min_stock_level = min_stock_level
-#             medicine.full_clean() 
-#             medicine.save()
-#             return JsonResponse({'status': 'success'})
-#         except (ValueError, ValidationError):
-#             return JsonResponse({'status': 'error', 'message': '最小庫存必須是一個數字'})
-#         except Medicine.DoesNotExist:
-#             return JsonResponse({'status': 'error', 'message': '找不到藥品'})
-
+#被照護者管理
+@group_required('caregiver')
+@login_required
+def patient_manager(request):
+    query = request.GET.get('search', '')
     
-    # else:
-    #     search_query = request.GET.get('search', '') 
-    #     order_by = request.GET.get('order_by', 'medicine_name') 
+    if query:
+        patients = Patient.objects.filter(patient_name__icontains=query)
+    else:
+        patients = Patient.objects.all()
+    
+    paginator = Paginator(patients, 10)  
+    page_number = request.GET.get('page', 1)
 
-    #     if order_by not in ['medicine_name', 'min_stock_level', 'efficacy', 'side_effects']:
-    #         order_by = 'medicine_name'
+    try:
+        page_obj = paginator.get_page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.get_page(1)
+    except EmptyPage:
+        page_obj = paginator.get_page(paginator.num_pages)
+    
+    return render(request, 'patientManagement/patient_manager.html', {'page_obj': page_obj})
+
+#新增被照護者
+@group_required('caregiver')
+@login_required
+def add_patient(request):
+    if request.method == 'POST':
+        form = PatientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '被照護者新增成功。')
+            return redirect('patient_manager')
+    else:
+        form = PatientForm()
+    return render(request, 'patientManagement/add_patient.html', {'form': form})
+
+#編輯被照護者
+@group_required('caregiver')
+@login_required
+def edit_patient(request, patient_id):
+    patient = get_object_or_404(Patient, patient_id=patient_id)
+    if request.method == 'POST':
+        form = PatientFormEdit(request.POST, instance=patient)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '被照護者資訊更新成功。')
+            return redirect('patient_manager')
+    else:
+        form = PatientFormEdit(instance=patient)
+    return render(request, 'patientManagement/edit_patient.html', {'form': form, 'patient': patient})
+
+#刪除被照護者
+@group_required('caregiver')
+@login_required
+def delete_patient(request, patient_id):
+    patient = get_object_or_404(Patient, patient_id=patient_id)
+    patient.delete()
+    messages.success(request, '被照護者已刪除。')
+    return redirect('patient_manager')
 
 
-    #     medicines_query = Medicine.objects.filter(
-    #         Q(medicine_name__icontains=search_query) | 
-    #         Q(efficacy__icontains=search_query) | 
-    #         Q(side_effects__icontains=search_query)
-    #     ).order_by(order_by)
+#床位管理
+@group_required('caregiver')
+@login_required
+def bed_manager(request):
+    beds = Bed.objects.all().order_by('bed_number')
 
-    #     paginator = Paginator(medicines_query, 10) 
-    #     page = request.GET.get('page')
-    #     try:
-    #         medicines = paginator.page(page)
-    #     except PageNotAnInteger:
-    #         medicines = paginator.page(1)
-    #     except EmptyPage:
-    #         medicines = paginator.page(paginator.num_pages)
+    query = request.GET.get('q')
+    if query:
+        beds = beds.filter(Q(bed_number__icontains=query) | Q(patient__patient_name__icontains=query))
 
-    #     return render(request, 'medicine_list.html', {'medicines': medicines})
+    paginator = Paginator(beds, 10)
 
-# #刪除藥品
-# @group_required('pharmacy_admin')
-# @login_required
-# def delete_medicine(request, medicine_id):
-#     if request.method == 'POST':
-#         medicine_instance = get_object_or_404(Medicine, medicine_id=medicine_id)
-#         medicine_instance.delete()
-#         messages.success(request, '藥品刪除成功！')
-#         return redirect('medicine_list')
-#     else:
-#         return HttpResponseForbidden("Forbidden")
+    page_number = request.GET.get('page')
+    
+    page_obj = paginator.get_page(page_number)
 
-# #修改藥品
-# @group_required('pharmacy_admin')
-# @login_required
-# def modify_medicine(request, medicine_id):
-#     medicine = get_object_or_404(Medicine, id=medicine_id)
-#     if request.method == 'POST':
-#         form = NewMedicineForm(request.POST, instance=medicine)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, '藥品修改成功！')
-#             return render(request, 'medicine_list.html', {'medicines': Medicine.objects.all()})
-#     else:
-#         form = NewMedicineForm(instance=medicine)
-#     return render(request, 'modify_medicine.html', {'form': form})
+    return render(request, 'bed/bed_manager.html', {'page_obj': page_obj})
 
-# #新增藥品
-# @group_required('pharmacy_admin')
-# @login_required
-# def add_medicine(request):
-#     if request.method == 'POST':
-#         form = NewMedicineForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             messages.success(request, '藥品添加成功！')
-#             return redirect('add_medicine')
-#         else:
-#             messages.error(request, '請檢查您所輸入的內容是否正確')
-#             for field, errors in form.errors.items():
-#                 for error in errors:
-#                     messages.error(request, f"{form.fields[field].label}: {error}")
-#     else:
-#         form = NewMedicineForm()
+#新增床位
+@group_required('caregiver')
+@login_required
+def add_bed(request):
+    if request.method == 'POST':
+        form = BedForm(request.POST)
+        if form.is_valid():
+            bed_number = form.cleaned_data['bed_number']
+            patient = form.cleaned_data['patient']
+            if patient:
+                existing_bed_with_patient = Bed.objects.filter(patient=patient).first()
+                if existing_bed_with_patient:
+                    form.add_error('patient', '該病人已被分配床位')
+                    return render(request, 'add_bed.html', {'form': form, 'operation': '添加'})
+            form.save()
+            return redirect('bed_manager')
+    else:
+        form = BedForm()
+    return render(request, 'bed/add_bed.html', {'form': form, 'operation': '添加'})
 
-#     return render(request, 'add_medicine.html', {'form': form})
+#編輯床位
+@group_required('caregiver')
+@login_required
+def edit_bed(request, bed_id):
+    bed = get_object_or_404(Bed, bed_id=bed_id)
+    if request.method == 'POST':
+        form = BedForm(request.POST, instance=bed)
+        if form.is_valid():
+            form.save()
+            return redirect('bed_manager')
+    else:
+        form = BedForm(instance=bed)
+    return render(request, 'bed/edit_bed.html', {'form': form})
+
+#刪除床位
+@group_required('caregiver')
+@login_required
+def delete_bed(request, bed_id):
+    bed = get_object_or_404(Bed, bed_id=bed_id)
+    bed.delete()
+    return redirect('bed_manager')
+
+
+#供應商管理
+@group_required('caregiver')
+@login_required
+def supplier_list(request):
+    query = request.GET.get('q')
+    if query:
+        suppliers = Supplier.objects.filter(supplier_name__icontains=query)
+    else:
+        suppliers = Supplier.objects.all()
+
+    paginator = Paginator(suppliers, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'supplier/supplier_list.html', {'page_obj': page_obj, 'query': query})
+
+#新增供應商
+@group_required('caregiver')
+@login_required
+def add_supplier(request):
+    if request.method == 'POST':
+        form = SupplierForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('suppliers')
+    else:
+        form = SupplierForm()
+    return render(request, 'supplier/add_supplier.html', {'form': form})
+
+#編輯供應商
+@group_required('caregiver')
+@login_required
+def edit_supplier(request, supplier_id):
+    supplier = get_object_or_404(Supplier, supplier_id=supplier_id)
+    if request.method == 'POST':
+        form = SupplierForm(request.POST, instance=supplier)
+        if form.is_valid():
+            form.save()
+            return redirect('suppliers')
+    else:
+        form = SupplierForm(instance=supplier)
+    return render(request, 'supplier/edit_supplier.html', {'form': form})
+
+#刪除供應商
+@group_required('caregiver')
+@login_required
+def delete_supplier(request, supplier_id):
+    supplier = get_object_or_404(Supplier, supplier_id=supplier_id)
+    supplier.delete()
+    return redirect('supplierts')
+
+
+#主餐管理
+@group_required('caregiver')
+@login_required
+def main_course_list(request):
+    query = request.GET.get('query', '')
+
+    if query:
+        main_courses = MainCourse.objects.filter(course_name__icontains=query)
+    else:
+        main_courses = MainCourse.objects.all()
+
+    paginator = Paginator(main_courses, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'MealManagement/main_course_list.html', {'main_courses': page_obj, 'query': query})
+
+#新增主餐
+@group_required('caregiver')
+@login_required
+def add_main_course(request):
+    if request.method == 'POST':
+        form = MainCourseForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('main_course')
+    else:
+        form = MainCourseForm()
+    return render(request, 'MealManagement/add_main_course.html', {'form': form})
+
+#編輯主餐
+@group_required('caregiver')
+@login_required
+def edit_main_course(request, course_id):
+    course = get_object_or_404(MainCourse, course_id=course_id)
+    if request.method == 'POST':
+        form = MainCourseForm(request.POST, request.FILES, instance=course)
+        if form.is_valid():
+            if 'course_image' in request.FILES:
+                if course.course_image:
+                    old_image_path = course.course_image.path
+                    if os.path.isfile(old_image_path):
+                        os.remove(old_image_path)
+            form.save()
+            return redirect('main_course')
+    else:
+        form = MainCourseForm(instance=course)
+    return render(request, 'MealManagement/edit_main_course.html', {'form': form})
+
+#刪除主餐
+@group_required('caregiver')
+@login_required
+def delete_main_course(request, course_id):
+    course = get_object_or_404(MainCourse, course_id=course_id)
+    course.delete()
+    return redirect('main_course')
+
+
+#進貨管理
+@group_required('caregiver')
+@login_required
+def purchase_detail_list(request):
+    query = request.GET.get('query', '')
+
+    if query:
+        details = PurchaseDetail.objects.filter(sides__sides_name__icontains=query)
+    else:
+        details = PurchaseDetail.objects.all()
+
+    paginator = Paginator(details, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'purchase/detail_list.html', {'details': page_obj, 'query': query})
 
 #新增進貨
-# @group_required('pharmacy_admin')
-# @login_required
-# def add_purchase(request):
-#     medicines = Medicine.objects.all() 
+@group_required('caregiver')
+@login_required
+def purchase_detail_create(request):
+    if request.method == 'POST':
+        form = PurchaseDetailForm(request.POST)
+        if form.is_valid():
+            new_detail = form.save()
+            return redirect('purchase_detail')
+    else:
+        form = PurchaseDetailForm()
+    return render(request, 'purchase/detail_form.html', {'form': form})
 
-#     sort_by = request.GET.get('sort', 'purchase_date')
-#     if sort_by == 'date_desc':
-#         order = '-purchase_date' 
-#     else:
-#         order = 'purchase_date' 
+#編輯進貨
+@group_required('caregiver')
+@login_required
+def purchase_detail_update(request, pk):
+    detail = get_object_or_404(PurchaseDetail, pk=pk)
+    initial_quantity = detail.purchase_quantity
+    if request.method == 'POST':
+        form = PurchaseDetailForm(request.POST, instance=detail)
+        if form.is_valid():
+            updated_detail = form.save()
+            return redirect('purchase_detail')
+    else:
+        form = PurchaseDetailForm(instance=detail)
+    return render(request, 'purchase/detail_form.html', {'form': form})
 
-#     purchases = Purchase.objects.all().order_by(order)  
-
-#     paginator = Paginator(purchases, 10) 
-#     page_number = request.GET.get('page', 1)
-#     page_obj = paginator.get_page(page_number)
-
-#     if request.method == 'POST':
-#         # Extract data from POST request
-#         medicine_id = request.POST.get('medicine')
-#         purchase_date = request.POST.get('purchase_date')
-#         purchase_q = request.POST.get('purchase_q')
-#         purchase_unit_price = request.POST.get('purchase_unit_price')
-
-#         try:
-#             # Attempt to create and save a new Purchase instance
-#             Purchase.objects.create(
-#                 medicine_id=medicine_id,
-#                 purchase_date=purchase_date,
-#                 purchase_q=purchase_q,
-#                 purchase_unit_price=purchase_unit_price
-#             )
-#             messages.success(request, '進貨添加成功！')
-#         except Exception as e:
-#             messages.error(request, f'進貨添加失敗：{str(e)}')
-
-#         return redirect('add_purchase')  # Redirect to the same page to show the updated table
-
-#     return render(request, 'add_purchase.html', {'medicines': medicines, 'page_obj': page_obj})
-
-# @group_required('pharmacy_admin')
-# @require_POST
-# @login_required
-# def delete_purchase(request, order_id):
-#     Purchase.objects.get(pk=order_id).delete()
-#     return redirect(request.META.get('HTTP_REFERER', 'add_purchase'))
+#刪除進貨
+@group_required('caregiver')
+@login_required
+def purchase_detail_delete(request, pk):
+    detail = get_object_or_404(PurchaseDetail, pk=pk)
+    detail.delete()
+    return redirect('purchase_detail')
 
 
+#主餐bom表管理(管理主餐內的配菜)
+@group_required('caregiver')
+@login_required
+def main_course_bom_settings(request):
+    if request.method == 'POST':
+        form = CourseSidesForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('bom_settings')
+    else:
+        form = CourseSidesForm()
 
-# #庫存與車狀態查看
-# @group_required('pharmacy_admin')
-# @login_required
-# def warehouse_view(request):
-#     filter_form = WarehouseFilterForm(request.GET or None)
-#     creation_form = WarehouseCreationForm(request.POST or None)
-#     warehouses = Warehouse.objects.all()
+    course_sides_list = CourseSides.objects.select_related('course', 'sides').all()
+    paginator = Paginator(course_sides_list, 10)
+    page_number = request.GET.get('page')
+    course_sides = paginator.get_page(page_number)
 
-#     # 處理篩選表單
-#     if request.method == 'GET' and filter_form.is_valid():
-#         if filter_form.cleaned_data.get('is_active') is not None:
-#             warehouses = warehouses.filter(is_active=filter_form.cleaned_data['is_active'])
+    return render(request, 'MealManagement/main_course_bom_form.html', {
+        'form': form,
+        'course_sides': course_sides,
+        'paginator': paginator,
+    })
 
-#     # 處理新增倉庫表單
-#     if request.method == 'POST' and creation_form.is_valid():
-#         creation_form.save()
-#         return redirect('warehouse')  # 假設 'warehouse_view' 是這個視圖的名字
+#編輯主餐bom表(調整主餐中的配菜與數量)
+@group_required('caregiver')
+@login_required
+def edit_course_sides(request, pk):
+    cs = get_object_or_404(CourseSides, pk=pk)
+    if request.method == 'POST':
+        form = CourseSidesForm(request.POST, instance=cs)
+        if form.is_valid():
+            form.save()
+            return redirect('bom_settings')
+    else:
+        form = CourseSidesForm(instance=cs)
+    return render(request, 'MealManagement/course_sides_form.html', {
+        'form': form
+    })
 
-#     # 計算當前庫存和最低庫存水平
-#     for warehouse in warehouses:
-#         warehouse.current_stock = warehouse.medicine.get_current_stock()
-#         warehouse.min_stock_level = warehouse.medicine.min_stock_level
+#刪除主餐中的配菜
+@group_required('caregiver')
+@login_required
+def delete_course_sides(request, pk):
+    cs = get_object_or_404(CourseSides, pk=pk)
+    cs.delete()
+    return redirect('bom_settings')
 
-#     low_stock_medicines = [warehouse.medicine for warehouse in warehouses if warehouse.current_stock <= warehouse.min_stock_level]
 
-#     # 確定警示顏色和消息文本
-#     alert_color = 'success' if not low_stock_medicines else 'danger'
-#     alert_message = '目前並無庫存不足狀況。' if not low_stock_medicines else ''
+#配菜存貨管理
+@group_required('caregiver')
+@login_required
+def inventory_management(request):
+    total_patients = Patient.objects.count()
+    
+    days = int(request.GET.get('days', 7))  
 
-#     return render(request, 'warehouse.html', {
-#         'filter_form': filter_form,
-#         'creation_form': creation_form,
-#         'warehouses': warehouses,
-#         'low_stock_medicines': low_stock_medicines,
-#         'alert_color': alert_color,
-#         'alert_message': alert_message
-#     })
+    sides = Sides.objects.all()
+    
+    inventory_data = []
+    for side in sides:
+        total_needed = 0
+        SideStock = getSideStockBySidesId(side.sides_id)
+        SideStock = SideStock if SideStock >= 0 else 0
+        total_needed = SideStock * total_patients * days
+        inventory_data.append({
+            'sides_name': side.sides_name,
+            'current_stock': SideStock,
+            'minimum_required': total_needed,
+        })
 
-# @group_required('pharmacy_admin')
-# @require_POST
-# @login_required
-# def toggle_active(request, warehouse_id):
-#     warehouse = Warehouse.objects.get(pk=warehouse_id)
-#     warehouse.is_active = not warehouse.is_active
-#     warehouse.save()
-#     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    paginator = Paginator(inventory_data, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-# @group_required('pharmacy_admin')
-# @require_POST
-# @login_required
-# def delete_warehouse(request, warehouse_id):
-#     Warehouse.objects.get(pk=warehouse_id).delete()
-#     return redirect(request.META.get('HTTP_REFERER', 'warehouse'))
+    return render(request, 'MealManagement/inventory_management.html', {
+        'inventory_data': page_obj,
+        'days': days
+    })
+
+#取得配菜數量
+def get_sides_unit(request, sides_id):
+    sides = Sides.objects.filter(sides_id=sides_id).first()
+    if sides:
+        return JsonResponse({'sides_unit': sides.sides_unit})
+    else:
+        return JsonResponse({'sides_unit': ''})
+
+#新增配菜
+@group_required('caregiver')
+@login_required
+def sides_create(request):
+    if request.method == 'POST':
+        form = AddSides(request.POST)
+        if form.is_valid():
+            new_detail = form.save()
+            return redirect('bom_settings')
+    else:
+        form = AddSides()
+    return render(request, 'MealManagement/add_sides.html', {'form': form})
