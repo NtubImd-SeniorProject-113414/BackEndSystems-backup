@@ -6,14 +6,14 @@ from django.db.models import Q
 from backendApp.decorator import group_required
 from backendApp.middleware import login_required
 from ..models import Notify, Patient, PatientNotifys
-from ..forms import NotifyForm
+from ..forms import SelectorForm
 
 
 @login_required
 @group_required('caregiver')
 def send_notify(request):
     if request.method == 'POST':
-        form = NotifyForm(request.POST)
+        form = SelectorForm(request.POST)
         if form.is_valid():
             try:
                 notify_message = form.cleaned_data['notify_message']
@@ -29,19 +29,19 @@ def send_notify(request):
                         is_read=False
                     )
                 notify_id = notify.notify_id
-                form = NotifyForm()
+                form = SelectorForm()
                 return render(request, 'notify/send_notify.html', {'form': form, 'message': "訊息發送成功", "css": "alert alert-success", "notify_id": notify_id})
             except:
                 return render(request, 'notify/send_notify.html', {'form': form, 'message': "訊息發送失敗", "css": "alert alert-danger"})
     else:
-        form = NotifyForm()
+        form = SelectorForm()
     return render(request, 'notify/send_notify.html', {'form': form})
 
 @login_required
 def edit_notify(request, notify_id):
     notify = get_object_or_404(Notify, notify_id=notify_id)
     if request.method == 'POST':
-        form = NotifyForm(request.POST, instance=notify)
+        form = SelectorForm(request.POST, instance=notify)
         if form.is_valid():
             try:
                 form.save()
@@ -58,7 +58,7 @@ def edit_notify(request, notify_id):
                 return render(request, 'notify/edit_notify.html', {'message': "訊息編輯失敗", "css": "alert alert-danger", 'form': form})
     else:
         associated_patients = Patient.objects.filter(patientnotifys__notify=notify)
-        form = NotifyForm(instance=notify, initial={'patients': associated_patients})
+        form = SelectorForm(instance=notify, initial={'patients': associated_patients})
     return render(request, 'notify/edit_notify.html', {'form': form})
 
 
