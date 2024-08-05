@@ -41,7 +41,20 @@ $(document).ready(function() {
         }
         if (!hasSelection) {
             event.preventDefault();
-            alert("請選擇至少一個發送對象！");
+            alert("請選擇至少一個對象！");
+        }
+    });
+
+    $('#print-qrcode-form').submit(function(event) {
+        let hasSelection = false;
+        choicesInstances.forEach(function(instance) {
+            if (instance.getValue(true).length > 0) {
+                hasSelection = true;
+            }
+        });
+        if (!hasSelection) {
+            event.preventDefault();
+            alert("請選擇至少一個對象！");
         }
     });
 });
