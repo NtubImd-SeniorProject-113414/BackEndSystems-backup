@@ -89,7 +89,7 @@ from django import forms
 #     is_active = forms.BooleanField(label='是否啟用', required=False)
 
 
-class NotifyForm(forms.ModelForm):
+class SelectorForm(forms.ModelForm):
     patients = forms.ModelMultipleChoiceField(
         queryset=Patient.objects.all(),
         widget=forms.SelectMultiple(attrs={'class': 'form-control choices'}),

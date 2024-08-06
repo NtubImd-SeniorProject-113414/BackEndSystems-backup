@@ -6,7 +6,7 @@ from backendApp.views.notify import edit_notify, notify_manager, send_notify, de
 from backendApp.views.order_timeSlot import timeSlots_manager, create_timeSlot, edit_timeSlot, delete_timeSlot
 from backendApp.views.views import *
 from backendApp.login import login_view,logout_view
-from backendApp.views import userManagement, card, order_backend, medicine, rebot
+from backendApp.views import userManagement, card, order_backend, medicine, rebot, robot_management
 from lineIntegrations.views import linebot, verify, order, medicament, notify
 
 urlpatterns = [
@@ -113,7 +113,7 @@ urlpatterns = [
 
     #機器人
     path('robot_management/robot_manager', medicine.finish_medicine_demand, name='robot_manager'),
-    path('robot_management/stop_point_manager', medicine.finish_medicine_demand, name='stop_point_manager'),
+    path('robot_management/stop_point', robot_management.stop_point, name='stop_point'),
     path('robot_management/turn_point_manager', medicine.finish_medicine_demand, name='turn_point_manager'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
