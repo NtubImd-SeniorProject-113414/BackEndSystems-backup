@@ -60,15 +60,15 @@ header {
 .content {
     padding-top: 90px;
     padding-bottom: 20px;
-    /* 增加 padding-top 以避免被 header 遮蓋 */
     margin-left: 280px;
-    /* 調整左側距離依照 sidebar 的寬度 */
     flex: 1;
     overflow-y: auto;
     flex-grow: 1;
-    /* 填滿剩餘空間 */
 }
 
+.container{
+    min-height: 850px;
+}
 
 header h2 {
     color: #fff !important;
