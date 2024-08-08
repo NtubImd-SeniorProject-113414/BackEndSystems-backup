@@ -96,14 +96,16 @@ class SelectorForm(forms.ModelForm):
         required=True,
         label="選擇發送對象"
     )
+    
+    notify_message = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
+        label="通知訊息"
+    )
 
     class Meta:
         model = Notify
         fields = ['notify_message', 'patients']
-        widgets = {
-            'notify_message': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
-        }
-
 
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, help_text='必填，請輸入有效的郵件地址。')
