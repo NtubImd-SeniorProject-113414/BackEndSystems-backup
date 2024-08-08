@@ -34,9 +34,7 @@ def create_point_pdf(text_image_pairs):
 
     styleN = ParagraphStyle(name='Normal', fontName='SimSun', fontSize=12, textColor=colors.black, alignment=1)
     
-    elements = []
-    elements.append(Spacer(1, 20))
-    
+    elements = []    
     row_data = []
     row_count = 0
     
