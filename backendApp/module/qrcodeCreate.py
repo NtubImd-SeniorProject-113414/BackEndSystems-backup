@@ -8,14 +8,14 @@ def generate_qr_code(data):
     if not data:
         raise ValueError("Data for QR Code cannot be empty")
 
-    print(f"Generating QR code with data: {data}")  # 调试输出
+    print(f"Generating QR code with data: {data}")
 
     # 创建二维码
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_H,
-        box_size=10,  # 调大 box_size
-        border=5,     # 调大 border
+        box_size=10,
+        border=5,
     )
 
     qr.add_data(data)
@@ -29,7 +29,7 @@ def generate_qr_code(data):
         raise FileNotFoundError(f"Logo file not found at {logo_full_path}")
 
     logo = Image.open(logo_full_path).convert("RGBA")
-    logo_size = 50  # 控制 logo 大小，确保不会过度覆盖二维码
+    logo_size = 50
     logo = logo.resize((logo_size, logo_size))
 
     logo_with_padding_size = int(logo_size)
@@ -49,6 +49,6 @@ def generate_qr_code(data):
     file_name = f"{uuid.uuid4()}.png"
     file_path = os.path.join(settings.MEDIA_ROOT, file_name)
     img.save(file_path)
-    relative_file_path = os.path.join(settings.MEDIA_URL, file_name)
+    relative_file_path = os.path.join(file_name)
     
     return relative_file_path

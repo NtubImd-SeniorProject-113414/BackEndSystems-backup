@@ -1,16 +1,18 @@
+from io import BytesIO
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Image, Paragraph, PageBreak, Spacer
 from reportlab.lib.units import inch
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.styles import ParagraphStyle
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from reportlab.lib.fonts import addMapping
+from django.conf import settings
 
 def header(canvas, doc):
     canvas.saveState()
     page_width = A4[0]
-    logo_path = "static/img/logo.png"
+    logo_path = f"{settings.STATICFILES_DIRS[0]}/img/logo.png"
     logo_width = 50
     logo_height = 50
     total_width = logo_width + 350
@@ -23,26 +25,14 @@ def header(canvas, doc):
     canvas.drawString(text_x, A4[1] - 40, text)
     canvas.restoreState()
 
-def create_point_pdf(filename):
-    doc = SimpleDocTemplate(filename, pagesize=A4)
-    pdfmetrics.registerFont(TTFont('SimSun', 'static/font/SimSun.ttf'))
+def create_point_pdf(text_image_pairs):
+    buffer = BytesIO()
+
+    doc = SimpleDocTemplate(buffer, pagesize=A4)
+    pdfmetrics.registerFont(TTFont('SimSun', f"{settings.STATICFILES_DIRS[0]}/font/SimSun.ttf"))
     addMapping('SimSun', 0, 0, 'SimSun')
 
-    styles = getSampleStyleSheet()
     styleN = ParagraphStyle(name='Normal', fontName='SimSun', fontSize=12, textColor=colors.black, alignment=1)
-
-    image_path = "media/3d02aad6-930d-465d-bc5c-3bd49137af89.png"
-    
-    text_image_pairs = [
-        ["文字 1", image_path],
-        ["文字 2", image_path],
-        ["文字 3", image_path],
-        ["文字 4", image_path],
-        ["文字 5", image_path],
-        ["文字 6", image_path],
-        ["文字 7", image_path],
-        ["文字 8", image_path]
-    ]
     
     elements = []
     elements.append(Spacer(1, 20))
@@ -86,4 +76,7 @@ def create_point_pdf(filename):
     
     doc.build(elements, onFirstPage=header, onLaterPages=header)
 
-create_point_pdf("output_table1.pdf")
+    pdf = buffer.getvalue()
+    buffer.close()
+
+    return pdf
