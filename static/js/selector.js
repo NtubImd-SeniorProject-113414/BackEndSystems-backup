@@ -95,6 +95,7 @@ $(document).ready(function() {
                 window.URL.revokeObjectURL(url);
             },
             error: function() {
+                $('#preloaderModal').modal('hide');
                 alert("發生錯誤！");
             }
         });
