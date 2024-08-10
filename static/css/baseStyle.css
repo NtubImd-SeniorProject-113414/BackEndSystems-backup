@@ -57,13 +57,14 @@ header {
 }
 
 
-.content {
+.container-content {
     padding-top: 90px;
     padding-bottom: 20px;
     margin-left: 280px;
     flex: 1;
     overflow-y: auto;
     flex-grow: 1;
+    background-color: #f5f6fa;
 }
 
 .container{
@@ -213,6 +214,7 @@ header img {
     border-color: #1d4f7b;
 }
 
+/* 子选项样式 */
 .sub-option {
     padding-left: 40px;
     font-size: 14px;
@@ -246,28 +248,32 @@ header img {
     font-weight: bold;
 }
 
+/* 動畫 */
 .fa-chevron-down {
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease; /* 將速度調快 */
 }
 
 .fa-chevron-down.open {
     transform: rotate(180deg);
 }
 
+
+
 .sidebar .collapse {
     overflow: hidden;
     transition: height 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
     opacity: 0;
     height: 0;
-    transform: translateY(-10px);
+    transform: translateY(-10px); /* 初始位置稍微上移 */
 }
 
 .sidebar .collapse.show {
     max-height: 500px;
-    height: auto;
+    height: auto; /* 使用 auto 來動態調整高度 */
+    /* 根據需要調整這裡的最大高度 */
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0); /* 滑動到原來的位置 */
 }
 
 .sidebar .collapse.collapsing {
