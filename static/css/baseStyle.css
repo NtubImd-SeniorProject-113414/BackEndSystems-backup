@@ -1,7 +1,7 @@
 body,
 html {
     font-family: 'Roboto', sans-serif;
-    background-color: #F4F3EF;
+    background-color: #f5f6fa;
     margin: 0;
     padding: 0;
     font-size: 16px;
@@ -213,7 +213,6 @@ header img {
     border-color: #1d4f7b;
 }
 
-/* 子选项样式 */
 .sub-option {
     padding-left: 40px;
     font-size: 14px;
@@ -247,32 +246,28 @@ header img {
     font-weight: bold;
 }
 
-/* 動畫 */
 .fa-chevron-down {
-    transition: transform 0.2s ease; /* 將速度調快 */
+    transition: transform 0.2s ease;
 }
 
 .fa-chevron-down.open {
     transform: rotate(180deg);
 }
 
-
-
 .sidebar .collapse {
     overflow: hidden;
     transition: height 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
     opacity: 0;
     height: 0;
-    transform: translateY(-10px); /* 初始位置稍微上移 */
+    transform: translateY(-10px);
 }
 
 .sidebar .collapse.show {
     max-height: 500px;
-    height: auto; /* 使用 auto 來動態調整高度 */
-    /* 根據需要調整這裡的最大高度 */
+    height: auto;
     opacity: 1;
     visibility: visible;
-    transform: translateY(0); /* 滑動到原來的位置 */
+    transform: translateY(0);
 }
 
 .sidebar .collapse.collapsing {
