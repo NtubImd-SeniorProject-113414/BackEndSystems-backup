@@ -7,18 +7,23 @@ from backendApp.middleware import line_verify_2
 from backendApp.models import Patient
 from lineIntegrations.module.lineVerify import getLineUserUidByToken
 
-@line_verify_2
-@csrf_exempt
+api_key = 'sk-e_wRH2kA8wffZE-tLbTzXKMN2AViVkixiLaz0i6wrbT3BlbkFJeqrmFH_NA9K09sgd5WI_yI6PQnTHF8xhONkisiXq8A'
+# @line_verify_2
+# @csrf_exempt
 def sendMessageToOpenAi(request, *args, **kwargs):
     if request.method == 'POST':
         patient_id = kwargs.get('patient_id')
         data = json.loads(request.body)
+
+        print(data)
+        openai.api_key = api_key
+
         transcript = "用繁體中文回答" + data.get('transcript', '')
-        client = None
-        response = client.chat.completions.create(
+
+        response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": transcript}],
-            stream=False,
+            stream=False
         )
         if response and response.choices:
             message = response.choices[0].message
