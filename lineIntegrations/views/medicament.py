@@ -7,7 +7,6 @@ from backendApp.middleware import line_verify_2
 from backendApp.models import Patient
 from lineIntegrations.module.lineVerify import getLineUserUidByToken
 
-api_key = 'sk-e_wRH2kA8wffZE-tLbTzXKMN2AViVkixiLaz0i6wrbT3BlbkFJeqrmFH_NA9K09sgd5WI_yI6PQnTHF8xhONkisiXq8A'
 # @line_verify_2
 # @csrf_exempt
 def sendMessageToOpenAi(request, *args, **kwargs):
