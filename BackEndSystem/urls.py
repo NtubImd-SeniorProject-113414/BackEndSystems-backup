@@ -114,6 +114,6 @@ urlpatterns = [
     #機器人
     path('robot_management/robot_manager', medicine.finish_medicine_demand, name='robot_manager'),
     path('robot_management/stop_point', robot_management.stop_point, name='stop_point'),
-    path('robot_management/turn_point_manager', medicine.finish_medicine_demand, name='turn_point_manager'),
+    path('robot_management/turn_point_manager', robot_management.turn_point, name='turn_point_manager'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
