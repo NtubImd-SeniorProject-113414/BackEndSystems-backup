@@ -22,53 +22,29 @@
 
   {% if page_obj %}
   {% for item in patients_with_forms %}
-  <div class="patient-card">
-    <div class="patient-header">
-      <h3>{{ item.patient.patient_name }}</h3>
-      <div class="action-buttons">
-        <!-- 触发模态框 -->
-        <a href="#" class="bi bi-pencil-square" title="修改" data-bs-toggle="modal"
-          data-bs-target="#editPatientModal{{ item.patient.patient_id }}"></a>
+    <div class="patient-card">
+      <div class="patient-header">
+        <h3>{{ item.patient.patient_name }}</h3>
+        <div class="action-buttons">
+          <a href="#" class="bi bi-pencil-square" title="修改" data-bs-toggle="modal"
+            data-bs-target="#editPatientModal{{ item.patient.patient_id }}"></a>
 
-        <!-- 删除按钮 -->
-        <form action="{% url 'delete_patient' item.patient.patient_id %}" method="post" class="d-inline">
-          {% csrf_token %}
-          <button type="submit" class="bi bi-trash" title="刪除" onclick="return confirm('確定要刪除這位被照護者嗎？');"></button>
-        </form>
+          <form action="{% url 'delete_patient' item.patient.patient_id %}" method="post" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="bi bi-trash" title="刪除" onclick="return confirm('確定要刪除這位被照護者嗎？');"></button>
+          </form>
+        </div>
+      </div>
+      <div class="patient-details">
+        <div><span>出生日期:</span> {{ item.patient.patient_birth }}</div>
+        <div><span>電話:</span> {{ item.patient.patient_number }}</div>
+        <div><span>身分證字號:</span> {{ item.patient.patient_idcard }}</div>
+        <div><span>創建時間:</span> {{ item.patient.created_time }}</div>
       </div>
     </div>
-    <div class="patient-details">
-      <div><span>出生日期:</span> {{ item.patient.patient_birth }}</div>
-      <div><span>電話:</span> {{ item.patient.patient_number }}</div>
-      <div><span>身分證字號:</span> {{ item.patient.patient_idcard }}</div>
-      <div><span>創建時間:</span> {{ item.patient.created_time }}</div>
-    </div>
+    {% include 'modal/edit_modal.html' with form=item.form item_id=item.patient.patient_id item_title='被照護者' %}
 
-    <!-- 编辑模态框 -->
-  </div>
-<div class="modal fade" id="editPatientModal{{ item.patient.patient_id }}" tabindex="-1"
-    aria-labelledby="editPatientModalLabel{{ item.patient.patient_id }}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content no-hover-effect">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editPatientModalLabel{{ item.patient.patient_id }}">修改被照護者資料</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="{% url 'edit_patient' item.patient.patient_id %}" id="edit-form-{{ item.patient.patient_id }}" class="edit-form">
-                    {% csrf_token %}
-                    {{ item.form.as_p }}
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success save-btn">儲存更改</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消更改</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-  {% endfor %}
+{% endfor %}
 
   <div class="pagination justify-content-center">
     {% if page_obj.has_previous %}
