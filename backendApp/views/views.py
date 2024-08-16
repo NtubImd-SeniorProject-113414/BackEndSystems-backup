@@ -55,7 +55,6 @@ def patient_manager(request):
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
     
-    # 构造一个包含患者和表单的列表
     patients_with_forms = [
         {
             'patient': patient,

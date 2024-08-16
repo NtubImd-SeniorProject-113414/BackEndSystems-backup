@@ -42,7 +42,7 @@
         <div><span>創建時間:</span> {{ item.patient.created_time }}</div>
       </div>
     </div>
-    {% include 'modal/edit_modal.html' with form=item.form item_id=item.patient.patient_id item_title='被照護者' %}
+    {% include 'modal/edit_modal.html' with form=item.form item_id=item.patient.patient_id item_title='被照護者資料' url_name='edit_patient' %}
 
 {% endfor %}
 
