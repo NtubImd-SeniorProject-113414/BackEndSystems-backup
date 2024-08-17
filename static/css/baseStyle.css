@@ -27,29 +27,20 @@ header {
     z-index: 3000;
 }
 
-
-
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 5000;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
+#preloaderModal {
+    z-index: 9999;
+    /* 确保模态框的 z-index 比较高 */
 }
 
 .modal {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
-    z-index: 6000;
 }
 
 .modal-content {
     background-color: white;
     padding: 20px;
-    z-index: 6000;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border: none;
@@ -67,7 +58,7 @@ header {
     background-color: #f5f6fa;
 }
 
-.container{
+.container {
     min-height: 850px;
 }
 
@@ -250,7 +241,8 @@ header img {
 
 /* 動畫 */
 .fa-chevron-down {
-    transition: transform 0.2s ease; /* 將速度調快 */
+    transition: transform 0.2s ease;
+    /* 將速度調快 */
 }
 
 .fa-chevron-down.open {
@@ -264,16 +256,19 @@ header img {
     transition: height 0.4s ease, opacity 0.4s ease, transform 0.4s ease;
     opacity: 0;
     height: 0;
-    transform: translateY(-10px); /* 初始位置稍微上移 */
+    transform: translateY(-10px);
+    /* 初始位置稍微上移 */
 }
 
 .sidebar .collapse.show {
     max-height: 500px;
-    height: auto; /* 使用 auto 來動態調整高度 */
+    height: auto;
+    /* 使用 auto 來動態調整高度 */
     /* 根據需要調整這裡的最大高度 */
     opacity: 1;
     visibility: visible;
-    transform: translateY(0); /* 滑動到原來的位置 */
+    transform: translateY(0);
+    /* 滑動到原來的位置 */
 }
 
 .sidebar .collapse.collapsing {
@@ -424,4 +419,61 @@ header img {
 
 #preloaderModal {
     z-index: 9999;
+}
+
+.modal-header {
+    background-color: #007bff;
+    color: white;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modal-footer .btn {
+    border-radius: 25px;
+    padding: 10px 20px;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="date"],
+select {
+    border-radius: 50px;
+    border: 1px solid #ced4da;
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: #495057;
+    background-color: #f1f3f5;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus,
+select:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: 0;
 }
