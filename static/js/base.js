@@ -40,9 +40,13 @@ $(document).ready(function () {
     
     $(window).on('pageshow', function (event) {
         if (event.originalEvent.persisted) {
-            $('#preloaderModal').modal('hide');
+            $('.modal').modal('hide');
+            location.reload();
         }
     });
     
+    $('#preloaderModal').on('show.bs.modal', function () {
+        $(this).css('z-index', 9999);
+        $('.modal-backdrop').last().css('z-index', 9998);
+    });
 });
-
