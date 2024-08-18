@@ -331,8 +331,12 @@ class Vehicle(models.Model):
 class ActionType(models.Model):
     action_type_id = models.AutoField(primary_key=True)
     action_type_name = models.CharField(max_length=10)
+    action_type_display = models.CharField(max_length=10)
 
-# QR Code 掃描點 (停靠點和轉彎點)
+    def __str__(self):
+        return self.action_type_display
+
+# QR Code 掃描點 (停靠點和事件管理)
 class QRCodePoint(models.Model):
     qr_id = models.AutoField(primary_key=True)
     qr_code_image = models.CharField(max_length=100)  # 掃描點的名稱
@@ -349,10 +353,11 @@ class DeliveryAssignment(models.Model):
 # 轉向表 (表示左右轉)
 class TurnPoint(models.Model):
     turn_point_id = models.AutoField(primary_key=True)
+    turn_point_name = models.CharField(max_length=100)
     qr_point = models.ForeignKey(QRCodePoint, on_delete=models.SET_NULL, null=True, blank=True)
 
 # 路線條件表 (記錄某路線的站點和轉向條件)
 class RouteCondition(models.Model):
     route_condition_id = models.AutoField(primary_key=True)
-    patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, on_delete=models.SET_NULL, null=True, blank=True)
     turn_point = models.ForeignKey(TurnPoint, on_delete=models.CASCADE)
