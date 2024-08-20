@@ -74,8 +74,7 @@
         </div>
 
     </header>
-    <!-- 灰色背景遮罩 -->
-    <div class="overlay" onclick="toggleSidebar()"></div> <!-- 點擊遮罩也可以關閉側邊欄 -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
 
     <div class="container-fluid">
         <nav class="sidebar">
@@ -106,6 +105,16 @@
             {% endfor %}
         </nav>
         <main class="container-content">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             {% block content %}
             {% endblock %}
         </main>
