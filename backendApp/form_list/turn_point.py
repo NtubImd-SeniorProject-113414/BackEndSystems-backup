@@ -28,30 +28,39 @@ class TurnPointForm(forms.ModelForm):
         fields = ['turn_point_name', 'action_type', 'patient']
 
     def __init__(self, *args, **kwargs):
+        patient = kwargs.pop('patient', None)
+        action = kwargs.pop('action', None)
+
         super(TurnPointForm, self).__init__(*args, **kwargs)
             
         self.fields['turn_point_name'].label = "事件名稱"
         self.fields['patient'].label = "觸發條件(對象)"
         self.fields['action_type'].label = "執行動作"
 
+        if patient:
+            self.fields['patient'].initial = patient
+        if action:
+            self.fields['action_type'].initial = action
+
     def save(self, commit=True):
         turn_point = super(TurnPointForm, self).save(commit=False)
 
         if commit:
-            turn_point.save() 
+            turn_point.save()
 
             qr_code_data = f"TurnPoint-{turn_point.turn_point_id}"
             qr_code_image_path = generate_qr_code(qr_code_data)
 
-            action_type = self.cleaned_data['action_type']
-
             qr_code_point = QRCodePoint.objects.create(
                 qr_code_image=qr_code_image_path,
-                action_type=action_type
+                action_type=self.cleaned_data['action_type']
             )
 
             turn_point.qr_point = qr_code_point
             turn_point.save()
+
+            related_conditions = RouteCondition.objects.filter(turn_point=turn_point)
+            related_conditions.delete()
 
             patients = self.cleaned_data['patient']
             for patient in patients:

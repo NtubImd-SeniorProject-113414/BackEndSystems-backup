@@ -36,9 +36,12 @@ def turn_point(request):
 
     turn_points_with_forms = [
         {
-            'turn_point': turn_point, 
+            'turn_point': turn_point,
+            'patients': (patients := RouteCondition.objects.filter(turn_point=turn_point).values_list('patient__patient_id', 'patient__patient_name')) and [patient_name for patient_id, patient_name in patients],
             'form': TurnPointForm(
-                instance=turn_point
+                instance=turn_point,
+                patient=[patient_id for patient_id, patient_name in patients],
+                action=turn_point.qr_point.action_type.action_type_id
             )
         }
         for turn_point in turn_points
