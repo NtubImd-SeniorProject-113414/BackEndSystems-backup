@@ -39,8 +39,8 @@
                             <p class="card-text">觸發動作: {{ item.turn_point.qr_point.action_type.action_type_display }}</p>
         
                             <p class="card-text">指定被照護者:
-                                {% for patient in turn_point.patient.all %}
-                                    {{ patient.patient_name }}{% if not forloop.last %}, {% endif %}
+                                {% for patient in item.patients %}
+                                    {{ patient }}{% if not forloop.last %}, {% endif %}
                                 {% endfor %}
                             </p>
         
