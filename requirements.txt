@@ -5,10 +5,11 @@ paho-mqtt
 django-bootstrap4
 django-crispy-forms
 crispy-bootstrap5
-openai
+openai==0.28
 django-cors-headers
 channels
 mysqlclient
 Pillow
+edge_tts
 qrcode[pil]
 reportlab
