@@ -74,6 +74,7 @@ urlpatterns = [
     path('linebot/medicament', medicament.getVerifyPage),
     path('medicament/api/verify', medicament.setSessionByToken),
     path('medicament/api/openAi', medicament.sendMessageToOpenAi),
+    path('medicament/api/getVoice', medicament.textToSpeech),
 
     # path('add_purchase/', add_purchase, name='add_purchase'),
     # path('add_medicine/', add_medicine, name='add_medicine'),
