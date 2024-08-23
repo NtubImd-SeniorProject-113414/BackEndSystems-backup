@@ -41,8 +41,8 @@ def function_menu(request):
             'mode': 'multi',
             'items': [
                 {'url': 'robot_manager', 'name': '機器人管理', 'icon': 'fa-solid fa-robot'},
-                {'url': 'stop_point', 'name': ' 運送點管理', 'icon': 'fa-solid fa-briefcase'},
-                {'url': 'turn_point_manager', 'name': ' 轉彎點管理', 'icon': 'fa-solid fa-magnet'}
+                {'url': 'stop_point', 'name': ' 運送點條碼列印', 'icon': 'fa-solid fa-briefcase'},
+                {'url': 'turn_point_manager', 'name': ' 事件管理與條碼列印', 'icon': 'fa-solid fa-magnet'}
             ]
         },
         {

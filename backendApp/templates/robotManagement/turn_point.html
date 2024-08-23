@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>事件管理</title>
+    <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <style>
+        .card {
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-weight: bolder;
+        }
+        body{
+            background-color: #f5f6fa;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">事件管理</h1>
+        <form method="post" id="print-qrcode-form-all" novalidate>
+            {% csrf_token %}
+            <div class="form-main" id="print-qrcode-form">
+                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                    新增事件管理
+                </a>
+                <button type="submit" class="btn btn-success">匯出成PDF</button>
+            </form>
+        {% include 'modal/add_modal.html' with form=add_form item_title='事件管理' url_name='add_turn_point' %}
+        <br><br>
+        <h2 class="mb-4">已新增的事件：</h2>
+        <div id="timeSlots" class="row">
+            {% for item in turn_points_with_forms %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ item.turn_point.turn_point_name }}</h5>
+                            
+                            <p class="card-text">觸發動作: {{ item.turn_point.qr_point.action_type.action_type_display }}</p>
+        
+                            <p class="card-text">指定被照護者:
+                                {% for patient in item.patients %}
+                                    {{ patient }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+        
+                            <div class="action-buttons">
+                                <a href="#" class="bi bi-pencil-square" title="修改" data-bs-toggle="modal" data-bs-target="#editModal{{ item.turn_point.turn_point_id }}"></a>
+                      
+                                <form action="{% url 'delete_turn_point' item.turn_point.turn_point_id %}" method="post" class="d-inline">
+                                  {% csrf_token %}
+                                  <button type="submit" class="bi bi-trash" title="刪除" onclick="return confirm('確定要刪除這個事件嗎？');"></button>
+                                </form>
+                            </div>
+
+                            {% include 'modal/edit_modal.html' with form=item.form item_id=item.turn_point.turn_point_id item_title='事件' url_name='edit_turn_point' %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="/static/js/modal.js"></script>
+{% endblock %}
+
