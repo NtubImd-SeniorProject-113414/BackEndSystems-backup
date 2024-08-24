@@ -51,7 +51,9 @@ async def textToSpeech(request):
         # 初始化 TTS 引擎
         communicate = edge_tts.Communicate(text=text, voice=voice)
 
-        audio_path = "audio/output2.wav"  # 指定音频文件的存储路径
+        audio_path = "audio/output2.mp3"  # 指定音频文件的存储路径
+        
+        command = 'rhubarb -f json -o {輸出路徑+檔名} {音頻路徑 (限制.wav檔案)} -r phonetic'
         await communicate.save(audio_path)
 
     #     response_data = {
