@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 
@@ -7,8 +7,28 @@ from backendApp.decorator import group_required
 from backendApp.forms import SelectorForm
 from backendApp.form_list.turn_point import TurnPointForm
 from backendApp.middleware import login_required
-from backendApp.models import RouteCondition, TurnPoint
+from backendApp.models import RouteCondition, TurnPoint, Vehicle
 from backendApp.module.pointPrint import create_point_pdf
+
+@login_required
+@group_required('caregiver')
+def robot_manager(request):
+    robots = Vehicle.objects.all()
+    return render(request, 'robotManagement/rebot_manager.html', {'robots': robots})
+
+@login_required
+@group_required('caregiver')
+def get_robots_data(request):
+    robots = Vehicle.objects.all()
+    robot_data = [{
+        'vehicle_id': robot.vehicle_id,
+        'vehicle_name': robot.vehicle_name,
+        'vehicle_mac_address': robot.vehicle_mac_address,
+        'vehicle_status': robot.vehicle_status.vehicle_state_html_style,
+        'created_time': robot.created_time.strftime('%Y-%m-%d %H:%M:%S'),
+    } for robot in robots]
+    
+    return JsonResponse({'robots': robot_data})
 
 @login_required
 @group_required('caregiver')

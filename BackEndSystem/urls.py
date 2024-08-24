@@ -112,7 +112,8 @@ urlpatterns = [
     path('medicine_order_management/finish/<str:card_code>', medicine.finish_medicine_demand, name='finish_medicine_order'),
 
     #機器人
-    path('robot_management/robot_manager', medicine.finish_medicine_demand, name='robot_manager'),
+    path('robot_management/robot_manager', robot_management.robot_manager, name='robot_manager'),
+    path('api/get-robots-data/', robot_management.get_robots_data, name='get_robots_data'),
     path('robot_management/stop_point', robot_management.stop_point, name='stop_point'),
     path('robot_management/turn_point_manager', robot_management.turn_point, name='turn_point_manager'),
     path('robot_management/turn_point_manager/add', robot_management.add_turn_point, name='add_turn_point'),
