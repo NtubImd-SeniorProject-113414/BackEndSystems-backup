@@ -320,10 +320,13 @@ class Order(models.Model):
 class VehicleStatus(models.Model):
     vehicle_status_code = models.AutoField(primary_key=True)
     vehicle_status_name = models.CharField(max_length=10)
+    vehicle_state_html_style = models.CharField(max_length=100)
 
 # 車輛表
 class Vehicle(models.Model):
     vehicle_id = models.AutoField(primary_key=True)
+    vehicle_name = models.CharField(max_length=100)
+    vehicle_mac_address = models.CharField(max_length=100, unique=True)
     vehicle_status = models.ForeignKey(VehicleStatus, on_delete=models.CASCADE, db_column='vehicle_status_code')
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
