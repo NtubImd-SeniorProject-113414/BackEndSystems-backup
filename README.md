@@ -12,10 +12,12 @@ python manage.py runserver
 找繁體中文 => zh-TW開頭
 https://gist.github.com/BettyJJ/17cbaa1de96235a7f5773b8690a20462
 
-# 透過語音轉音頻對至音軌zip檔案載點
-https://github.com/DanielSWolf/rhubarb-lip-sync/releases
+*** 以下兩者需自行下載，並設置環境變數，否則無法執行react虛擬人對話運行 ***
 
-# wav檔轉換用zip檔載點
+# 語音轉檔套件下載點  ffmpeg
 https://www.ffmpeg.org/download.html
+
+# wav轉嘴型json檔案套件下載點 Rhubarb
+https://github.com/DanielSWolf/rhubarb-lip-sync/releases
 
 => 請參閱安裝教學 https://vocus.cc/article/64701a2cfd897800014daed0
