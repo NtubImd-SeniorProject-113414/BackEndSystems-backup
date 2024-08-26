@@ -151,8 +151,3 @@ h2 {
   margin-top: 40px;
 }
 
-.modal-content {
-  background-color:white; /* 設置背景透明 */
-  padding: 0;                   /* 移除內距 */
-  border: none;                 /* 移除邊框 */
-}
