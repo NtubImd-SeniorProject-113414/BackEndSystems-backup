@@ -331,11 +331,21 @@ header img {
 
 @media (max-width: 376px) {
 
+    .sidebar {
+        left: -100%; /* 隐藏侧边栏 */
+        width: 100%; /* 侧边栏占满全屏宽度 */
+        transition: left 0.3s ease;
+    }
+
     .header-logo {
         font-size: 14px;
         font-weight: bold;
         display: flex;
         align-items: center;
+    }
+
+    .container-content {
+        margin-left: 0; /* 移除左边距，让内容充满屏幕 */
     }
 
 
@@ -361,6 +371,10 @@ header img {
 
     .sidebar.show {
         left: 0;
+    }
+
+    .container-content {
+        margin-left: 0; /* 移除左边距，让内容充满屏幕 */
     }
 
     .content {
@@ -403,7 +417,7 @@ header img {
         top: 60px;
         bottom: 0;
         width: 260px;
-        height: auto;
+        height: 100%; /* Full height */
     }
 
     .hamburger-menu {
