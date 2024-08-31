@@ -39,8 +39,24 @@ socket.onclose = function(event) {
     console.warn('WebSocket 連接已被關閉：', event);
 };
 
+
+
 function showalarm(message, isImage = false) {
     document.getElementById('alarmMessage').innerText = message;
+
+    $('#alarmModal').on('show.bs.modal', function () {
+        $(this).css('z-index', 9999);
+        setTimeout(function () {
+            $('.modal-backdrop').last().attr('data-modal-id', 'alarmModal');
+            $('.modal-backdrop[data-modal-id="alarmModal"]').css('z-index', 9998);
+        }, 0);
+    });
+    $('#alarmModal').on('hidden.bs.modal', function() {
+        if (alarmSound) {
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+        }
+    });
 
     const imageElement = document.getElementById('receivedImage');
     if (imageElement) {
@@ -57,10 +73,4 @@ function showalarm(message, isImage = false) {
     }
 
     $('#alarmModal').modal('show');
-    $('#alarmModal').on('hidden.bs.modal', function() {
-        if (alarmSound) {
-            alarmSound.pause();
-            alarmSound.currentTime = 0;
-        }
-    });
 }
