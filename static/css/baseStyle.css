@@ -25,12 +25,7 @@ header {
     justify-content: space-between;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 3000;
-}
-
-#preloaderModal {
-    z-index: 9999;
-    /* 确保模态框的 z-index 比较高 */
-}
+} 
 
 .modal {
     display: none;

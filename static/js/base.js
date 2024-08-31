@@ -46,8 +46,8 @@ $(document).ready(function () {
     });
     
     $('#preloaderModal').on('show.bs.modal', function () {
-        $(this).css('z-index', 9999);
-        $('.modal-backdrop').last().css('z-index', 9998);
+        $(this).css('z-index', 9997);
+        $('.modal-backdrop').last().css('z-index', 9996);
     });
 
     $('#print-qrcode-form-all').submit(function(event) {
