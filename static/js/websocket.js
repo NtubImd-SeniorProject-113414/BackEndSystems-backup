@@ -11,8 +11,8 @@ socket.onmessage = function(event) {
     if (typeof event.data === 'string') {
         const parsedData = JSON.parse(event.data);
 
-        if (parsedData.type === 'alert') {
-            showAlert(parsedData.message);
+        if (parsedData.type === 'alarm') {
+            showalarm(parsedData.message);
         }
     } else if (event.data instanceof ArrayBuffer) {
         const blob = new Blob([event.data], { type: 'image/png' });
@@ -23,7 +23,7 @@ socket.onmessage = function(event) {
             imageElement.src = url;
         }
 
-        showAlert('收到新圖片！', true);
+        showalarm('收到新圖片！', true);
     }
 
     if (showModal) {
@@ -39,8 +39,8 @@ socket.onclose = function(event) {
     console.warn('WebSocket 連接已被關閉：', event);
 };
 
-function showAlert(message, isImage = false) {
-    document.getElementById('alertMessage').innerText = message;
+function showalarm(message, isImage = false) {
+    document.getElementById('alarmMessage').innerText = message;
 
     const imageElement = document.getElementById('receivedImage');
     if (imageElement) {
@@ -51,5 +51,16 @@ function showAlert(message, isImage = false) {
         }
     }
 
+    const alarmSound = document.getElementById('alarmSound');
+    if (alarmSound) {
+        alarmSound.play();
+    }
+
     $('#alarmModal').modal('show');
+    $('#alarmModal').on('hidden.bs.modal', function() {
+        if (alarmSound) {
+            alarmSound.pause();
+            alarmSound.currentTime = 0;
+        }
+    });
 }
