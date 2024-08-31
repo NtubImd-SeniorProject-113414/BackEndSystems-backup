@@ -8,10 +8,12 @@ from backendApp.views.views import *
 from backendApp.login import login_view,logout_view
 from backendApp.views import userManagement, card, order_backend, medicine
 from lineIntegrations.views import linebot, verify, order, medicament, notify
+from django.views.generic import TemplateView
 
 urlpatterns = [
-    path('', index),
-    path('index', index, name='index'),
+    path(r'', TemplateView.as_view(template_name="index.html")),
+    # path('', index),
+    # path('index', index, name='index'),
     path('admin', admin.site.urls),
     path('login', login_view, name='login'),
     path('logout', logout_view, name='logout'),

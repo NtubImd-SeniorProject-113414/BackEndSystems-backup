@@ -63,6 +63,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
+            os.path.join(BASE_DIR, 'frontendApp/dist'),
             os.path.join(BASE_DIR, 'backendApp/templates'),
             os.path.join(BASE_DIR, 'lineIntegrations/templates'),
         ],
@@ -139,6 +140,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "frontendApp/dist/static"),
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'lineIntegrations/static'),
 ]
