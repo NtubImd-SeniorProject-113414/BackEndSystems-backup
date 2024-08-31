@@ -1,0 +1,98 @@
+#alarmModal{
+    padding: 2rem;
+}
+#alarmModal.modal-confirm {	
+	color: #8e8e8e;
+	width: 450px;
+	margin: 30px auto;
+}
+#alarmModal .modal-confirm .modal-content {
+	padding: 20px;
+	border-radius: 5px;		
+	border: none;
+}
+#alarmModal .modal-confirm .alarmModal-modal-header {
+	border-bottom: none;   
+    position: relative;
+	text-align: center;
+	border-radius: 5px 5px 0 0;
+}
+#alarmModal .modal-confirm h4 {
+	color: #545557;
+	text-align: center;
+	font-size: 30px;
+	margin: 0 0 25px;
+}
+#alarmModal .modal-confirm .form-control, #alarmModal .modal-confirm .btn {
+	min-height: 40px;
+	border-radius: 3px; 
+}
+#alarmModal .modal-confirm .close {
+	background: #c0c3c8;
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	color: #fff;
+	text-shadow: none;
+	opacity: 0.5;
+	width: 22px;
+	height: 22px;
+	border-radius: 20px;
+	font-size: 16px;
+}
+#alarmModal .modal-confirm .close span {
+	position: relative;
+	top: -1px;
+}
+#alarmModal .modal-confirm .close:hover {
+	opacity: 0.8;
+}
+#alarmModal .modal-confirm .icon-box {
+	color: #f95858;		
+	display: inline-block;
+	z-index: 9;
+	text-align: center;
+	position: relative;
+	transform: scale(1.5);
+}
+@keyframes fadeInOut {
+    0%, 100% { 
+        opacity: 0; 
+    }
+    50% { 
+        opacity: 1; 
+    }
+}
+
+#alarmModal .modal-confirm .icon-box i:first-child {
+    font-size: 100px;
+    animation: fadeInOut 0.4s infinite;
+}
+
+#alarmModal .modal-confirm .icon-box i:last-child {
+    font-size: 26px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    top: 44px;
+    animation: fadeInOut 0.4s infinite;
+}
+
+#alarmModal .modal-confirm .btn {
+	color: #fff;
+	border-radius: 4px;
+	background: #e9534e;
+	text-decoration: none;
+	transition: all 0.4s;
+	line-height: normal;
+	border-radius: 3px;
+	margin: 30px 0 20px;
+	padding: 6px 20px;
+	min-width: 150px;
+	border: none;
+}
+#alarmModal .modal-confirm .btn:hover, #alarmModal .modal-confirm .btn:focus {
+	background: #a13b38;
+	outline: none;
+}

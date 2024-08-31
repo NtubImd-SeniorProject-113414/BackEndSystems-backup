@@ -45,10 +45,10 @@ function showalarm(message, isImage = false) {
     document.getElementById('alarmMessage').innerText = message;
 
     $('#alarmModal').on('show.bs.modal', function () {
-        $(this).css('z-index', 9999);
+        $(this).css('z-index', 8888);
         setTimeout(function () {
             $('.modal-backdrop').last().attr('data-modal-id', 'alarmModal');
-            $('.modal-backdrop[data-modal-id="alarmModal"]').css('z-index', 9998);
+            $('.modal-backdrop[data-modal-id="alarmModal"]').css('z-index', 8887);
         }, 0);
     });
     $('#alarmModal').on('hidden.bs.modal', function() {
