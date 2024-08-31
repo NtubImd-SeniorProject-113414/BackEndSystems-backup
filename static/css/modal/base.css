@@ -1,0 +1,26 @@
+.modal-header {
+    background-color: #51b2b7; 
+}
+
+.modal-content {
+    background-color:white;
+    padding: 0;                   
+    border: none;                 
+  }
+
+
+.btn-success {
+    background-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+}
+
+.btn-secondary {
+    background-color: #D04F57;
+}
+
+.btn-secondary:hover {
+    background-color: #c51924;
+}
