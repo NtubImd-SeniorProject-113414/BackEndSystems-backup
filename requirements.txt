@@ -7,7 +7,7 @@ django-crispy-forms
 crispy-bootstrap5
 openai==0.28
 django-cors-headers
-channels
+channels==3.0.4
 mysqlclient
 Pillow
 edge_tts

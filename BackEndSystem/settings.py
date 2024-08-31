@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'corsheaders',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,16 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'BackEndSystem.urls'
+
+# Channels 設置
+ASGI_APPLICATION = 'BackEndSystem.asgi.application'
+
+# 使用 InMemoryChannelLayer 作為通道層
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 TEMPLATES = [
     {
