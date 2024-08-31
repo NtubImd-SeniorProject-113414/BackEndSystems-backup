@@ -29,17 +29,20 @@
 </head>
 
 <body>
-    <div class="modal fade" id="alarmModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel"
+    <div class="modal fade" id="alarmModal" tabindex="-1" role="dialog" aria-labelledby="alarmModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="alertModalLabel">警告</h5>
+                    <h5 class="modal-title" id="alarmModalLabel">警告</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p id="alertMessage">收到新消息！</p>
+                    <p id="alarmMessage">收到新消息！</p>
                     <img id="receivedImage" style="max-width: 100%; display: none;" alt="接收到的圖片">
+                    <audio id="alarmSound" loop style="display: none;">
+                        <source src="{% static 'audio/alarm.mp3' %}" type="audio/mpeg">
+                    </audio>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">關閉</button>
@@ -126,7 +129,7 @@
             {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}">
+                <div class="alarm {% if message.tags %}alarm-{{ message.tags }}{% else %}alarm-info{% endif %}">
                     {{ message }}
                 </div>
                 {% endfor %}
