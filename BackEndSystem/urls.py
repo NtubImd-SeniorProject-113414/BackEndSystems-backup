@@ -6,7 +6,7 @@ from backendApp.views.notify import edit_notify, notify_manager, send_notify, de
 from backendApp.views.order_timeSlot import timeSlots_manager, create_timeSlot, edit_timeSlot, delete_timeSlot
 from backendApp.views.views import *
 from backendApp.login import login_view,logout_view
-from backendApp.views import userManagement, card, order_backend, medicine
+from backendApp.views import userManagement, card, order_backend, medicine, rebot
 from lineIntegrations.views import linebot, verify, order, medicament, notify
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     path('admin', admin.site.urls),
     path('login', login_view, name='login'),
     path('logout', logout_view, name='logout'),
+    path('rebot', rebot.robot_main, name='rebot'),
     path('user_manager/',userManagement.user_manager, name='user_manager'),
     path('user_manager/create', userManagement.create_user, name='add_user'),
     path('user_manager/edit/<int:user_id>/', userManagement.edit_user, name='edit_user'),
