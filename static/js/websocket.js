@@ -9,10 +9,14 @@ socket.onmessage = function(event) {
     let showModal = true;
 
     if (typeof event.data === 'string') {
-        const parsedData = JSON.parse(event.data);
-
-        if (parsedData.type === 'alarm') {
-            showalarm(parsedData.message);
+        try {
+            const parsedData = JSON.parse(event.data);  // 解析 JSON 資料
+            if (parsedData.title) {
+                receivedTitle = parsedData.title;  // 儲存 title 資訊
+                showalarm(receivedTitle, false);
+            }
+        } catch (error) {
+            console.error('無法解析 JSON 資料：', error);
         }
     } else if (event.data instanceof ArrayBuffer) {
         const blob = new Blob([event.data], { type: 'image/png' });
