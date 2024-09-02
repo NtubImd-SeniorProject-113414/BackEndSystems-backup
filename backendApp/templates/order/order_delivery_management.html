@@ -26,7 +26,6 @@
         <th>餐點及數量</th>
         <th>點餐時間</th>
         <th>訂餐人</th>
-        <th>床位</th>
         <th>訂單狀態</th>
         <th>操作</th>
       </tr>
@@ -38,7 +37,6 @@
         <td>{{ order.course.course_name }} x {{ order.order_quantity }}</td>
         <td>{{ order.order_time }}</td>
         <td>{{ order.patient.patient_name }}</td>
-        <td>{{ order.first_bed_number }}</td>
         {% if order.order_state.order_state_code == 1 %}
           <td><p class="un-delivery">{{ order.order_state.order_state_name }}</p></td>
         {% elif order.order_state.order_state_code == 2 %}
@@ -46,10 +44,10 @@
         {% endif %}
         <td>
           {% if order.order_state.order_state_code == 1 %}
-            <a href="{% url 'delivery_order' order.rfidCard_code %}" class="btn btn-sm btn-success">送餐</a>
+            <a href="#" class="btn btn-sm btn-success">送餐</a>
             <a href="{% url 'cancel_order' order.order_id %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要取消訂單嗎？');">取消</a>
           {% elif order.order_state.order_state_code == 2 %}
-            <a href="{% url 'delivery_order' order.rfidCard_code %}" class="btn btn-sm btn-success" style="background-color: #a9a9a9; border:none">送餐</a>
+            <a href="#" class="btn btn-sm btn-success" style="background-color: #a9a9a9; border:none">送餐</a>
             <a href="order_delivery_management" class="btn btn-sm btn-danger" onclick="return alert('配送中請勿取消訂單！');" style="background-color: darkgray; border:none">取消</a>
           {% endif %}
         </td>
