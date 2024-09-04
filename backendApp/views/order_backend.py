@@ -21,11 +21,6 @@ def order_list(request):
         Q(order_time__date=date)
     )
     
-    for order in orders:
-        order.first_bed_number = order.patient.bed_set.first().bed_number if order.patient.bed_set.exists() else "未分配"
-        rfid_card = RfidCard.objects.filter(patient_id=order.patient_id).first()
-        order.rfidCard_code = rfid_card.rfidCard_code if rfid_card else "未綁定"
-    
     paginator = Paginator(orders, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -41,9 +36,7 @@ def order_list_history(request):
     orders = Order.objects.filter(
         (Q(order_state__order_state_code=3) | Q(order_state__order_state_code=4))
     )
-    for order in orders:
-        order.first_bed_number = order.patient.bed_set.first().bed_number if order.patient.bed_set.exists() else "未分配"
-
+    print(orders[0].order_state.order_state_code)
 
     paginator = Paginator(orders, 10)
     page_number = request.GET.get('page')

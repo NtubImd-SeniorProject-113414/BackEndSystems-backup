@@ -20,7 +20,6 @@
         <th>餐點及數量</th>
         <th>點餐時間</th>
         <th>訂餐人</th>
-        <th>床位</th>
         <th>訂單狀態</th>
       </tr>
     </thead>
@@ -31,10 +30,9 @@
         <td>{{ order.course.course_name }} x {{ order.order_quantity }}</td>
         <td>{{ order.order_time }}</td>
         <td>{{ order.patient.patient_name }}</td>
-        <td>{{ order.first_bed_number }}</td>
-        {% if orders.order_state.order_state_code == 3 %}
+        {% if order.order_state.order_state_code == 3 %}
           <td><p class="complete">{{ order.order_state.order_state_name }}</p></td>
-        {% elif orders.order_state.order_state_code == 4 %}
+        {% elif order.order_state.order_state_code == 4 %}
           <td><p class="cancel">{{ order.order_state.order_state_name }}</p></td>
         {% endif %}
       </tr>
