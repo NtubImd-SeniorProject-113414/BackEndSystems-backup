@@ -15,7 +15,7 @@ voice_param = "zh-TW-HsiaoChenNeural"
 
 # @line_verify_2
 # @csrf_exempt
-async def sendMessageToOpenAi(request, *args, **kwargs):
+async def chatWithOpenAi(request, *args, **kwargs):
     if request.method == 'POST':
         # patient_id = kwargs.get('patient_id')
         data = json.loads(request.body)
@@ -46,7 +46,7 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
                 convert_mp3_to_wav(audio_path, wav_path)
                 convert_wav_to_lipsyncJson(wav_path, lipsync_path)
         if response_text:
-            audioBase64 = convert_audio_to_base64(audio_path);
+            audioBase64 = convert_audio_to_base64(audio_path)
             lipsync_data = read_json_file(lipsync_path)
             data = {
                 'text': response_text,
@@ -61,6 +61,41 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
             return JsonResponse({'error': '未知錯誤'}, status=405)
     else:
         return JsonResponse({'error': 'Unsupported HTTP method'}, status=405)
+
+async def chatWithOpenAi(request, *args, **kwargs):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        userName = data.get('userName', '')
+
+        if userName:
+            response_text = userName + "您好，"
+            response_role = "assistant"
+            audio_path = "static/audio/output2.mp3"
+            communicate = edge_tts.Communicate(text=response_text, voice=voice_param)
+            await communicate.save(audio_path)
+            
+            wav_path = audio_path.replace('mp3','wav')
+            lipsync_path = wav_path.replace('wav','json')
+            
+            convert_mp3_to_wav(audio_path, wav_path)
+            convert_wav_to_lipsyncJson(wav_path, lipsync_path)
+        if response_text:
+            audioBase64 = convert_audio_to_base64(audio_path)
+            lipsync_data = read_json_file(lipsync_path)
+            data = {
+                'text': response_text,
+                'role': response_role,
+                "audio":  audioBase64,
+                "lipsync": lipsync_data,
+                "facialExpression": "smile",
+                "animation": "Laughing",
+            }
+            return JsonResponse(data)
+        else:
+            return JsonResponse({'error': '未知錯誤'}, status=405)
+    else:
+        return JsonResponse({'error': 'Unsupported HTTP method'}, status=405)
+
 
 @csrf_exempt
 def setSessionByToken(request):
