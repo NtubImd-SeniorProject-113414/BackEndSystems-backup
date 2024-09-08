@@ -2,6 +2,7 @@ from django.apps import AppConfig
 from apscheduler.schedulers.background import BackgroundScheduler
 from transformers import BertTokenizer, BertForSequenceClassification, pipeline
 from django.utils import timezone
+from django.apps import apps
 import torch
 import os
 
@@ -10,6 +11,10 @@ class BackendappConfig(AppConfig):
     name = 'backendApp'
 
     def ready(self):
+        # 檢查是否在主進程中運行，避免重複調度
+        if os.environ.get('RUN_MAIN', None) != 'true':
+            return
+        
         # 使用相對路徑來加載模型
         self.model_path = os.path.join(self.path, 'module', 'emotion')
         self.model = BertForSequenceClassification.from_pretrained(self.model_path)
@@ -34,12 +39,12 @@ class BackendappConfig(AppConfig):
         print("Checking for new ChatLogs to analyze...")
 
         # 使用 apps.get_model 動態加載模型
-        ChatLogs = self.get_model('ChatLogs')
+        ChatLogs = apps.get_model('backendApp', 'ChatLogs')  # 使用 apps 動態獲取模型
 
         # 查詢需要進行情緒分析的聊天紀錄
         chatlogs = ChatLogs.objects.filter(emotion_score__isnull=True)
 
-        # 如果沒有新的聊天紀錄，直接返回，暫停執行
+        # 如果沒有新的聊天紀錄，直接返回
         if not chatlogs.exists():
             print("No new ChatLogs found, pausing...")
             return
@@ -74,4 +79,3 @@ class BackendappConfig(AppConfig):
                 print(f"Updated ChatLog ID {log.chatLog_id} with emotion score {final_emotion}")
             except Exception as e:
                 print(f"Error during sentiment analysis: {e}")
-
