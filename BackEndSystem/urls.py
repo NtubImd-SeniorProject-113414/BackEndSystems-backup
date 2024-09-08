@@ -121,4 +121,8 @@ urlpatterns = [
     path('robot_management/turn_point_manager/edit/<int:turn_point_id>', robot_management.edit_turn_point, name='edit_turn_point'),
     path('robot_management/turn_point_manager/delete/<int:turn_point_id>', robot_management.delete_turn_point, name='delete_turn_point'),
 
+    #情緒管理
+    path('emotion/chatlogs', chatlogs_view, name='chatlogs'),
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
