@@ -9,6 +9,7 @@ from backendApp.login import login_view,logout_view
 from backendApp.views import userManagement, card, order_backend, medicine, rebot, robot_management
 from lineIntegrations.views import linebot, verify, order, medicament, notify
 
+
 urlpatterns = [
     path('', index),
     path('index', index, name='index'),
@@ -123,6 +124,8 @@ urlpatterns = [
 
     #情緒管理
     path('emotion/chatlogs', chatlogs_view, name='chatlogs'),
+    path('emotion/patient_emotions', patient_emotion_view, name='patient_emotions'),
+
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

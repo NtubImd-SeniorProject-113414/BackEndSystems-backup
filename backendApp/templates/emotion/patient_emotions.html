@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static custom_filters %}
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</head>
+<div class="container mt-2">
+    <div class="card shadow-sm">
+        <div class="card-header text-center">
+            <h1 class="mb-0">患者情緒平均分數</h1>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover table-responsive-lg">
+                <thead class="thead-dark text-center">
+                    <tr>
+                        <th scope="col" style="width: 30%;">被照護者</th>
+                        <th scope="col" style="width: 70%;">情緒分數</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                    <tr class="text-center">
+                        <td>{{ patient.patient_name }}</td>
+                        <td>
+                            <span class="emotion-rating">
+                                <!-- 顯示完整愛心 -->
+                                {% for i in patient.full_stars %}
+                                    <i class="bi bi-heart-fill text-{{ patient.avg_emotion_score|emotion_color }}"></i>
+                                {% endfor %}
+                                <!-- 顯示半顆愛心 -->
+                                {% if patient.half_star %}
+                                    <i class="bi bi-heart-half text-{{ patient.avg_emotion_score|emotion_color }}"></i>
+                                {% endif %}
+                                <!-- 顯示空愛心 -->
+                                {% for i in patient.empty_stars %}
+                                    <i class="bi bi-heart text-muted"></i>
+                                {% endfor %}
+                                <!-- 顯示數字情緒分數 -->
+                                <span class="ml-2 text-{{ patient.avg_emotion_score|emotion_color }}">
+                                    {{ patient.avg_emotion_score|floatformat:1 }}
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center">目前沒有患者情緒資料</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icons CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+{% endblock %}

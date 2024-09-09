@@ -11,6 +11,8 @@ from backendApp.forms import  *
 from backendApp.middleware import login_required
 from backendApp.module.sideStock import getSideStockBySidesId
 from backendApp.models import *
+from django.db.models import Avg
+
 
 #首頁
 @group_required('caregiver', 'admin', 'pharmacy')
@@ -371,7 +373,7 @@ def sides_create(request):
     return render(request, 'MealManagement/add_sides.html', {'form': form})
 
 
-#情緒管理所有情緒
+#情緒管理所有情緒紀錄
 @group_required('caregiver')
 @login_required
 def chatlogs_view(request):
@@ -386,3 +388,20 @@ def chatlogs_view(request):
     
     # 將記錄和分頁對象傳遞給模板
     return render(request, 'emotion/chatlogs.html', {'page_obj': page_obj})
+
+# 情緒平均狀況
+@group_required('caregiver')
+@login_required
+def patient_emotion_view(request):
+    # 計算每個患者的平均情緒分數
+    patients = Patient.objects.annotate(avg_emotion_score=Avg('chatlogs__emotion_score')).order_by('-avg_emotion_score')
+
+    # 預設星星數量和邏輯處理
+    for patient in patients:
+        if patient.avg_emotion_score is None:
+            patient.avg_emotion_score = 0  # 預設為0，沒有數據則顯示灰色
+        patient.full_stars = list(range(int(patient.avg_emotion_score)))  # 完整愛心範圍
+        patient.half_star = (patient.avg_emotion_score - int(patient.avg_emotion_score)) >= 0.5  # 半顆愛心
+        patient.empty_stars = list(range(5 - len(patient.full_stars) - (1 if patient.half_star else 0)))  # 空愛心範圍
+
+    return render(request, 'emotion/patient_emotions.html', {'patients': patients})
