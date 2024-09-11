@@ -7,46 +7,138 @@
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
     <style>
-        .table td,
-        .table th {
-            vertical-align: middle;
-            /* 讓內容在單元格中置中 */
+        /* 表單調整 */
+        .filter-form .form-group {
+            margin-right: 15px;
         }
 
-        .table th {
-            background-color: #26a19d;
-            color: #ffffff;
+        .filter-form {
+            margin-bottom: 20px;
         }
 
+        .filter-form .form-control {
+            width: 200px;
+        }
+
+        /* 卡片美化 */
         .card {
             border-radius: 10px;
-            /* 圓角邊框 */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .card-header {
+            background-color: #0bb3b8;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* 調整按鈕樣式 */
+        .btn-secondary, .btn-primary {
+            border-radius: 5px;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .btn-secondary:hover, .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        /* 表格樣式 */
+        .table {
+            margin-top: 20px;
+        }
+
+        .table th {
+            background-color: #17a2b8;
+            color: #fff;
+            text-align: center;
         }
 
         .table td {
-            padding: 12px;
-            /* 增加單元格內的間距 */
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
+            background-color: #f8f9fa;
+        }
+
+        .table td, .table th {
+            border: 1px solid #dee2e6;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        /* 分頁導航樣式 */
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #ffffff;
+            border-color: #007bff;
+        }
+
+        .pagination .page-item .page-link {
+            color: #007bff;
+            border-radius: 5px;
+        }
+
+        .pagination .page-item .page-link:hover {
+            background-color: #f8f9fa;
+            color: #007bff;
         }
     </style>
-
 </head>
-<div class="container mt-2">
-    <!-- 使用 Bootstrap 的 card 元件來包裹標題和表格 -->
+
+<div class="container mt-4">
     <div class="card">
         <div class="card-header">
-            <!-- 使用 d-flex 來佈局返回按鈕和標題 -->
             <div class="d-flex align-items-center justify-content-between">
-                <!-- 返回按鈕放在左邊 -->
-                <button class="btn btn-secondary" onclick="window.history.back()">←返回</button>
-                <!-- 標題置中 -->
+                <a class="btn btn-secondary" href="{% url 'patient_emotions' %}">← 返回</a>
                 <h1 class="text-center mb-0 flex-grow-1">情緒分析記錄</h1>
             </div>
         </div>
         <div class="card-body">
 
-            <table class="table table-bordered table-hover table-responsive">
-                <thead class="thead-dark text-center">
+            <!-- 篩選表單 -->
+            <form method="GET" class="filter-form d-flex justify-content-between align-items-center">
+                <div class="form-group">
+                    <label for="start_date">開始日期:</label>
+                    <input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date }}">
+                </div>
+                <div class="form-group">
+                    <label for="end_date">結束日期:</label>
+                    <input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date }}">
+                </div>
+                <div class="form-group">
+                    <label for="patient_name">被照護者名稱:</label>
+                    <input type="text" name="patient_name" id="patient_name" class="form-control" value="{{ patient_name }}" placeholder="輸入名稱">
+                </div>
+                <div class="form-group">
+                    <label for="search">搜尋對話:</label>
+                    <input type="text" name="search" id="search" class="form-control" value="{{ search_query }}" placeholder="搜尋對話內容">
+                </div>
+                <button type="submit" class="btn btn-primary">篩選</button>
+                <a href="{% url 'chatlogs' %}" class="btn btn-secondary">重置</a>
+            </form>
+
+            <table class="table table-bordered table-hover">
+                <thead>
                     <tr>
                         <th scope="col" style="width: 15%;">時間</th>
                         <th scope="col" style="width: 15%;">被照護者名稱</th>
@@ -58,13 +150,13 @@
                     {% for log in page_obj %}
                     <tr>
                         <td>{{ log.created_time }}</td>
-                        <td>{{ log.patient.patient_name }}</td> <!-- 顯示病患名稱 -->
-                        <td style="white-space: pre-wrap;">{{ log.patient_message }}</td> <!-- 自動換行 -->
+                        <td>{{ log.patient.patient_name }}</td>
+                        <td style="white-space: pre-wrap;">{{ log.patient_message }}</td>
                         <td class="text-center">{{ log.emotion_score }}</td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="text-center">目前沒有情緒分析記錄</td>
+                        <td colspan="4" class="text-center">目前沒有被照護者情緒分析記錄</td>
                     </tr>
                     {% endfor %}
                 </tbody>
