@@ -3,6 +3,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from transformers import BertTokenizer, BertForSequenceClassification, pipeline
 from django.utils import timezone
 from django.apps import apps
+from django.db import connection
 import torch
 import os
 
@@ -79,3 +80,5 @@ class BackendappConfig(AppConfig):
                 print(f"Updated ChatLog ID {log.chatLog_id} with emotion score {final_emotion}")
             except Exception as e:
                 print(f"Error during sentiment analysis: {e}")
+            finally:
+                connection.close()
