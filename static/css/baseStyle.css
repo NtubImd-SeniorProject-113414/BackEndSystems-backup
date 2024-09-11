@@ -21,13 +21,15 @@
 
 .content {
     flex: 1;
-    margin-left: 250px; /* Same as sidebar width */
+    margin-left: 250px;
+    /* Same as sidebar width */
     padding: 20px;
     overflow-y: auto;
 }
 
 
-body, html {
+body,
+html {
     font-family: 'Roboto', sans-serif;
     background-color: #F4F3EF;
     margin: 0;
@@ -143,7 +145,25 @@ header img {
 }
 
 
-sor: pointer;
+nav {
+    background-color: #f2f2f2;
+    width: 250px;
+    height: 100%;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    height: 100%;
+}
+
+nav li {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 20px;
+    border-bottom: 1px solid #ccc;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
 }
 
 nav li a,
@@ -190,39 +210,127 @@ main {
     height: 100%;
 }
 
-@media screen and (max-width: 768px) {
-    nav {
-        width: 100%;
-        height: auto;
-        position: static;
-        left: 0;
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* 半透明黑色背景 */
+    z-index: 1500;
+    /* 高於 sidebar 和其他內容 */
+    display: none;
+    /* 默認隱藏 */
+}
+
+.overlay.show {
+    display: block;
+    /* 點擊漢堡選單時顯示 */
+}
+
+@media (max-width: 376px) {
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #F4F3EF;
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
     }
 
-    main {
-        flex: 1;
-        padding: 20px;
-        margin-left: 0;
-        height: calc(100vh - 70px);
+    .header-logo {
+        font-size: 14px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+    }
+
+
+    header img {
+        height: 30px;
+        vertical-align: middle;
+        margin-right: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: -100%;
+        /* 初始隱藏 */
+        top: 85px;
+        width: 60%;
+        height: 100%;
+        background-color: white;
+        transition: left 0.3s ease;
+        z-index: 2000;
+        /* 确保在移动设备中sidebar有正确层次 */
+        /* 確保選單在內容上方 */
+    }
+
+    .sidebar.show {
+        left: 0;
+        /* 漢堡選單打開時側邊欄滑出 */
     }
 
     .content {
+        margin-left: 0;
+        /* 小螢幕內容不需要偏移 */
+    }
+
+    .overlay {
+        z-index: 1900;
+        /* 确保遮罩层在侧边栏之上 */
+    }
+
+    .hamburger-menu {
+        display: block;
+        /* 小螢幕下顯示漢堡按鈕 */
+    }
+
+    .header {
+        padding: 10px;
+        justify-content: space-between;
+    }
+
+    .account {
+        font-size: 13px;
+        position: relative;
+        margin-left: 5px;
+    }
+
+    .header-logo {
+        font-size: 18px;
+        font-weight: bold;
         display: flex;
-        flex-direction: column;
-        height: 100%;
+        align-items: center;
     }
 
-    .account-dropdown {
-        width: 100%;
-        /* 小屏幕上選單寬度為全屏 */
+}
+
+/* 大於 768px 時側邊欄顯示 */
+@media (min-width: 769px) {
+    .sidebar {
+        position: fixed;
         left: 0;
-        /* 左對齊 */
-        transform: none;
-        /* 不需要水平位移 */
+        top: 60px;
+        bottom: 0;
+        width: 260px;
+        height: auto;
     }
 
-    .account-dropdown .url-container {
-        padding: 10px 15px;
-        /* 增加填充，使觸控更容易 */
+    .content {
+        margin-left: 260px;
+        padding: 20px;
+    }
+
+    .hamburger-menu {
+        display: none;
+        z-index: 3000;
+        /* 提高漢堡選單的優先級 */
     }
 }
 
