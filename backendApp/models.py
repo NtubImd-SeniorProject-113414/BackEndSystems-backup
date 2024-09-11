@@ -280,6 +280,7 @@ class ChatLogs(models.Model):
     emotion_score = models.IntegerField(null=True, blank=True)  # 新增的情緒分數欄位
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
     is_confirmed = models.BooleanField(default=False)  # 新增的布林欄位，表示是否已確認
+    confirmed_time = models.DateTimeField(null=True, blank=True)  # 處理時間
 
 
 #用藥需求狀態
