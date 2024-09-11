@@ -64,7 +64,6 @@ header img {
 }
 
 .account {
-    margin-right: 50px;
     position: relative;
 }
 
@@ -72,43 +71,24 @@ header img {
     color: #fff;
     text-decoration: none;
     width: 160px;
-}
 
-.account li i {
-    margin-right: 10px;
 }
 
 .account-dropdown {
     position: absolute;
     font-size: 14px;
-    font-family: sans-serif;
     top: calc(100%);
-    transform: translateX(0%); /* 使用 transform 來精確定位 */
-    left: -40px;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     display: none;
-    max-height: 100px;
-    overflow-x: hidden;
-    overflow-y: auto; 
     border-radius: 0.5rem;
-    border: 1px solid #ddd; 
-    width: 150px;
-}
-.account-dropdown .url-container {
-    white-space: nowrap; 
-}
-.dropdown-div{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    border: 1px solid #ddd;
+    width: 140px;
+    z-index: 4000;
     text-align: center;
+    margin: auto;
 }
 
-.url-container{
-    width: 100%;
-    min-width: 120px;
-}
 .account-dropdown.show {
     display: block;
 }
@@ -119,15 +99,25 @@ header img {
 
 .account-dropdown a {
     display: block;
-    padding: 10px 25px;
+    padding: 10px;
     text-decoration: none;
     color: #333;
     line-height: 1.5;
+    border-radius: 0.5rem;
 }
 
 .account-dropdown a:hover {
     background-color: #f4f4f4;
+    border-radius: 0.5rem;
+    width: 140px;
+    font-weight: bold;
 }
+
+.url-container{
+    width: 100%;
+    min-width: 120px;
+}
+
 
 nav {
     background-color: #f2f2f2;
