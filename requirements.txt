@@ -10,3 +10,4 @@ django-cors-headers
 channels
 mysqlclient
 Pillow
+qrcode[pil]
