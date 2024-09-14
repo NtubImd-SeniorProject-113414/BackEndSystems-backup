@@ -100,7 +100,9 @@
             </a>
             <div class="collapse" id="{{ menu.id }}">
                 {% for item in menu.items %}
-                <a href="{% url item.url %}" class="sub-option">{{ item.name }}</a>
+                <a href="{% url item.url %}" class="sub-option">
+                    <span><i class="{{ item.icon }}"></i> {{ item.name }}</span>
+                </a>
                 {% endfor %}
             </div>
             {% endif %}
@@ -131,6 +133,14 @@
             // 切換圖標方向
             $(this).find('i').toggleClass('open');
         })
+
+        //載入中動畫
+        $(window).on('beforeunload', function () {
+            $('#preloaderModal').modal('show');
+        });
+        $(window).on('load', function () {
+            $('#preloaderModal').modal('hide');
+        });
     });
 
     // 點擊子選項切換樣式
