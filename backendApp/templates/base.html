@@ -24,12 +24,9 @@
     <link rel="shortcut icon" href="{% static 'img/logo.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}?v=1.1">
-
+    <link rel="stylesheet" type="text/css" href="{% static 'css/baseStyle.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/loading.css' %}">
     <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
-    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.jS' %}"></script>
-
 
     {% endblock %}
 </head>
@@ -119,15 +116,13 @@
 </html>
 <script>
     $(document).ready(function () {
-        // 確保 Modal 首先是顯示狀態
+        // 顯示預載動畫
         $('#preloaderModal').modal('show');
-
-        // 延遲3秒後隱藏加載動畫
         setTimeout(function () {
             $('#preloaderModal').modal('hide');
         }, 2000);
 
-        // 控制側邊欄的展開和收縮
+        // 切換側邊欄顯示與否
         $('.hamburger-menu').click(function () {
             $('.sidebar').toggleClass('show');
             $('.overlay').toggle();
@@ -138,14 +133,36 @@
             $('.overlay').hide();
         });
 
-        // 針對具有子菜單的主選項控制其展開和收合
-        $('nav a[data-bs-toggle="collapse"]').click(function () {
+        // 控制主選項及其子選單的展開/收合
+        $('nav a[data-bs-toggle="collapse"]').click(function (e) {
+            e.preventDefault();  // 防止默認鏈接行為
             var $target = $($(this).data('bs-target'));
-            $target.collapse('toggle');
-            $(this).find('i.fa-chevron-down').toggleClass('open');  // 切換箭頭方向
+
+            // 如果點擊的子選單已經展開，則收合該選單，並更新箭頭方向
+            if ($target.hasClass('show')) {
+                $target.collapse('hide');
+                $(this).find('i.fa-chevron-down').removeClass('open');
+            } else {
+                // 收合其他已展開的子選單，並更新其箭頭
+                $('nav .collapse.show').each(function () {
+                    $(this).collapse('hide');
+                    $(this).siblings('a[data-bs-toggle="collapse"]').find('i.fa-chevron-down').removeClass('open');
+                });
+
+                // 展開當前子選單，並更新箭頭方向
+                $target.collapse('show');
+                $(this).find('i.fa-chevron-down').addClass('open');
+            }
         });
     });
 
+    // 切換側邊欄顯示與否
+    $('.hamburger-menu').click(function () {
+        $('.sidebar').toggleClass('show');
+        $('.overlay').toggle();
+    });
+
+    // 切換側邊欄
     function toggleSidebar() {
         $('.sidebar').toggleClass('show');
         $('.overlay').toggle();
