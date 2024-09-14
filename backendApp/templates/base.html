@@ -80,7 +80,6 @@
     <!-- 灰色背景遮罩 -->
     <div class="overlay" onclick="toggleSidebar()"></div> <!-- 點擊遮罩也可以關閉側邊欄 -->
 
-
     <div class="container-fluid">
         <nav class="sidebar">
             {% for menu in function_menu %}
@@ -114,6 +113,7 @@
 </body>
 
 </html>
+
 <script>
     $(document).ready(function () {
         // 顯示預載動畫
@@ -133,27 +133,34 @@
             $('.overlay').hide();
         });
 
-        // 控制主選項及其子選單的展開/收合
-        $('nav a[data-bs-toggle="collapse"]').click(function (e) {
-            e.preventDefault();  // 防止默認鏈接行為
-            var $target = $($(this).data('bs-target'));
-            var $icon = $(this).find('i.fa-chevron-down');
+        // 監聽主選項的點擊事件，展開/收合子選項
+        $('.main-option').click(function () {
+            var $submenu = $(this).next('.collapse');  // 找到當前的子菜單
+            var $icon = $(this).find('i.fa-chevron-down');  // 找到當前菜單的箭頭
 
-            // 如果點擊的子選單已經展開，則收合該選單
-            if ($target.hasClass('show')) {
-                $target.collapse('hide');
-                $icon.removeClass('open');
-            } else {
-                // 收合所有已展開的子選單
-                $('nav .collapse.show').each(function () {
-                    $(this).collapse('hide');
-                    $(this).siblings('a[data-bs-toggle="collapse"]').find('i.fa-chevron-down').removeClass('open');
-                });
+            // 如果當前子菜單是隱藏的，展開它
+            if (!$submenu.hasClass('show')) {
+                // 收合其他已展開的子菜單，並恢復箭頭狀態
+                $('.collapse.show').collapse('hide').prev('.main-option').find('i.fa-chevron-down').removeClass('open');
 
-                // 展開當前子選單並且旋轉箭頭
-                $target.collapse('show');
+                // 展開當前子菜單，並旋轉當前箭頭
+                $submenu.collapse('show');
                 $icon.addClass('open');
+            } else {
+                // 如果當前子菜單已展開，則收合它，並恢復箭頭
+                $submenu.collapse('hide');
+                $icon.removeClass('open');
             }
+        });
+
+        // 如果子選單展開時同步更新箭頭
+        $('.collapse').on('shown.bs.collapse', function () {
+            $(this).prev('.main-option').find('i.fa-chevron-down').addClass('open');
+        });
+
+        // 如果子選單收合時同步更新箭頭
+        $('.collapse').on('hidden.bs.collapse', function () {
+            $(this).prev('.main-option').find('i.fa-chevron-down').removeClass('open');
         });
     });
 
