@@ -60,8 +60,6 @@ urlpatterns = [
     path('delete_course_sides/<int:pk>/', delete_course_sides, name='delete_course_sides'),
     path('inventory_management/', inventory_management, name='inventory_management'),
     
-
-
     path('notify_manager', notify_manager, name='notify_manager'),
     path('notify_manager/send', send_notify, name='send_notify'),
     path('notify_manager/edit/<int:notify_id>/', edit_notify, name='edit_notify'),
@@ -71,7 +69,6 @@ urlpatterns = [
     path('timeslot_manager/add', create_timeSlot, name='create_timeSlot'),
     path('timeslot_manager/edit/<int:time_slot_id>/', edit_timeSlot, name='update_timeSlot'),
     path('timeslot_manager/delete/<int:time_slot_id>/', delete_timeSlot, name='delete_timeSlot'),
-
 
     path('linebot', linebot.line_bot_webhook),
     path('linebot/verify', verify.getWebPage),
@@ -83,7 +80,6 @@ urlpatterns = [
     path('linebot/medicament', medicament.getVerifyPage),
     path('medicament/api/verify', medicament.setSessionByToken),
     path('medicament/api/openAi', medicament.sendMessageToOpenAi),
-
 
     # path('add_purchase/', add_purchase, name='add_purchase'),
     # path('add_medicine/', add_medicine, name='add_medicine'),
@@ -97,6 +93,7 @@ urlpatterns = [
 
     path('card_manager/', card.card_list, name='card_manager'),
     path('card_manager/call_sensor', card.call_card_sensor, name='call_sensor'),
+
     # for nodeRed
     path('card_manager/add', card.add_card, name='add_card'),
     path('card_manager/edit/<str:card_code>', card.edit_card, name='edit_card'),
@@ -119,4 +116,10 @@ urlpatterns = [
     
     # for nodeRed
     path('medicine_order_management/finish/<str:card_code>', medicine.finish_medicine_demand, name='finish_medicine_order'),
+
+    #機器人
+    path('robot_management/robot_manager', medicine.finish_medicine_demand, name='robot_manager'),
+    path('robot_management/stop_point_manager', medicine.finish_medicine_demand, name='stop_point_manager'),
+    path('robot_management/turn_point_manager', medicine.finish_medicine_demand, name='turn_point_manager'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

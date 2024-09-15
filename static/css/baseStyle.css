@@ -177,6 +177,9 @@ header img {
     border-radius: 8px;
     margin: 10px;
     transition: background-color 0.3s, color 0.3s;
+    flex: 1;
+    padding-top: 60px;
+    z-index: 999;
 }
 
 /* 主选项样式 */
