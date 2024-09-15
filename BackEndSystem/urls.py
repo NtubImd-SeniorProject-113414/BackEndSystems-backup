@@ -27,6 +27,8 @@ urlpatterns = [
     path('add_patient/', add_patient, name='add_patient'),
     path('edit_patient/<int:patient_id>/', edit_patient, name='edit_patient'),
     path('delete_patient/<int:patient_id>/', delete_patient, name='delete_patient'),
+    path('upload-image/<int:patient_id>/', upload_patient_image, name='upload_patient_image'),
+    path('delete_patient_image/<int:patient_id>/', delete_patient_image, name='delete_patient_image'),
 
     #供應商管理
     path('suppliers/', supplier_list, name='suppliers'),
