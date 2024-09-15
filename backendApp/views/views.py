@@ -449,33 +449,19 @@ def patient_emotion_view(request):
     })
 
 
-#負面情許顯示
+# 負面情緒顯示
 @group_required('caregiver')
 @login_required
 def negative_chatlogs_view(request):
     # 過濾出情緒分數 ≤ 2 且未處理的聊天記錄
     negative_logs = ChatLogs.objects.filter(emotion_score__lte=2, is_confirmed=False).order_by('-created_time')
 
-    return render(request, 'emotion/negative_chatlogs.html', {'logs': negative_logs})
+    # 每頁顯示 15 條記錄
+    paginator = Paginator(negative_logs, 15)  
+    page_number = request.GET.get('page', 1)  # 獲取當前頁碼，默認為第 1 頁
+    page_obj = paginator.get_page(page_number)  # 分頁對象
 
-# 處理「確認已處理」的邏輯
-@group_required('caregiver')
-@login_required
-def confirm_chatlog(request, chatlog_id):
-    if request.method == 'POST':
-        chatlog = get_object_or_404(ChatLogs, chatLog_id=chatlog_id)
-        chatlog.is_confirmed = True
-        chatlog.save()
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error'}, status=400)
-
-
-# 已處理的負面情緒記錄視圖
-@group_required('caregiver')
-@login_required
-def confirmed_negative_logs_view(request):
-    logs = ChatLogs.objects.filter(emotion_score__lte=2, is_confirmed=True).order_by('-confirmed_time')
-    return render(request, 'emotion/confirmed_negative_chatlogs.html', {'logs': logs})
+    return render(request, 'emotion/negative_chatlogs.html', {'page_obj': page_obj})
 
 #已處理負面紀錄
 @group_required('caregiver')
@@ -491,3 +477,19 @@ def confirm_chatlog(request, chatlog_id):
         except ChatLogs.DoesNotExist:
             return JsonResponse({'status': 'error', 'message': '記錄不存在'})
     return JsonResponse({'status': 'error', 'message': '無效請求'})
+
+# 已處理的負面情緒記錄視圖
+@group_required('caregiver')
+@login_required
+def confirmed_negative_logs_view(request):
+    logs_list = ChatLogs.objects.filter(emotion_score__lte=2, is_confirmed=True).order_by('-confirmed_time')
+    
+    # 使用 Paginator 進行分頁，每頁顯示15筆記錄
+    paginator = Paginator(logs_list, 15)
+    
+    # 獲取當前頁碼，默認為第1頁
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'emotion/confirmed_negative_chatlogs.html', {'page_obj': page_obj})
+
