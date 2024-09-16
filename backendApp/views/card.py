@@ -9,8 +9,6 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from ..models import RfidCard
 from ..module import mqtt
-import json
-from django.http import JsonResponse
 
 @group_required('caregiver')
 @login_required
