@@ -92,7 +92,7 @@
         <div class="account">
             <a href="#">
                 <i class="fas fa-user-circle"></i>
-                {{ request.user.username }} | 目前：{% for group in user.groups.all %} {{ group.display }} {% endfor %}
+                {{ request.user.username }} ({{request.user.first_name}}{{request.user.last_name }}) | 目前：{% for group in user.groups.all %} {{ group.display }} {% endfor %}
             </a>
             <div class="account-dropdown">
                 <a href="{% url 'edit_profile' %}">修改資訊</a>
