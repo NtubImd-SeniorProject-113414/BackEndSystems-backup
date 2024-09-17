@@ -5,11 +5,7 @@ import os
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.models import User
-from django.db.models.functions import Concat
+from django.core.paginator import Paginator
 from backendApp.decorator import group_required
 from backendApp.forms import  *
 from backendApp.middleware import login_required
@@ -111,68 +107,6 @@ def delete_patient(request, patient_id):
     patient.delete()
     messages.success(request, '被照護者已刪除。')
     return redirect('patient_manager')
-
-
-#床位管理
-@group_required('caregiver')
-@login_required
-def bed_manager(request):
-    beds = Bed.objects.all().order_by('bed_number')
-
-    query = request.GET.get('q')
-    if query:
-        beds = beds.filter(Q(bed_number__icontains=query) | Q(patient__patient_name__icontains=query))
-
-    paginator = Paginator(beds, 10)
-
-    page_number = request.GET.get('page')
-    
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'bed/bed_manager.html', {'page_obj': page_obj})
-
-#新增床位
-@group_required('caregiver')
-@login_required
-def add_bed(request):
-    if request.method == 'POST':
-        form = BedForm(request.POST)
-        if form.is_valid():
-            bed_number = form.cleaned_data['bed_number']
-            patient = form.cleaned_data['patient']
-            if patient:
-                existing_bed_with_patient = Bed.objects.filter(patient=patient).first()
-                if existing_bed_with_patient:
-                    form.add_error('patient', '該病人已被分配床位')
-                    return render(request, 'add_bed.html', {'form': form, 'operation': '添加'})
-            form.save()
-            return redirect('bed_manager')
-    else:
-        form = BedForm()
-    return render(request, 'bed/add_bed.html', {'form': form, 'operation': '添加'})
-
-#編輯床位
-@group_required('caregiver')
-@login_required
-def edit_bed(request, bed_id):
-    bed = get_object_or_404(Bed, bed_id=bed_id)
-    if request.method == 'POST':
-        form = BedForm(request.POST, instance=bed)
-        if form.is_valid():
-            form.save()
-            return redirect('bed_manager')
-    else:
-        form = BedForm(instance=bed)
-    return render(request, 'bed/edit_bed.html', {'form': form})
-
-#刪除床位
-@group_required('caregiver')
-@login_required
-def delete_bed(request, bed_id):
-    bed = get_object_or_404(Bed, bed_id=bed_id)
-    bed.delete()
-    return redirect('bed_manager')
-
 
 #供應商管理
 @group_required('caregiver')
