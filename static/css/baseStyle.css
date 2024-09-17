@@ -59,6 +59,7 @@ header {
 
 .content {
     padding-top: 90px;
+    padding-bottom: 20px;
     /* 增加 padding-top 以避免被 header 遮蓋 */
     margin-left: 280px;
     /* 調整左側距離依照 sidebar 的寬度 */
@@ -177,12 +178,8 @@ header img {
     border-radius: 8px;
     margin: 10px;
     transition: background-color 0.3s, color 0.3s;
-    flex: 1;
-    padding-top: 60px;
-    z-index: 999;
 }
 
-/* 主选项样式 */
 .main-option {
     font-weight: bold;
     color: white;
