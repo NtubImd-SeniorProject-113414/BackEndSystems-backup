@@ -13,3 +13,15 @@ def has_groups(user, group_names):
         return False
     groups = user.groups.values_list('name', flat=True)
     return any(group in groups for group in group_names)
+
+@register.filter
+def to_range(start, end):
+    return range(start, end)
+
+@register.filter
+def emotion_color(score):
+    if score >= 4:
+        return 'success'  # 綠色
+    elif score >= 2:
+        return 'warning'  # 橙色
+    return 'danger'  # 紅色

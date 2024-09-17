@@ -68,6 +68,7 @@ class Patient(models.Model):
     patient_idcard =models.CharField(max_length=10)
     line_notify = models.CharField(max_length=45, blank=True, null=True, unique=True)
     line_id = models.CharField(max_length=45, blank=True, null=True, unique=True)
+    patient_image_path = models.ImageField(upload_to='patients/', max_length=255, blank=True, null=True)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     def save(self, *args, **kwargs):
@@ -108,6 +109,7 @@ class Patient(models.Model):
             return {"status": False, "msg":"資料填寫錯誤"}
     def __str__(self):
         return self.patient_name
+
 
 #通知
 class Notify(models.Model):
@@ -277,7 +279,11 @@ class ChatLogs(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     patient_message = models.CharField(max_length=1000)
     response_message = models.CharField(max_length=1000)
+    emotion_score = models.IntegerField(null=True, blank=True)  # 新增的情緒分數欄位
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
+    is_confirmed = models.BooleanField(default=False)  # 新增的布林欄位，表示是否已確認
+    confirmed_time = models.DateTimeField(null=True, blank=True)  # 處理時間
+
 
 #用藥需求狀態
 class MedicineDemandState(models.Model):

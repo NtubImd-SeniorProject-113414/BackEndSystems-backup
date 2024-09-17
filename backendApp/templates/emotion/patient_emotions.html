@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static custom_filters %}
+{% block content %}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <link href="{% static 'model/choices/choices.min.css' %}" rel="stylesheet">
+    <script src="{% static 'model/choices/choices.min.js' %}"></script>
+
+
+    <style>
+        /* 背景顏色調整 */
+        body {
+            background-color: #f7f8fc;
+        }
+
+        .container {
+            margin-top: 30px;
+        }
+
+        /* 美化情緒分析紀錄按鈕 */
+        .btn-analysis {
+            background-color: #3cbaa5; /* 改為你想要的顏色 */
+            color: white;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-analysis:hover {
+            background-color: #0b7276;
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-analysis i {
+            margin-right: 8px;
+        }
+
+        /* 卡片樣式 */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            background-color: white;
+        }
+
+        .card-header {
+            background-color: #4a90e2;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        /* 表格樣式 */
+        table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: 600;
+            padding: 12px;
+            text-align: center;
+        }
+
+        tbody td {
+            padding: 15px;
+            background-color: white;
+            border-top: 1px solid #dee2e6;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        tbody tr:hover td {
+            background-color: #f1f3f5;
+        }
+
+        /* 調整情緒愛心圖示的大小和對齊 */
+        .emotion-rating i {
+            font-size: 1.4rem;
+        }
+
+        .emotion-rating .ml-2 {
+            margin-left: 8px;
+            font-size: 1.2rem;
+        }
+
+        /* 表格外圍的邊框 */
+        .table-bordered {
+            border: 1px solid #dee2e6;
+        }
+
+        /* 搜索區域樣式 */
+        .filter-form {
+            margin-bottom: 20px;
+        }
+
+        /* 分頁導航樣式 */
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #ffffff;
+            border-color: #007bff;
+        }
+
+        .pagination .page-item .page-link {
+            color: #007bff;
+            border-radius: 5px;
+        }
+
+        .pagination .page-item .page-link:hover {
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+    </style>
+</head>
+
+<!-- 主要內容區域 -->
+<div class="container">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h1 class="mb-0">被照護者情緒平均分數一覽</h1>
+            <!-- 添加圖標並應用美化樣式 -->
+            <a href="{% url 'negative_chatlogs' %}" class="btn btn-analysis" style="background-color: #c1392c;">
+                <i class="bi bi-heartbreak-fill"></i> 未處理負面情緒
+            </a>
+            <a href="{% url 'negative_confirmed_chatlogs' %}" class="btn btn-analysis" style="background-color: #65ae2e">
+                <i class="bi bi-check-circle-fill"></i> 已處理負面情緒
+            </a>
+            <a href="{% url 'chatlogs' %}" class="btn btn-analysis">
+                <i class="bi bi-file-earmark-text"></i> 情緒分析記錄
+            </a>
+        </div>
+        <div class="card-body">
+            <form method="GET" class="filter-form d-flex align-items-center" style="gap: 20px;">
+                <!-- 下拉框區域，使用 flex-grow 讓它佔據更多的空間 -->
+                <div class="form-group flex-grow-1">
+                    <label for="patient" class="form-label">選擇被照護者:</label>
+                    <select name="patient" id="patient-select" class="form-control" style="border-radius: 10px;">
+                        <option value="">全部</option>
+                        {% for patient in page_obj %}
+                        <option value="{{ patient.patient_name }}" {% if patient.patient_name == selected_patient %}selected{% endif %}>
+                            {{ patient.patient_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <!-- 篩選按鈕區域 -->
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" style="padding: 10px 20px; margin-top:25px;">篩選</button>
+                </div>
+            </form>
+
+            <table class="table table-bordered table-hover table-responsive-lg">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 30%;">被照護者</th>
+                        <th scope="col" style="width: 70%;">情緒分數</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for patient in page_obj %}
+                    <tr>
+                        <td>{{ patient.patient_name }}</td>
+                        <td>
+                            <span class="emotion-rating">
+                                <!-- 顯示完整愛心 -->
+                                {% for i in patient.full_stars %}
+                                <i class="bi bi-heart-fill text-{{ patient.avg_emotion_score|emotion_color }}"></i>
+                                {% endfor %}
+                                <!-- 顯示半顆愛心 -->
+                                {% if patient.half_star %}
+                                <i class="bi bi-heart-half text-{{ patient.avg_emotion_score|emotion_color }}"></i>
+                                {% endif %}
+                                <!-- 顯示空愛心 -->
+                                {% for i in patient.empty_stars %}
+                                <i class="bi bi-heart text-muted"></i>
+                                {% endfor %}
+                                <!-- 顯示數字情緒分數 -->
+                                <span class="ml-2 text-{{ patient.avg_emotion_score|emotion_color }}">
+                                    {{ patient.avg_emotion_score|floatformat:1 }}
+                                </span>
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center">目前沒有被照護者情緒資料</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- 分頁導航 -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if selected_patient %}&patient={{ selected_patient }}{% endif %}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}{% if selected_patient %}&patient={{ selected_patient }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if selected_patient %}&patient={{ selected_patient }}{% endif %}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icons CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<script>
+    // 初始化 Choices.js
+    const patientSelect = document.getElementById('patient-select');
+    const choices = new Choices(patientSelect, {
+        searchEnabled: true,  // 啟用搜尋功能
+        itemSelectText: '',   // 選擇項目時不顯示文字
+        shouldSort: false     // 按照選項的順序顯示
+    });
+</script>
+{% endblock %}
+
