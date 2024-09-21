@@ -26,3 +26,8 @@ def stop_point(request):
             print("表單驗證失敗：", form.errors)
     form = SelectorForm()
     return render(request, 'robotManagement/stop_point.html', {'form': form})
+
+@login_required
+@group_required('caregiver')
+def turn_point(request):
+    return render(request, 'robotManagement/turn_point.html')

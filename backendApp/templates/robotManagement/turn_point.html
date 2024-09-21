@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>轉彎點管理</title>
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <style>
+        .card {
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-weight: bolder;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">轉彎點管理</h1>
+        <a href="{% url 'create_timeSlot' %}" class="btn btn-primary">新增轉彎點</a>
+        <br><br>
+        <h2 class="mb-4">已新增的轉彎點：</h2>
+        <div id="timeSlots" class="row">
+            {% for timeSlot in timeSlots %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">測試</h5>
+                        <p class="card-text">觸發動作: </p>
+                        <p class="card-text">指定被照護者: </p>
+                        <!-- <a href="{% url 'update_timeSlot' timeSlot.timeSlot_id %}" class="btn btn-primary">編輯</a> -->
+                        <form action="{% url 'delete_timeSlot' timeSlot.timeSlot_id %}" method="post"  class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" name="delete" class="btn btn-danger" onclick="return confirm('確定要刪除這個轉彎點嗎？');">刪除</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</body>
+
+</html>
+
+{% endblock %}
