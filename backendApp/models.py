@@ -349,7 +349,7 @@ class DeliveryAssignment(models.Model):
 # 轉向表 (表示左右轉)
 class TurnPoint(models.Model):
     turn_point_id = models.AutoField(primary_key=True)
-    qr_point = models.ForeignKey(QRCodePoint, on_delete=models.CASCADE)
+    qr_point = models.ForeignKey(QRCodePoint, on_delete=models.SET_NULL, null=True, blank=True)
 
 # 路線條件表 (記錄某路線的站點和轉向條件)
 class RouteCondition(models.Model):
