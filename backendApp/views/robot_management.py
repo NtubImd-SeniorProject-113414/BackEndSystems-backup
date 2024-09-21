@@ -36,9 +36,9 @@ def turn_point(request):
 
     turn_points_with_forms = [
         {
-            'turn_point': turn_points, 
+            'turn_point': turn_point, 
             'form': TurnPointForm(
-                instance=turn_points
+                instance=turn_point
             )
         }
         for turn_point in turn_points
