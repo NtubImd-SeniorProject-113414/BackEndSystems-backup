@@ -78,9 +78,8 @@
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
             text-align: center;
-            font-size: 3vh;
-            width: 80%;
-            max-width: 800px;
+            font-size: 7rem;
+            width: 80%; /* 調整為70% */
             opacity: 0;
             transition: opacity 0.5s, transform 0.5s, visibility 0.5s;
         }
@@ -92,8 +91,7 @@
         }
 
         .user-photo, .meal-photo {
-            width: 150px;
-            height: 150px;
+            width: 20vw; /* 調整大小 */
             object-fit: cover;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -108,38 +106,41 @@
             margin-bottom: 30px;
         }
 
-        .notification p {
-            font-size: 2.5vh;
-            font-weight: 600;
-            margin: 10px 0;
-        }
-
         .notification button {
             margin-top: 20px;
-            padding: 10px 30px;
-            font-size: 3vh;
+            padding: 10px;
+            width: 60%;
+            font-size: 3.5rem;
             font-weight: 600;
             border: none;
-            background-color: #007bff;
+            background-color: #3cb442;
             color: #fff;
             border-radius: 5px;
             cursor: pointer;
         }
 
         .notification button:hover {
-            background-color: #0056b3;
+            background-color: #7aae7d;
         }
 
         .timer {
-            font-size: 3.5vh;
+            font-size: 3rem;
             font-weight: 600;
-            color: #ff0000; /* 計時文字紅色 */
+            color: #ff0000; /* 倒數計時紅色 */
             margin-top: 20px;
         }
 
         .caption {
             font-size: 3vh;
             font-weight: 600;
+        }
+
+        /* 新增標題設計 */
+        .notification h2 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #007bff; /* 標題顏色 */
+            margin-bottom: 50px;
         }
     </style>
 </head>
@@ -151,19 +152,19 @@
         <div class="eye right" id="right-eye"></div>
     </div>
     <div class="notification" id="notification">
+        <h2>《餐點已送達》</h2> <!-- 新增標題 -->
         <div class="photos">
             <div>
-                <img class="user-photo" src="https://via.placeholder.com/150" alt="用戶頭像">
+                <img class="user-photo" src="https://static-00.iconduck.com/assets.00/user-icon-2046x2048-9pwm22pp.png" alt="用戶頭像">
                 <p class="caption">用戶名</p>
             </div>
             <div>
-                <img class="meal-photo" src="https://via.placeholder.com/150" alt="餐點圖片">
+                <img class="meal-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsXRvq8gNs1oeIphcQ6-xMJSDwzQTznZoVCw&s" alt="餐點圖片">
                 <p class="caption">餐點名稱</p>
             </div>
         </div>
-        <p id="message">請於 <span id="time-left">30</span> 秒內取餐</p>
-        <button onclick="confirmDelivery()">領取</button>
-        <div class="timer" id="timer"></div>
+        <p id="message" class="timer">請於 <span id="time-left">30</span> 秒內完成取餐</p>
+        <button onclick="confirmDelivery()">完成取餐</button>
     </div>
 </div>
 
