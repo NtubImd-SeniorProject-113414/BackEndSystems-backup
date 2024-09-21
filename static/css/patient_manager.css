@@ -4,22 +4,6 @@ body {
   background-color: #f5f6fa;
 }
 
-body.modal-open {
-  overflow: hidden;
-}
-
-.modal-backdrop {
-  z-index: 100;
-}
-
-.modal-dialog {
-  z-index: 101;
-}
-
-.modal.fade .modal-dialog {
-  transition: none;
-}
-
 h2 {
   font-size: 1.75rem;
   color: #2c3e50;
@@ -216,61 +200,4 @@ h2 {
   font-size: 1.2rem;
   color: #999999;
   margin-top: 40px;
-}
-
-.modal-header {
-  background-color: #007bff;
-  color: white;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-}
-
-.modal-content {
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.modal-footer .btn {
-  border-radius: 25px;
-  padding: 10px 20px;
-}
-
-.btn-success {
-  background-color: #28a745;
-  border-color: #28a745;
-}
-
-.btn-success:hover {
-  background-color: #218838;
-}
-
-.btn-secondary {
-  background-color: #6c757d;
-  border-color: #6c757d;
-}
-
-.btn-secondary:hover {
-  background-color: #5a6268;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="date"],
-select {
-  border-radius: 50px;
-  border: 1px solid #ced4da;
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: #495057;
-  background-color: #f1f3f5;
-  width: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-input:focus,
-select:focus {
-  border-color: #80bdff;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  outline: 0;
 }
