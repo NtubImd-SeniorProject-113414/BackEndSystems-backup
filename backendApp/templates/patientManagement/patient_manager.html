@@ -11,6 +11,7 @@
   body {
     font-family: 'Arial', sans-serif;
     color: #333333;
+    background-color: #f5f6fa;
   }
 
   body.modal-open {
@@ -27,11 +28,6 @@
 
   .modal.fade .modal-dialog {
     transition: none;
-  }
-
-  .container {
-    margin-top: 20px;
-    max-width: 900px;
   }
 
   h2 {
@@ -122,7 +118,6 @@
   .patient-card {
     background-color: #ffffff;
     overflow: hidden;
-    /* 防止滚动条 */
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     padding: 15px;
@@ -136,10 +131,10 @@
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   }
 
-  .no-hover-effect:hover {
-    transform: none !important;
-    box-shadow: none !important;
-  }
+.no-hover-effect:hover {
+  transform: none !important;
+  box-shadow: none !important;
+}
 
   .patient-header {
     display: flex;
@@ -330,28 +325,27 @@
 
     <!-- 编辑模态框 -->
   </div>
-  <div class="modal fade" id="editPatientModal{{ item.patient.patient_id }}" tabindex="-1"
+<div class="modal fade" id="editPatientModal{{ item.patient.patient_id }}" tabindex="-1"
     aria-labelledby="editPatientModalLabel{{ item.patient.patient_id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content no-hover-effect">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editPatientModalLabel{{ item.patient.patient_id }}">修改被照護者資料</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form method="post" action="{% url 'edit_patient' item.patient.patient_id %}"
-            id="edit-form-{{ item.patient.patient_id }}" class="edit-form">
-            {% csrf_token %}
-            {{ item.form.as_p }} <!-- 使用對應的表單 -->
-            <div class="modal-footer">
-              <button type="submit" class="btn btn-success save-btn">儲存更改</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消更改</button>
+        <div class="modal-content no-hover-effect">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPatientModalLabel{{ item.patient.patient_id }}">修改被照護者資料</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-          </form>
+            <div class="modal-body">
+                <form method="post" action="{% url 'edit_patient' item.patient.patient_id %}" id="edit-form-{{ item.patient.patient_id }}" class="edit-form">
+                    {% csrf_token %}
+                    {{ item.form.as_p }} <!-- 使用對應的表單 -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success save-btn">儲存更改</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消更改</button>
+                    </div>
+                </form>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
   {% endfor %}
 
@@ -384,15 +378,15 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     var saveButtons = document.querySelectorAll('.save-btn');
-
-    saveButtons.forEach(function (button) {
-      button.addEventListener('click', function (event) {
-        // 找到包含該按鈕的模態框元素
-        var modal = bootstrap.Modal.getInstance(button.closest('.modal'));
-
-        // 關閉模態框
-        modal.hide();
-      });
+    
+    saveButtons.forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            // 找到包含該按鈕的模態框元素
+            var modal = bootstrap.Modal.getInstance(button.closest('.modal'));
+            
+            // 關閉模態框
+            modal.hide();
+        });
     });
     var modals = document.querySelectorAll('.modal');
 
