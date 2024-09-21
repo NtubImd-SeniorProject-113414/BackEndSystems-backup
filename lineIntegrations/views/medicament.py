@@ -1,5 +1,6 @@
 import json
 import openai
+import edge_tts
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -38,6 +39,25 @@ def sendMessageToOpenAi(request, *args, **kwargs):
         return JsonResponse({'response': response_text, 'role': response_role})
     else:
         return JsonResponse({'error': 'Unsupported HTTP method'}, status=405)
+
+async def textToSpeech(request):
+    if request.method == 'POST':
+        text = "Hi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the test"
+        voice = 'en-US-GuyNeural'
+
+        # 初始化 TTS 引擎
+        communicate = edge_tts.Communicate(text=text, voice=voice)
+
+        audio_path = "audio/output2.mp3"  # 指定音频文件的存储路径
+        await communicate.save(audio_path)
+
+    #     response_data = {
+    #         "audioBase64": audio_data
+    #     }    
+    #     return JsonResponse(response_data)
+        return JsonResponse({'message': 'Audio processed'})
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
 
 @csrf_exempt
 def setSessionByToken(request):
