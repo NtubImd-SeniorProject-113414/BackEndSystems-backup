@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
 
 from backendApp.decorator import group_required
 from backendApp.forms import SelectorForm
+from backendApp.form_list.turn_point import TurnPointForm
 from backendApp.middleware import login_required
-from backendApp.models import Patient
+from backendApp.models import RouteCondition, TurnPoint
 from backendApp.module.pointPrint import create_point_pdf
 
 @login_required
@@ -30,4 +32,62 @@ def stop_point(request):
 @login_required
 @group_required('caregiver')
 def turn_point(request):
-    return render(request, 'robotManagement/turn_point.html')
+    turn_points = TurnPoint.objects.all()
+
+    turn_points_with_forms = [
+        {
+            'turn_point': turn_points, 
+            'form': TurnPointForm(
+                instance=turn_points
+            )
+        }
+        for turn_point in turn_points
+    ]
+
+    return render(request, 'robotManagement/turn_point.html', {
+        'add_form': TurnPointForm(),
+        'turn_points_with_forms': turn_points_with_forms
+    })
+
+
+@group_required('caregiver')
+@login_required
+def add_turn_point(request):
+    if request.method == 'POST':
+        form = TurnPointForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '事件新增成功。')
+            return redirect('turn_point_manager')
+    else:
+        form = TurnPointForm()
+
+    return render(request, 'robotManagement/turn_point.html', {
+        'add_form': form,
+    })
+
+@group_required('caregiver')
+@login_required
+def edit_turn_point(request, turn_point_id):
+    turn_point = get_object_or_404(TurnPoint, turn_point_id=turn_point_id)
+    if request.method == 'POST':
+        form = TurnPointForm(request.POST, instance=turn_point)
+        if form.is_valid():
+            form.save()
+            messages.success(request, '事件資訊更新成功。')
+            return redirect('turn_point_manager')
+    else:
+        form = TurnPointForm(instance=turn_point)
+
+    return render(request, 'robotManagement/edit_turn_point.html', {
+        'edit_form': form,
+        'turn_point': turn_point
+    })
+
+@group_required('caregiver')
+@login_required
+def delete_turn_point(request, turn_point_id):
+    turn_point = get_object_or_404(TurnPoint, turn_point_id=turn_point_id)
+    turn_point.delete()
+    messages.success(request, '事件已刪除。')
+    return redirect('turn_point_manager')
