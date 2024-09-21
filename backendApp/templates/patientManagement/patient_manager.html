@@ -31,7 +31,7 @@
         <h3>{{ item.patient.patient_name }}</h3>
         <div class="action-buttons">
           <a href="#" class="bi bi-pencil-square" title="修改" data-bs-toggle="modal"
-            data-bs-target="#editPatientModal{{ item.patient.patient_id }}"></a>
+            data-bs-target="#editModal{{ item.patient.patient_id }}"></a>
 
           <form action="{% url 'delete_patient' item.patient.patient_id %}" method="post" class="d-inline">
             {% csrf_token %}
@@ -76,6 +76,6 @@
   {% endif %}
 </div>
 
-<script src="{% static 'js/model.js' %}"></script>
+<script src="{% static 'js/modal.js' %}"></script>
 
 {% endblock %}
