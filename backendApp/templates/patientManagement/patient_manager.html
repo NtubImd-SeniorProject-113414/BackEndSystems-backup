@@ -17,7 +17,11 @@
       <input type="text" name="search" class="form-control" placeholder="搜尋被照護者" value="{{ request.GET.search }}">
       <button type="submit"><i class="bi bi-search"></i></button>
     </form>
-    <a href="{% url 'add_patient' %}" class="btn btn-primary">新增被照護者</a>
+    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+      新增被照護者
+    </a>
+    {% include 'modal/add_modal.html' with form=add_form item_title='被照護者資料' url_name='add_patient' %}
+
   </div>
 
   {% if page_obj %}

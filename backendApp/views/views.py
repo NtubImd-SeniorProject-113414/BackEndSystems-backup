@@ -65,6 +65,7 @@ def patient_manager(request):
     
     return render(request, 'patientManagement/patient_manager.html', {
         'page_obj': page_obj,
+        'add_form': PatientForm(),
         'patients_with_forms': patients_with_forms
     })
 
@@ -77,10 +78,8 @@ def add_patient(request):
         if form.is_valid():
             form.save()
             messages.success(request, '被照護者新增成功。')
-            return redirect('patient_manager')
-    else:
-        form = PatientForm()
-    return render(request, 'patientManagement/add_patient.html', {'form': form})
+    return redirect('patient_manager')
+
 
 #編輯被照護者
 @group_required('caregiver')
