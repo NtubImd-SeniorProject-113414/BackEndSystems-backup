@@ -391,9 +391,6 @@ class PurchaseDetailForm(forms.ModelForm):
         
         return super().save(commit=commit)
 
-
-
-
 class AddSides(forms.ModelForm):
     class Meta:
         model = Sides

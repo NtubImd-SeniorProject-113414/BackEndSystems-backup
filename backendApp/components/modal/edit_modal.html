@@ -3,11 +3,11 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content no-hover-effect">
             <div class="modal-header">
-                <h5 class="modal-title" id="editPatientModalLabel{{ item_id }}">修改{{ item_title }}資料</h5>
+                <h5 class="modal-title" id="editPatientModalLabel{{ item_id }}">修改{{ item_title }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{% url 'edit_patient' item_id %}" id="edit-form-{{ item_id }}" class="edit-form">
+                <form method="post" action="{% url url_name item_id %}" id="edit-form-{{ item_id }}" class="edit-form">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <div class="modal-footer">
