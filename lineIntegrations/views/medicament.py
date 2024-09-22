@@ -42,13 +42,16 @@ def sendMessageToOpenAi(request, *args, **kwargs):
 
 async def textToSpeech(request):
     if request.method == 'POST':
-        text = "Hi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the testHi this is the test"
-        voice = 'en-US-GuyNeural'
+        text = "哈摟 我是智伴系統，歡迎與我聊天，也歡迎你們與我進行健康諮詢我將提供你們建議，若是身體不適也可以透過旁邊的按鈕通知給照護者喔！"
+        # 英文模型
+        # voice = 'en-US-GuyNeural'
+        # 中文模型
+        voice = "zh-TW-HsiaoChenNeural"
 
         # 初始化 TTS 引擎
         communicate = edge_tts.Communicate(text=text, voice=voice)
 
-        audio_path = "audio/output2.mp3"  # 指定音频文件的存储路径
+        audio_path = "audio/output2.wav"  # 指定音频文件的存储路径
         await communicate.save(audio_path)
 
     #     response_data = {
