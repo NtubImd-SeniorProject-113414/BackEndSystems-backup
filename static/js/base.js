@@ -40,9 +40,58 @@ $(document).ready(function () {
     
     $(window).on('pageshow', function (event) {
         if (event.originalEvent.persisted) {
-            $('#preloaderModal').modal('hide');
+            $('.modal').modal('hide');
+            location.reload();
         }
     });
     
+    $('#preloaderModal').on('show.bs.modal', function () {
+        $(this).css('z-index', 9999);
+        $('.modal-backdrop').last().css('z-index', 9998);
+    });
+
+    $('#print-qrcode-form-all').submit(function(event) {
+        event.preventDefault();
+    
+        let formData = new FormData(this);
+        $('#preloaderModal').modal('show');
+    
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function(data, status, xhr) {
+                $('#preloaderModal').modal('hide');
+                let disposition = xhr.getResponseHeader('Content-Disposition');
+                let filename = "stop_point_report.pdf";
+                if (disposition && disposition.indexOf('attachment') !== -1) {
+                    let filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                    let matches = filenameRegex.exec(disposition);
+                    if (matches != null && matches[1]) { 
+                        filename = matches[1].replace(/['"]/g, '');
+                    }
+                }
+    
+                let blob = new Blob([data], { type: 'application/pdf' });
+                let link = document.createElement('a');
+                let url = window.URL.createObjectURL(blob);
+                link.href = url;
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+    
+                window.URL.revokeObjectURL(url);
+            },
+            error: function() {
+                $('#preloaderModal').modal('hide');
+                alert("發生錯誤！");
+            }
+        });
+    });
 });
 

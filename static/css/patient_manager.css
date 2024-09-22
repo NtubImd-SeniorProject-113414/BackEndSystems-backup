@@ -1,103 +1,138 @@
-
-#patient-manager .input-group {
-    margin-bottom: 1rem;
+body {
+  font-family: "Arial", sans-serif;
+  color: #333333;
+  background-color: #f5f6fa;
 }
 
-#patient-manager .form-control {
-    border: 2px solid #ddd; /* 更明顯的邊框 */
-    border-radius: 4px;
-    padding: 10px 15px;
+h2 {
+  font-size: 1.75rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
 }
 
-#patient-manager table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+.search-bar {
+  display: flex;
+  align-items: center;
+  width: 85%;
 }
 
-#patient-manager th, #patient-manager td {
-    text-align: left;
-    padding: 15px; /* 調整為更大的內邊距以提供更好的閱讀體驗 */
-    border-bottom: 1px solid #ddd; /* 每行下方添加分隔線 */
-    vertical-align: middle; /* 垂直居中對齊 */
+.search-bar input {
+  flex-grow: 1;
+  border-radius: 50px;
+  border: 1px solid #ced4da;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #495057;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease;
 }
 
-#patient-manager thead {
-    background-color: #0056b3; /* 深藍色表頭背景 */
-    color: white;
+.search-bar input::placeholder {
+  color: #adb5bd;
 }
 
-#patient-manager tbody tr:nth-child(odd) {
-    background-color: #f9f9f9; /* 更淺的間隔行背景色 */
+.search-bar input:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-#patient-manager tbody tr:hover {
-    background-color: #e1f5fe; /* 滑鼠經過時的背景色 */
+.search-bar button {
+  background: none;
+  border: none;
+  color: #007bff;
+  margin-left: -40px;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
-#patient-manager .btn {
-    margin-right: 8px;
-    padding: 10px 15px; /* 調整按鈕大小 */
-    border: none; /* 移除邊框 */
-    border-radius: 4px; /* 圓角按鈕 */
-    color: white; /* 按鈕文字顏色 */
-    cursor: pointer; /* 滑鼠指標為手形 */
-    transition: background-color 0.3s, transform 0.2s; /* 過渡效果 */
+.search-bar button:hover {
+  color: #0056b3;
 }
 
-#patient-manager .btn-primary {
-    background-color: #007bff;
+.patient-card {
+  background-color: #ffffff;
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-left: 5px solid #007bff;
 }
 
-#patient-manager .btn-primary:hover {
-    background-color: #0056b3; /* 按鈕懸停效果 */
+.patient-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-#patient-manager .btn-danger {
-    background-color: #dc3545;
+.no-hover-effect:hover {
+  transform: none !important;
+  box-shadow: none !important;
 }
 
-.btn-danger:hover {
-    background-color: #c82333; /* 按鈕懸停效果 */
+.patient-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e9ecef;
 }
 
-/* Pagination styling */
+.patient-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: #333333;
+  font-weight: 600;
+}
+
+.patient-details {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 0.9rem;
+  color: #495057;
+}
+
+.patient-details div {
+  flex-basis: 48%;
+  margin-bottom: 8px;
+}
+
+.patient-details div span {
+  font-weight: 600;
+  color: #6c757d;
+}
+
 .pagination {
-    text-align: center;
-    margin-top: 20px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
 }
 
-.pagination a {
-    margin: 0 5px;
-    padding: 5px 10px;
-    background-color: #4CAF50;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
+.page-link {
+  color: #007bff;
+  margin: 0 5px;
+  border-radius: 50%;
+  padding: 8px 12px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.pagination a:hover {
-    background-color: #388e3c;
+.page-link:hover {
+  background-color: #e9ecef;
+  transform: translateY(-2px);
+  text-decoration: none;
 }
 
- .pagination .current {
-    margin: 0 5px;
-    padding: 5px 10px;
-    background-color: #ddd;
-    
-    color: black;
+.disabled {
+  color: #6c757d;
 }
 
-
-/* 響應式設計 */
-@media (max-width: 768px) {
-    #patient-manager .container {
-        width: 95%;
-        margin: auto;
-        padding: 10px;
-    }
-
-    #patient-manager h2 {
-        font-size: 1.5em;
-    }
+.no-results {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #999999;
+  margin-top: 40px;
 }
