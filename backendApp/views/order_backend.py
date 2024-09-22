@@ -37,13 +37,18 @@ def order_list_history(request):
     orders = Order.objects.filter(
         (Q(order_state__order_state_code=3) | Q(order_state__order_state_code=4))
     )
-    print(orders[0].order_state.order_state_code)
+    
+    # 檢查是否有訂單
+    has_orders = orders.exists()
 
     paginator = Paginator(orders, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
-    return render(request, 'order/order_delivery_management_history.html', {'page_obj': page_obj,})
+    return render(request, 'order/order_delivery_management_history.html', {
+        'page_obj': page_obj,
+        'has_orders': has_orders,  # 傳遞標誌到模板
+    })
 
 @login_required
 @group_required('caregiver')
