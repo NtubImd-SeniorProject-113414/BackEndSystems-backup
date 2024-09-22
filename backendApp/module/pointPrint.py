@@ -20,7 +20,7 @@ def header(canvas, doc):
     canvas.drawImage(logo_path, logo_x, A4[1] - 60, width=logo_width, height=logo_height, mask='auto')
     canvas.setFont('SimSun', 20)
     canvas.setFillColorRGB(0, 0, 0)
-    text = "MediMate - 運輸站點QRCode列印"
+    text = "MediMate - QRCode列印報表"
     text_x = logo_x + logo_width + 10
     canvas.drawString(text_x, A4[1] - 40, text)
     canvas.restoreState()

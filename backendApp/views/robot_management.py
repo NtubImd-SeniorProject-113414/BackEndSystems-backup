@@ -33,24 +33,32 @@ def stop_point(request):
 @group_required('caregiver')
 def turn_point(request):
     turn_points = TurnPoint.objects.all()
+    if request.method == 'POST':
+        data_list = [[f"{str(turn_point.turn_point_name)}", settings.MEDIA_ROOT + "/" + turn_point.qr_point.qr_code_image] for turn_point in turn_points]
+        pdf_data = create_point_pdf(data_list)
 
-    turn_points_with_forms = [
-        {
-            'turn_point': turn_point,
-            'patients': (patients := RouteCondition.objects.filter(turn_point=turn_point).values_list('patient__patient_id', 'patient__patient_name')) and [patient_name for patient_id, patient_name in patients],
-            'form': TurnPointForm(
-                instance=turn_point,
-                patient=[patient_id for patient_id, patient_name in patients],
-                action=turn_point.qr_point.action_type.action_type_id
-            )
-        }
-        for turn_point in turn_points
-    ]
+        # 設置 response 的 Content-Type 和 Content-Disposition 來讓 PDF 自動下載
+        response = HttpResponse(pdf_data, content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="stop_point_report.pdf"'
+        return response
+    else:
+        turn_points_with_forms = [
+            {
+                'turn_point': turn_point,
+                'patients': (patients := RouteCondition.objects.filter(turn_point=turn_point).values_list('patient__patient_id', 'patient__patient_name')) and [patient_name for patient_id, patient_name in patients],
+                'form': TurnPointForm(
+                    instance=turn_point,
+                    patient=[patient_id for patient_id, patient_name in patients],
+                    action=turn_point.qr_point.action_type.action_type_id
+                )
+            }
+            for turn_point in turn_points
+        ]
 
-    return render(request, 'robotManagement/turn_point.html', {
-        'add_form': TurnPointForm(),
-        'turn_points_with_forms': turn_points_with_forms
-    })
+        return render(request, 'robotManagement/turn_point.html', {
+            'add_form': TurnPointForm(),
+            'turn_points_with_forms': turn_points_with_forms
+        })
 
 
 @group_required('caregiver')

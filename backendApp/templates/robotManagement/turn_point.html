@@ -28,9 +28,14 @@
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">事件管理</h1>
-        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
-            新增事件管理
-        </a>
+        <form method="post" id="print-qrcode-form-all" novalidate>
+            {% csrf_token %}
+            <div class="form-main" id="print-qrcode-form">
+                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemModal">
+                    新增事件管理
+                </a>
+                <button type="submit" class="btn btn-success">匯出成PDF</button>
+            </form>
         {% include 'modal/add_modal.html' with form=add_form item_title='事件管理' url_name='add_turn_point' %}
         <br><br>
         <h2 class="mb-4">已新增的事件：</h2>
