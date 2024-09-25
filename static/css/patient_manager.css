@@ -112,19 +112,33 @@ h2 {
   justify-content: center;
 }
 
-.page-link {
-  color: #007bff;
-  margin: 0 5px;
-  border-radius: 50%;
-  padding: 8px 12px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+.page-btn, .page-link {
+  background-color: #ffffff; /* 按鈕背景色 */
+  border: 1px solid #ccc; /* 按鈕邊框 */
+  color: #333333; /* 文字顏色 */
+  padding: 8px 16px; /* 內距 */
+  margin: 0 5px; /* 間距 */
+  cursor: pointer; /* 滑鼠指標 */
+  text-decoration: none; /* 移除超連結下劃線 */
+  border-radius: 4px; /* 邊角圓滑 */
+  display: inline-block; /* 確保按鈕正確顯示 */
 }
 
-.page-link:hover {
-  background-color: #e9ecef;
-  transform: translateY(-2px);
-  text-decoration: none;
+.page-btn:hover, .page-link:hover {
+  background-color: #e9ecef; /* 滑鼠懸浮時的背景色 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 滑鼠懸浮時的陰影效果 */
 }
+
+.page-current {
+  background-color: #f8f9fa; /* 當前頁面背景色 */
+  border: 1px solid #ccc;
+  color: #333333;
+  padding: 8px 16px;
+  margin: 0 5px;
+  border-radius: 4px;
+  pointer-events: none; /* 禁用點擊事件 */
+}
+
 
 .disabled {
   color: #6c757d;
