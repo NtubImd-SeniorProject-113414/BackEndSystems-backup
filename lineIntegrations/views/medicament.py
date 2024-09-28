@@ -16,7 +16,7 @@ from asgiref.sync import sync_to_async
 from django.utils import timezone
 
 charactors = ['/male1', '/male2', '/female1', '/female2']
-voice_param = ["zh-TW-HsiaoChenNeural", "", "", ""]
+voice_param = ["zh-TW-YunJheNeural", "zh-TW-YunJheNeural", "zh-TW-HsiaoChenNeural", "zh-TW-HsiaoYuNeural"]
 openai.api_key = ''
 
 @csrf_exempt
@@ -44,7 +44,7 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
         data = json.loads(request.body)
         patient_name = data['userName']
         transcript = data['transcript']
-    
+        location = data['location']
         chat_logs = await get_today_chat_logs(patient_name)
         
         history = [
@@ -80,7 +80,7 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
             await save_chat_log(patient_name, transcript, response_text)
             
             audio_path = "static/audio/chat.mp3"
-            voice_param = "zh-CN-XiaoxiaoNeural"
+            voice_param = get_voice_param_by_location(location)
             audioWithJsonData = await generate_video_lipsync_convert_file(response_text, audio_path, voice_param)
 
             data = {
@@ -104,9 +104,11 @@ def helloUserInfoAndVideo(request, *args, **kwargs):
     if request.method == 'POST':
         data = json.loads(request.body)
         patient_name = data['userName']
+        location = data['charactor']
         text = f"{patient_name}您好！請問今天需要甚麼幫助呢！"
+        
         audio_path = "static/audio/hellouser.mp3"
-        voice_param = "zh-CN-XiaoxiaoNeural"
+        voice_param = get_voice_param_by_location(location)
 
         audioWithJsonData = asyncio.run(generate_video_lipsync_convert_file(text, audio_path, voice_param))
         
@@ -129,10 +131,11 @@ def sendUncomfortableMessage(request, *args, **kwargs):
         data = json.loads(request.body)
         patient_name = data['userName']
         transcript = data['transcript']
+        location = data['location']
         
         text = f"已收到{patient_name}您的通知！我們已經通知了護理人員，稍後會有專業人員前來了解您的狀況。"
         audio_path = "static/audio/uncomfortableMessage.mp3"
-        voice_param = "zh-CN-XiaoxiaoNeural"
+        voice_param = get_voice_param_by_location(location)
 
         audioWithJsonData = asyncio.run(generate_video_lipsync_convert_file(text, audio_path, voice_param))
         
