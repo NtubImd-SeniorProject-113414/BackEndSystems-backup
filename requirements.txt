@@ -16,3 +16,4 @@ reportlab
 pydub
 apscheduler
 transformers
+python-decouple
