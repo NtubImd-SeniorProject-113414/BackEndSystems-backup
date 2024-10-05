@@ -64,6 +64,7 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
 
             請保持語氣溫暖、耐心，並且希望你講話像是人一樣不要過多的贅字遣詞，回答時盡量簡單，並根據被照護者的需求調整你的回應。如果你發現他們提到了不舒服，可以提醒他們使用畫面中右邊第二個醫生按鈕來回報醫護人員。
             
+            請在80字以內回答。
             並且目前正與 {patient_name} 對話中
         """
         history.append({"role": "user", "content": transcript})
