@@ -307,7 +307,6 @@ class Order(models.Model):
     order_state = models.ForeignKey(OrderState, on_delete=models.CASCADE, db_column='order_state_code')
     order_quantity = models.IntegerField()
     order_time = models.DateTimeField(auto_now_add=True)
-    delivery_location = models.ForeignKey('QRCodePoint', on_delete=models.CASCADE, null=True, blank=True)  # 送餐位置
 
     @staticmethod
     def getOrderByPatientIdAndTimeSlot(patient_id, timeSlot):
@@ -345,13 +344,20 @@ class QRCodePoint(models.Model):
     qr_code_image = models.CharField(max_length=100)  # 掃描點的名稱
     action_type = models.ForeignKey(ActionType, on_delete=models.CASCADE)  # 關聯到ActionType
 
-# 訂單和車輛之間的中間表
+# 運送任務表
 class DeliveryAssignment(models.Model):
-    assignment_id = models.AutoField(primary_key=True)
+    delivery_id = models.AutoField(primary_key=True)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='delivery_assignments')
     vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE, related_name='delivery_assignments')
     current_location = models.ForeignKey(QRCodePoint, on_delete=models.SET_NULL, null=True, blank=True)  # 當前掃描點
-    assigned_time = models.DateTimeField(auto_now_add=True)
+    create_time = models.DateTimeField(auto_now_add=True)
+    completion_time = models.DateTimeField(null=True, blank=True)
+    delivery_status = models.ForeignKey('DeliveryStatus', on_delete=models.CASCADE, db_column='delivery_status_code')
+
+# 運送任務狀態表
+class DeliveryStatus(models.Model):
+    delivery_status_code = models.AutoField(primary_key=True)
+    delivery_status_name = models.CharField(max_length=50)
 
 # 轉向表 (表示左右轉)
 class TurnPoint(models.Model):
