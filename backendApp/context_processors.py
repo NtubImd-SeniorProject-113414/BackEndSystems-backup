@@ -1,3 +1,7 @@
+from django.conf import settings
+from decouple import config
+
+
 def function_menu(request):
     function_menu = [
         {
@@ -85,3 +89,16 @@ def function_menu(request):
         }
     ]
     return {'function_menu': function_menu}
+
+def env_datas(request):
+    websocket_url = settings.WEBSOCKET_URL
+    vtuber_url = config('VTUBER_URL')
+    register_liff_id = config('REGISTER_LIFF_ID')
+    vtuber_liff_id = config('VTUBER_LIFF_ID')
+    
+    return {
+        'websocket_url': websocket_url,
+        'vtuber_url': vtuber_url,
+        'register_liff_id': register_liff_id,
+        'vtuber_liff_id': vtuber_liff_id,
+    }
