@@ -39,17 +39,6 @@ class OrderArrivedConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None):
         if text_data:
             data = json.loads(text_data)
-            message_type = data.get('type', '')
-            if message_type == "confirm_delivery":
-                print("test")
-                await self.channel_layer.group_send(
-                    'order_arrived_group',
-                    {
-                        'type': 'test_message', 
-                        'course_name': 'test',
-                    }
-                )
-                return
 
             payload = data.get('payload', '').split(",")
             patient_id, order_id = payload[0], payload[1]
@@ -87,10 +76,4 @@ class OrderArrivedConsumer(AsyncWebsocketConsumer):
             'course_image_path': course_image_path,
             'patient_name': patient_name,
             'patient_image_path': patient_image_path
-        }))
-
-    async def test_message(self, event):
-        print("test2")
-        await self.send(text_data=json.dumps({
-            'test': 'test'
         }))
