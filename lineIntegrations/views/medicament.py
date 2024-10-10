@@ -4,7 +4,11 @@ import edge_tts
 import subprocess
 import base64
 import asyncio
+import uuid
+import os
 
+
+from decouple import config
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
@@ -81,7 +85,9 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
             
             await save_chat_log(patient_name, transcript, response_text)
             
-            audio_path = "static/audio/chat.mp3"
+            unique_filename = str(uuid.uuid4())
+            audio_path = f"static/audio/chat/{unique_filename}.mp3"
+
             voice_param = get_voice_param_by_location(location)
             audioWithJsonData = await generate_video_lipsync_convert_file(response_text, audio_path, voice_param)
 
@@ -93,8 +99,21 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
                 "animation": "Idle",
             }
             
-            return JsonResponse(data)
+            response = JsonResponse(data)
 
+            def cleanup_audio_file():
+                try:
+                    if os.path.exists(audio_path):
+                        os.remove(audio_path)
+                        os.remove(audio_path.replace('mp3','json'))
+                        os.remove(audio_path.replace('mp3','wav'))
+                except Exception as e:
+                    print(f"Error deleting audio file: {e}")
+
+            response.close = lambda: cleanup_audio_file()
+
+            return response
+            
         else:
             return JsonResponse({'error': '未知錯誤'}, status=405)
     else:
@@ -109,7 +128,8 @@ def helloUserInfoAndVideo(request, *args, **kwargs):
         location = data['charactor']
         text = f"{patient_name}您好！請問今天需要甚麼幫助呢！"
         
-        audio_path = "static/audio/hellouser.mp3"
+        unique_filename = str(uuid.uuid4())
+        audio_path = f"static/audio/hello/{unique_filename}.mp3"
         voice_param = get_voice_param_by_location(location)
 
         audioWithJsonData = asyncio.run(generate_video_lipsync_convert_file(text, audio_path, voice_param))
@@ -123,7 +143,20 @@ def helloUserInfoAndVideo(request, *args, **kwargs):
             "animation": "Waving",
         }
 
-        return JsonResponse(data)
+        response = JsonResponse(data)
+
+        def cleanup_audio_file():
+            try:
+                if os.path.exists(audio_path):
+                    os.remove(audio_path)
+                    os.remove(audio_path.replace('mp3','json'))
+                    os.remove(audio_path.replace('mp3','wav'))
+            except Exception as e:
+                print(f"Error deleting audio file: {e}")
+
+        response.close = lambda: cleanup_audio_file()
+
+        return response
     else:
         return JsonResponse({'error': 'Unsupported HTTP method'}, status=405)
     
@@ -133,10 +166,11 @@ def sendUncomfortableMessage(request, *args, **kwargs):
         data = json.loads(request.body)
         patient_name = data['userName']
         transcript = data['transcript']
-        location = data['location']
+        location = data['charactor']
         
         text = f"已收到{patient_name}您的通知！我們已經通知了護理人員，稍後會有專業人員前來了解您的狀況。"
-        audio_path = "static/audio/uncomfortableMessage.mp3"
+        unique_filename = str(uuid.uuid4())
+        audio_path = f"static/audio/uncomfortableMessage/{unique_filename}.mp3"
         voice_param = get_voice_param_by_location(location)
 
         audioWithJsonData = asyncio.run(generate_video_lipsync_convert_file(text, audio_path, voice_param))
@@ -162,7 +196,20 @@ def sendUncomfortableMessage(request, *args, **kwargs):
             "animation": "Idle",
         }
 
-        return JsonResponse(data)
+        response = JsonResponse(data)
+
+        def cleanup_audio_file(sender, **kwargs):
+            try:
+                if os.path.exists(audio_path):
+                    os.remove(audio_path)
+                    os.remove(audio_path.replace('mp3','json'))
+                    os.remove(audio_path.replace('mp3','wav'))
+            except Exception as e:
+                print(f"Error deleting audio file: {e}")
+
+        response.close = lambda: cleanup_audio_file()
+
+        return response
     else:
         return JsonResponse({'error': 'Unsupported HTTP method'}, status=405)
 
