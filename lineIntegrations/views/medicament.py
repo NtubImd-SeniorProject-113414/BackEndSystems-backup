@@ -28,7 +28,7 @@ openai.api_key = config('OPENAI_API_KEY')
 def setSessionByToken(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        access_token = data.get('token', '')
+        access_token = data['token']
         lineUid = getLineUserUidByToken(access_token)
         patient_id = Patient.getpatientIdByLineUid(lineUid)
         patient = Patient.objects.filter(patient_id=patient_id).first()
@@ -50,6 +50,8 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
         patient_name = data['userName']
         transcript = data['transcript']
         location = data['charactor']
+        
+        # 獲取對話紀錄 (異步調用)
         chat_logs = await get_today_chat_logs(patient_name)
         
         history = [
@@ -60,6 +62,7 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
             for log in chat_logs
         ]
         
+        # 構造 prompt
         prompt = f"""
             你是一個大系統中重要的虛擬人，專門為長照中心的被照護者提供服務。你的角色是幫助緩解被照護者在床上或感到無聊時的孤單感，可以和他們進行聊天和互動。當被照護者想與你交談時，你需要以友善和耐心的方式回應他們的問題，並根據以下指導提供幫助：
             1. **健康諮詢**：根據常識和一般健康信息提供建議，但避免具體的醫療診斷或治療建議。
@@ -74,6 +77,7 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
         """
         history.append({"role": "user", "content": transcript})
         
+        # 與OpenAI溝通 (異步調用)
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "system", "content": prompt}] + history,
@@ -83,13 +87,19 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
         if response and response.choices:
             response_text = response.choices[0].message['content']
             
+            # 保存對話紀錄 (異步調用)
             await save_chat_log(patient_name, transcript, response_text)
             
+            # 音頻文件的生成處理 (異步處理)
             unique_filename = str(uuid.uuid4())
             audio_path = f"static/audio/chat/{unique_filename}.mp3"
-
             voice_param = get_voice_param_by_location(location)
-            audioWithJsonData = await generate_video_lipsync_convert_file(response_text, audio_path, voice_param)
+
+            try:
+                audioWithJsonData = await generate_video_lipsync_convert_file(response_text, audio_path, voice_param)
+            except Exception as e:
+                print(f"Error generating audio: {e}")
+                return JsonResponse({'error': 'Audio generation error'}, status=500)
 
             data = {
                 'text': response_text,
@@ -105,8 +115,8 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
                 try:
                     if os.path.exists(audio_path):
                         os.remove(audio_path)
-                        os.remove(audio_path.replace('mp3','json'))
-                        os.remove(audio_path.replace('mp3','wav'))
+                        os.remove(audio_path.replace('mp3', 'json'))
+                        os.remove(audio_path.replace('mp3', 'wav'))
                 except Exception as e:
                     print(f"Error deleting audio file: {e}")
 
@@ -118,12 +128,13 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
             return JsonResponse({'error': '未知錯誤'}, status=405)
     else:
         return JsonResponse({'error': 'Unsupported HTTP method'}, status=405)
-    
+
 
 @csrf_exempt
 def helloUserInfoAndVideo(request, *args, **kwargs):
     if request.method == 'POST':
         data = json.loads(request.body)
+        print(data)
         patient_name = data['userName']
         location = data['charactor']
         text = f"{patient_name}您好！請問今天需要甚麼幫助呢！"

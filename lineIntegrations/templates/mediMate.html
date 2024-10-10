@@ -34,7 +34,7 @@
             .then(() => {
                 console.log('LIFF initialization successful');
                 liff.openWindow({
-                    url: "{{ vtuber_url }}/receive-token?token=" + liff.getAccessToken(),
+                    url: "{{ vtuber_url }}/receiveToken?token=" + liff.getAccessToken(),
                     external: true
                 });
             })
