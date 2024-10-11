@@ -3,23 +3,402 @@
 {% block content %}
 
 <head>
-  <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: white;
+            padding: 15px 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            font-weight:bold;
+
+        }
+        /* 美化心形图标 */
+        .bi-heart-fill,
+        .bi-heart-half,
+        .bi-heart {
+            font-size: 1.2em; /* 调整图标大小 */
+            vertical-align: middle; /* 垂直对齐 */
+        }
+
+        .toggle-arrow {
+            position: absolute;
+            right: 20px;
+            font-size: 1.2em; /* 调整大小 */
+            cursor: pointer; /* 增加手型图标，提示可点击 */
+        }
+
+        .notification-card,
+        .emotion-card,
+        .vehicle-card {
+            background: #ffffff;
+            border-left: 6px solid #007bff;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            transform: translateY(-4px);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-card:hover,
+        .emotion-card:hover,
+        .vehicle-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            background-color: #f1f1f1;
+        }
+
+        .camera-feed {
+            width: 100%;
+            height: 300px;
+            border-radius: 8px;
+            border: none;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-success {
+            color: green !important;
+        }
+
+        .text-danger {
+            color: red !important;
+        }
+
+        .text-offline {
+            color: red !important;
+        }
+
+        .view-more {
+        text-align: right;
+        font-weight: bold;
+        display: block; /* Change from none to block */
+    }
+
+        .show-view-more .view-more {
+            display: block; /* Show when section is expanded */
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .status {
+            font-size: 1.2em; /* 较大字体 */
+            font-weight: bold; /* 加粗 */
+            color: #333; /* 深色文本 */
+            margin-bottom: 10px; /* 与时间的间距 */
+            display: block; /* 显示为块，独立一行 */
+        }
+        /* 时间样式 */
+        .time {
+            font-size: 1em; /* 正常字体大小 */
+            color: #777; /* 灰色文本 */
+        }
+
+        /* 右上角的顯示區塊 */
+        .status-box {
+            background-color: #b2d9e4; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+            padding: 15px;
+            margin-top: 20px; 
+            text-align: center; 
+            transition: all 0.3s ease; 
+        }
+        .status-box:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* 悬停时的阴影 */
+        }
+
+        .status-box .status {
+            font-size: 18px;
+            margin-right: 10px;
+        }
+
+        .status-box .time {
+            font-size: 16px;
+            color: #495057;
+        }
+
+        .collapsed-content {
+            display: none;
+        }
+
+        .show-content {
+            display: block;
+        }
+
+        /* 通知消息的容器样式 */
+        .notification-message {
+            background-color: #f0f9ff; 
+            color: #0a74da;           
+            border: 1px solid #a3daff; 
+            border-radius: 8px;      
+            padding: 10px 15px;    
+            font-size: 1.1em;        
+            font-weight: 500;         
+            text-align: center;       
+            margin: 15px 0;          
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); 
+            position: relative;      
+            display: flex;           
+            justify-content: center; 
+            align-items: center;     
+        }
+
+        .notification-message::before {
+            content: "ℹ️";           
+            font-size: 1.2em;        
+            margin-right: 10px;      
+        }
+
+        /* 整体容器样式 */
+        .view-more {
+            text-align: center; /* 将内容居中 */
+            margin-top: 20px;   /* 与上方内容保持距离 */
+        }
+
+        /* 链接样式 */
+        .view-more-link {
+            display: inline-block;  
+            padding: 10px 10px;     
+            background-color: #6fcbe0;
+            color: white;           
+            font-size: 12px;       
+            font-weight: bold;      
+            border-radius: 5px;     
+            text-decoration: none;  
+            transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+        }
+
+        /* 悬停时的样式 */
+        .view-more-link:hover {
+            background-color: #2385ee; 
+            color: white;          
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
+            transform: translateY(-2px); 
+        }
+
+
+    </style>
 </head>
 
 <div class="container">
+    <div class="row align-items-center">
+        <div class="col-md-7">
+            <h1>歡迎，
+                {% if user.first_name and user.last_name %}
+                    {{ user.first_name }}{{ user.last_name }}
+                {% else %}
+                    {{ user.username }}
+                {% endif %}
+                ！</h1>
+            <p>您的目前的身分為：<strong>{% for group in user.groups.all %} {{ group.display }}  {% endfor %}</strong></p>
+        </div>
+        <div class="col-md-5">
+            <div class="status-box">
+                <span class="status">被照護者人數：<span id="patientCount"></span></span>
+                <span class="time" id="currentTime"></span>
+            </div>
+        </div>
+    </div>
 
-  <h1>歡迎，
-    {% if user.first_name and user.last_name %}
-      {{ user.first_name }}{{ user.last_name }}
-    {% else %}
-      {{ user.username }}
-    {% endif %}
-  ！</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="section-header">IP Camera即時影像</div>
+            <img src="https://via.placeholder.com/640x480.png?text=Camera+Feed" alt="Camera Feed" class="camera-feed">
+        </div>
 
-<p>您的目前的身分為：<strong>{% for group in user.groups.all %} {{ group.display }}  {% endfor %}</strong></p>
+        <div class="col-md-3">
+            <div class="section-header">負面情緒即時通知 <i class="bi bi-chevron-down toggle-arrow" id="toggleNegativeEmotion"></i></div>
+            <div id="negativeEmotionContainer" class="show-content"></div>
+            <div class="view-more">
+                <a href="{% url 'negative_chatlogs' %}" class="view-more-link">查看更多負面情緒通知</a>
+            </div>
+        </div>
 
+        <div class="col-md-3">
+            <div class="section-header">情緒平均分數 <i class="bi bi-chevron-down toggle-arrow" id="toggleEmotionScore"></i></div>
+            <div id="memberContainer" class="show-content"></div>
+            <div class="view-more">
+                <a href="{% url 'patient_emotions' %}" class="view-more-link">查看更多情緒分析</a>
+            </div>
+        </div>
+    </div>
 
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="section-header">即時訂單 <i class="bi bi-chevron-down toggle-arrow" id="toggleOrders"></i></div>
+            <div id="orderContainer" class="show-content"></div>
+            <div class="view-more">
+                <a href="{% url 'order_delivery_management' %}" class="view-more-link">查看更多訂單</a>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="section-header">車輛狀態 <i class="bi bi-chevron-down toggle-arrow" id="toggleVehicles"></i></div>
+            <div id="vehicleContainer" class="show-content"></div>
+            <div class="view-more">
+                <a href="{% url 'robot_manager' %}" class="view-more-link">查看更多車輛</a>
+            </div>
+        </div>
+    </div>
 </div>
 
+<script>
+function updateDashboard(showAllOrders = false, showAllVehicles = false) {
+    $.ajax({
+        url: "{% url 'dashboard_data' %}",
+        method: "GET",
+        data: { show_all_orders: showAllOrders, show_all_vehicles: showAllVehicles },
+        success: function(data) {
+            const vehicleContainer = $('#vehicleContainer');
+            vehicleContainer.empty();
+            data.vehicles.forEach(function(vehicle, index) {
+                if (index < 3) {
+                    const statusClass = vehicle.status === 'offline' ? 'text-offline' : 'text-success';
+                    vehicleContainer.append(`
+                        <div class="vehicle-card">
+                            <p><strong>車輛名稱: ${vehicle.name}</strong></p>
+                            <p>車輛狀態 <span class="${statusClass}">${vehicle.status}</span></p>
+                            <a href="{% url 'robot_manager' %}" class="btn btn-primary btn-small">查看車輛</a>
+                        </div>
+                    `);
+                }
+            });
+
+            const orderContainer = $('#orderContainer');
+            orderContainer.empty();
+            if (data.orders.length === 0) {
+                orderContainer.append('<p class="notification-message">目前無訂單</p>');
+            } else {
+                data.orders.forEach(function(order, index) {
+                    if (index < 3) {
+                        orderContainer.append(`
+                            <div class="notification-card">
+                                <p><strong>Order #${order.id}</strong> - ${order.time}</p>
+                                <p>點餐者: ${order.patient}, 主餐: ${order.course}, 數量: ${order.quantity}</p>
+                                <a href="{% url 'order_delivery_management' %}" class="btn btn-primary btn-small">查看訂單</a>
+                            </div>
+                        `);
+                    }
+                });
+            }
+
+            const notificationContainer = $('#negativeEmotionContainer');
+            notificationContainer.empty();
+            if (data.notifications.length === 0) {
+                notificationContainer.append('<p class="notification-message">目前無負面情緒</p>');
+            } else {
+                data.notifications.forEach(function(notification, index) {
+                    if (index < 3) {
+                        notificationContainer.append(`
+                            <div class="notification-card">
+                                <p><strong>${notification.patient}</strong></p>
+                                <p>情緒分數為 ${notification.emotion_score}, 尚未處理</p>
+                                <a href="{% url 'negative_chatlogs' %}" class="btn btn-primary btn-small">處理狀態</a>
+                            </div>
+                        `);
+                    }
+                });
+            }
+                
+                
+
+                $('#patientCount').text(data.patient_count);
+
+                const memberContainer = $('#memberContainer');
+                memberContainer.empty();
+                data.patients.forEach(function(patient, index) {
+                    if (index < 3) {
+                        let fullHearts = Math.floor(patient.avg_emotion_score);
+                        let halfHeart = (patient.avg_emotion_score - fullHearts) >= 0.5;
+                        let emptyHearts = 5 - fullHearts - (halfHeart ? 1 : 0);
+
+                        let heartIcons = '';
+                        for (let i = 0; i < fullHearts; i++) {
+                            heartIcons += `<i class="bi bi-heart-fill text-danger"></i>`;
+                        }
+                        if (halfHeart) {
+                            heartIcons += `<i class="bi bi-heart-half text-danger"></i>`;
+                        }
+                        for (let i = 0; i < emptyHearts; i++) {
+                            heartIcons += `<i class="bi bi-heart text-muted"></i>`;
+                        }
+
+                        memberContainer.append(`
+                            <div class="emotion-card">
+                                <p><strong>${patient.name}</strong> ${heartIcons} ${patient.avg_emotion_score.toFixed(1)}</p>
+                            </div>
+                        `);
+                    }
+                });
+            },
+            error: function() {
+                console.log("Failed to fetch dashboard data.");
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        updateDashboard();
+            // 自动每 30 秒刷新一次数据
+        setInterval(function() {
+            updateDashboard(); // 定时调用刷新函数
+        }, 30000); // 30秒 = 30000毫秒
+    });
+
+    function displayCurrentTime() {
+    const currentTimeElement = document.getElementById('currentTime');
+    setInterval(() => {
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const amPm = hours >= 12 ? '下午' : '上午';
+        const formattedHours = (hours % 12 || 12).toString().padStart(2, '0'); // 12小时制
+        currentTimeElement.textContent = `${now.getFullYear()}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getDate().toString().padStart(2, '0')} ${['星期日','星期一','星期二','星期三','星期四','星期五','星期六'][now.getDay()]} ${amPm} ${formattedHours}:${minutes}`;
+    }, 1000);
+}
+
+    displayCurrentTime();
+
+    function setupToggle(toggleId, containerId) {
+    const toggle = document.getElementById(toggleId);
+    const container = document.getElementById(containerId);
+    toggle.addEventListener('click', function() {
+        container.classList.toggle('collapsed-content');
+        container.classList.toggle('show-content');
+        toggle.classList.toggle('bi-chevron-down');
+        toggle.classList.toggle('bi-chevron-up');
+        // 同时切换 view-more 链接的显示状态
+        const viewMoreLink = container.nextElementSibling;  // Assumes 'view-more' is next
+        if (viewMoreLink) {
+            viewMoreLink.style.display = container.classList.contains('show-content') ? 'block' : 'none';
+        }
+    });
+}
+
+    setupToggle('toggleNegativeEmotion', 'negativeEmotionContainer');
+    setupToggle('toggleEmotionScore', 'memberContainer');
+    setupToggle('toggleOrders', 'orderContainer');
+    setupToggle('toggleVehicles', 'vehicleContainer');
+</script>
 
 {% endblock %}
