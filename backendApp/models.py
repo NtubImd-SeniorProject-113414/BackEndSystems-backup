@@ -279,6 +279,8 @@ class ChatLogs(models.Model):
     response_message = models.CharField(max_length=1000)
     emotion_score = models.IntegerField(null=True, blank=True)  # 新增的情緒分數欄位
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
+    is_confirmed = models.BooleanField(default=False)  # 新增的布林欄位，表示是否已確認
+
 
 #用藥需求狀態
 class MedicineDemandState(models.Model):
