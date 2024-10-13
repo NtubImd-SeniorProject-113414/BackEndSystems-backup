@@ -277,6 +277,7 @@ class ChatLogs(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
     patient_message = models.CharField(max_length=1000)
     response_message = models.CharField(max_length=1000)
+    emotion_score = models.IntegerField(null=True, blank=True)  # 新增的情緒分數欄位
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
 #用藥需求狀態
