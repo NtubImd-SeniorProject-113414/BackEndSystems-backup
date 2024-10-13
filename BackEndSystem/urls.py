@@ -124,7 +124,11 @@ urlpatterns = [
 
     #情緒管理
     path('emotion/chatlogs', chatlogs_view, name='chatlogs'),
-    path('emotion/patient_emotions', patient_emotion_view, name='patient_emotions'),
+    path('emotion', patient_emotion_view, name='patient_emotions'),
+    path('emotion/negative-chatlogs/', negative_chatlogs_view, name='negative_chatlogs'),
+    path('confirm-chatlog/<int:chatlog_id>/', confirm_chatlog, name='confirm_chatlog'),
+    path('emotion/confirmed/', confirmed_negative_logs_view, name='negative_confirmed_chatlogs'),
+    path('emotion/confirm-chatlog/<int:chatlog_id>/', confirm_chatlog, name='confirm_chatlog'),
 
 
 
