@@ -369,3 +369,20 @@ def sides_create(request):
     else:
         form = AddSides()
     return render(request, 'MealManagement/add_sides.html', {'form': form})
+
+
+#情緒管理所有情緒
+@group_required('caregiver')
+@login_required
+def chatlogs_view(request):
+    chatlogs_list = ChatLogs.objects.all().order_by('-created_time')
+    
+    # 每頁顯示10筆記錄
+    paginator = Paginator(chatlogs_list, 10)
+    
+    # 獲取當前頁碼，默認為第1頁
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+    
+    # 將記錄和分頁對象傳遞給模板
+    return render(request, 'emotion/chatlogs.html', {'page_obj': page_obj})
