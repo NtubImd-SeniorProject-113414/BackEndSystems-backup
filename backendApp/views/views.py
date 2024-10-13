@@ -11,8 +11,8 @@ from backendApp.forms import  *
 from backendApp.middleware import login_required
 from backendApp.module.sideStock import getSideStockBySidesId
 from backendApp.models import *
-from django.db.models import Avg
-
+from django.db.models import Avg,Q
+from django.utils.dateparse import parse_date
 
 #首頁
 @group_required('caregiver', 'admin', 'pharmacy')
@@ -377,31 +377,117 @@ def sides_create(request):
 @group_required('caregiver')
 @login_required
 def chatlogs_view(request):
+    # 獲取篩選條件
+    patient_name = request.GET.get('patient_name', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    search_query = request.GET.get('search', '')
+
+    # 基本查詢集
     chatlogs_list = ChatLogs.objects.all().order_by('-created_time')
+
+    # 篩選條件
+    if patient_name:
+        chatlogs_list = chatlogs_list.filter(patient__patient_name__icontains=patient_name)
+
+    if start_date:
+        chatlogs_list = chatlogs_list.filter(created_time__date__gte=parse_date(start_date))
     
+    if end_date:
+        chatlogs_list = chatlogs_list.filter(created_time__date__lte=parse_date(end_date))
+
+    if search_query:
+        chatlogs_list = chatlogs_list.filter(patient_message__icontains=search_query)
+
     # 每頁顯示10筆記錄
     paginator = Paginator(chatlogs_list, 10)
-    
+
     # 獲取當前頁碼，默認為第1頁
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
-    
-    # 將記錄和分頁對象傳遞給模板
-    return render(request, 'emotion/chatlogs.html', {'page_obj': page_obj})
+
+    # 將篩選條件傳遞回模板，方便保持篩選條件狀態
+    context = {
+        'page_obj': page_obj,
+        'patient_name': patient_name,
+        'start_date': start_date,
+        'end_date': end_date,
+        'search_query': search_query
+    }
+
+    return render(request, 'emotion/chatlogs.html', context)
 
 # 情緒平均狀況
 @group_required('caregiver')
 @login_required
 def patient_emotion_view(request):
-    # 計算每個患者的平均情緒分數
+    # 取得篩選條件
+    selected_patient = request.GET.get('patient', '')  # 篩選條件：被照護者
+
+    # 計算每個患者的平均情緒分數，並根據名稱篩選
     patients = Patient.objects.annotate(avg_emotion_score=Avg('chatlogs__emotion_score')).order_by('-avg_emotion_score')
 
+    if selected_patient:
+        patients = patients.filter(Q(patient_name__icontains=selected_patient))
+
+    # 每頁顯示10筆記錄
+    paginator = Paginator(patients, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
     # 預設星星數量和邏輯處理
-    for patient in patients:
+    for patient in page_obj:
         if patient.avg_emotion_score is None:
             patient.avg_emotion_score = 0  # 預設為0，沒有數據則顯示灰色
         patient.full_stars = list(range(int(patient.avg_emotion_score)))  # 完整愛心範圍
         patient.half_star = (patient.avg_emotion_score - int(patient.avg_emotion_score)) >= 0.5  # 半顆愛心
         patient.empty_stars = list(range(5 - len(patient.full_stars) - (1 if patient.half_star else 0)))  # 空愛心範圍
 
-    return render(request, 'emotion/patient_emotions.html', {'patients': patients})
+    return render(request, 'emotion/patient_emotions.html', {
+        'page_obj': page_obj,
+        'selected_patient': selected_patient,
+    })
+
+
+#負面情許顯示
+@group_required('caregiver')
+@login_required
+def negative_chatlogs_view(request):
+    # 過濾出情緒分數 ≤ 2 且未處理的聊天記錄
+    negative_logs = ChatLogs.objects.filter(emotion_score__lte=2, is_confirmed=False).order_by('-created_time')
+
+    return render(request, 'emotion/negative_chatlogs.html', {'logs': negative_logs})
+
+# 處理「確認已處理」的邏輯
+@group_required('caregiver')
+@login_required
+def confirm_chatlog(request, chatlog_id):
+    if request.method == 'POST':
+        chatlog = get_object_or_404(ChatLogs, chatLog_id=chatlog_id)
+        chatlog.is_confirmed = True
+        chatlog.save()
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'}, status=400)
+
+
+# 已處理的負面情緒記錄視圖
+@group_required('caregiver')
+@login_required
+def confirmed_negative_logs_view(request):
+    logs = ChatLogs.objects.filter(emotion_score__lte=2, is_confirmed=True).order_by('-confirmed_time')
+    return render(request, 'emotion/confirmed_negative_chatlogs.html', {'logs': logs})
+
+#已處理負面紀錄
+@group_required('caregiver')
+@login_required
+def confirm_chatlog(request, chatlog_id):
+    if request.method == 'POST':
+        try:
+            chatlog = ChatLogs.objects.get(pk=chatlog_id)
+            chatlog.is_confirmed = True
+            chatlog.confirmed_time = timezone.now()  # 設置處理時間
+            chatlog.save()
+            return JsonResponse({'status': 'success'})
+        except ChatLogs.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': '記錄不存在'})
+    return JsonResponse({'status': 'error', 'message': '無效請求'})
