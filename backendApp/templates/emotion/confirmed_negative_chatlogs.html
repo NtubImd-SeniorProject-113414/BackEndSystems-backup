@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+
+    <style>
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            border-radius: 5px;
+            padding: 8px 15px;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+            color: white;
+        }
+
+        /* 表格樣式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead th {
+            background-color: #007bff;
+            color: #000;
+            padding: 12px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        tbody td {
+            padding: 15px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+            vertical-align: middle;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* 卡片樣式 */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .card-header {
+            background-color: #2fc96d;
+            padding: 10px 20px;
+            border-bottom: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        /* 分頁導航樣式 */
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #ffffff;
+            border-color: #007bff;
+        }
+
+        .pagination .page-item .page-link {
+            color: #007bff;
+            border-radius: 5px;
+        }
+
+        .pagination .page-item .page-link:hover {
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+    </style>
+</head>
+
+<div class="container mt-4">
+    <!-- 返回按鈕 -->
+    <a href="{% url 'patient_emotions' %}" class="btn-back mb-3">← 返回</a>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>已處理負面情緒記錄</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-hover table-responsive-lg">
+                <thead>
+                    <tr>
+                        <th scope="col">日期</th>
+                        <th scope="col">被照護者</th>
+                        <th scope="col">對話內容</th>
+                        <th scope="col">情緒分數</th>
+                        <th scope="col">處理時間</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in page_obj %}
+                    <tr>
+                        <td>{{ log.created_time|date:"Y-m-d H:i" }}</td>
+                        <td>{{ log.patient.patient_name }}</td>
+                        <td>{{ log.patient_message }}</td>
+                        <td>{{ log.emotion_score }}</td>
+                        <td>{{ log.confirmed_time|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">目前沒有已處理的負面情緒記錄</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- 分頁導航 -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -11,6 +11,10 @@ from backendApp.forms import  *
 from backendApp.middleware import login_required
 from backendApp.module.sideStock import getSideStockBySidesId
 from backendApp.models import *
+from django.db.models import Avg,Q
+from django.utils.dateparse import parse_date
+from django.core.files.base import ContentFile
+
 
 #首頁
 @group_required('caregiver', 'admin', 'pharmacy')
@@ -68,6 +72,49 @@ def patient_manager(request):
         'add_form': PatientForm(),
         'patients_with_forms': patients_with_forms
     })
+
+# 上傳被照護者圖片視圖
+@login_required
+@group_required('caregiver')
+def upload_patient_image(request, patient_id):
+    patient = get_object_or_404(Patient, patient_id=patient_id)
+
+    if request.method == 'POST' and request.FILES.get('croppedImage'):
+        # 如果已存在舊圖片，先刪除
+        if patient.patient_image_path:
+            patient.patient_image_path.delete(save=False)  # 刪除舊圖片，但不立即保存
+
+        # 獲取新上傳的文件
+        myfile = request.FILES['croppedImage']
+        
+        # 生成 UUID 檔案名，並保留文件的副檔名
+        ext = myfile.name.split('.')[-1]  # 取得文件的副檔名
+        new_filename = f"{uuid.uuid4()}.{ext}"  # 生成唯一的 UUID 檔案名
+
+        # 使用 ImageField 保存新圖片，並使用 UUID 作為檔名
+        patient.patient_image_path.save(new_filename, ContentFile(myfile.read()), save=True)
+
+        # 獲取圖片的 URL
+        file_url = patient.patient_image_path.url
+        
+        return JsonResponse({'url': file_url})
+    
+    return JsonResponse({'error': '圖片上傳失敗'}, status=400)
+
+# 刪除被照護者照片
+@login_required
+@group_required('caregiver')
+def delete_patient_image(request, patient_id):
+    if request.method == 'POST':
+        patient = get_object_or_404(Patient, patient_id=patient_id)
+
+        # 確認患者是否有圖片
+        if patient.patient_image_path:
+            # 刪除圖片文件
+            patient.patient_image_path.delete(save=True)
+            return JsonResponse({'status': 'success'})
+    
+    return JsonResponse({'status': 'fail'}, status=400)
 
 #新增被照護者
 @group_required('caregiver')
@@ -369,3 +416,125 @@ def sides_create(request):
     else:
         form = AddSides()
     return render(request, 'MealManagement/add_sides.html', {'form': form})
+
+
+#情緒管理所有情緒紀錄
+@group_required('caregiver')
+@login_required
+def chatlogs_view(request):
+    # 獲取篩選條件
+    patient_name = request.GET.get('patient_name', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    search_query = request.GET.get('search', '')
+
+    # 基本查詢集
+    chatlogs_list = ChatLogs.objects.all().order_by('-created_time')
+
+    # 篩選條件
+    if patient_name:
+        chatlogs_list = chatlogs_list.filter(patient__patient_name__icontains=patient_name)
+
+    if start_date:
+        chatlogs_list = chatlogs_list.filter(created_time__date__gte=parse_date(start_date))
+    
+    if end_date:
+        chatlogs_list = chatlogs_list.filter(created_time__date__lte=parse_date(end_date))
+
+    if search_query:
+        chatlogs_list = chatlogs_list.filter(patient_message__icontains=search_query)
+
+    # 每頁顯示10筆記錄
+    paginator = Paginator(chatlogs_list, 10)
+
+    # 獲取當前頁碼，默認為第1頁
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    # 將篩選條件傳遞回模板，方便保持篩選條件狀態
+    context = {
+        'page_obj': page_obj,
+        'patient_name': patient_name,
+        'start_date': start_date,
+        'end_date': end_date,
+        'search_query': search_query
+    }
+
+    return render(request, 'emotion/chatlogs.html', context)
+
+# 情緒平均狀況
+@group_required('caregiver')
+@login_required
+def patient_emotion_view(request):
+    # 取得篩選條件
+    selected_patient = request.GET.get('patient', '')  # 篩選條件：被照護者
+
+    # 計算每個患者的平均情緒分數，並根據名稱篩選
+    patients = Patient.objects.annotate(avg_emotion_score=Avg('chatlogs__emotion_score')).order_by('-avg_emotion_score')
+
+    if selected_patient:
+        patients = patients.filter(Q(patient_name__icontains=selected_patient))
+
+    # 每頁顯示10筆記錄
+    paginator = Paginator(patients, 10)
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    # 預設星星數量和邏輯處理
+    for patient in page_obj:
+        if patient.avg_emotion_score is None:
+            patient.avg_emotion_score = 0  # 預設為0，沒有數據則顯示灰色
+        patient.full_stars = list(range(int(patient.avg_emotion_score)))  # 完整愛心範圍
+        patient.half_star = (patient.avg_emotion_score - int(patient.avg_emotion_score)) >= 0.5  # 半顆愛心
+        patient.empty_stars = list(range(5 - len(patient.full_stars) - (1 if patient.half_star else 0)))  # 空愛心範圍
+
+    return render(request, 'emotion/patient_emotions.html', {
+        'page_obj': page_obj,
+        'selected_patient': selected_patient,
+    })
+
+
+# 負面情緒顯示
+@group_required('caregiver')
+@login_required
+def negative_chatlogs_view(request):
+    # 過濾出情緒分數 ≤ 2 且未處理的聊天記錄
+    negative_logs = ChatLogs.objects.filter(emotion_score__lte=2, is_confirmed=False).order_by('-created_time')
+
+    # 每頁顯示 15 條記錄
+    paginator = Paginator(negative_logs, 15)  
+    page_number = request.GET.get('page', 1)  # 獲取當前頁碼，默認為第 1 頁
+    page_obj = paginator.get_page(page_number)  # 分頁對象
+
+    return render(request, 'emotion/negative_chatlogs.html', {'page_obj': page_obj})
+
+#已處理負面紀錄
+@group_required('caregiver')
+@login_required
+def confirm_chatlog(request, chatlog_id):
+    if request.method == 'POST':
+        try:
+            chatlog = ChatLogs.objects.get(pk=chatlog_id)
+            chatlog.is_confirmed = True
+            chatlog.confirmed_time = timezone.now()  # 設置處理時間
+            chatlog.save()
+            return JsonResponse({'status': 'success'})
+        except ChatLogs.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': '記錄不存在'})
+    return JsonResponse({'status': 'error', 'message': '無效請求'})
+
+# 已處理的負面情緒記錄視圖
+@group_required('caregiver')
+@login_required
+def confirmed_negative_logs_view(request):
+    logs_list = ChatLogs.objects.filter(emotion_score__lte=2, is_confirmed=True).order_by('-confirmed_time')
+    
+    # 使用 Paginator 進行分頁，每頁顯示15筆記錄
+    paginator = Paginator(logs_list, 15)
+    
+    # 獲取當前頁碼，默認為第1頁
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'emotion/confirmed_negative_chatlogs.html', {'page_obj': page_obj})
+

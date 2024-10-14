@@ -9,7 +9,31 @@
 <link href="{% static 'css/modal/base.css' %}" rel="stylesheet">
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
 <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+<style>
+  .modal-dialog {
+    margin-top: 80px;  /* 調整 modal 的頂部間距 */
+  }
+
+  .img-container {
+  max-width: 100%;  /* 確保容器寬度自適應 */
+  height: 400px;    /* 固定高度，適應不同尺寸的圖片 */
+  overflow: hidden; /* 隱藏溢出的部分 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;  /* 可選：設置背景色以顯示預覽區域 */
+}
+
+.img-container img {
+  max-width: 100%;        /* 圖片寬度自適應容器 */
+  max-height: 100%;       /* 圖片高度自適應容器 */
+  object-fit: contain;    /* 保持圖片比例，防止拉伸 */
+}
+</style>
 
 <div id="patient-manager" class="container">
   <h2 class="text-center">被照護者管理</h2>
@@ -23,34 +47,77 @@
       新增被照護者
     </a>
     {% include 'modal/add_modal.html' with form=add_form item_title='被照護者資料' url_name='add_patient' %}
-
   </div>
 
   {% if page_obj %}
   {% for item in patients_with_forms %}
-    <div class="patient-card">
-      <div class="patient-header">
-        <h3>{{ item.patient.patient_name }}</h3>
-        <div class="action-buttons">
-          <a href="#" class="bi bi-pencil-square" title="修改" data-bs-toggle="modal"
-            data-bs-target="#editModal{{ item.patient.patient_id }}"></a>
+  <div class="patient-card">
+    <div class="patient-header">
+      <h3>{{ item.patient.patient_name }}</h3>
+      <div class="action-buttons">
+        <!-- 編輯按鈕 -->
+        <a href="#" class="bi bi-pencil-square" title="修改" data-bs-toggle="modal"
+           data-bs-target="#editModal{{ item.patient.patient_id }}"></a>
 
-          <form action="{% url 'delete_patient' item.patient.patient_id %}" method="post" class="d-inline">
-            {% csrf_token %}
-            <button type="submit" class="bi bi-trash" title="刪除" onclick="return confirm('確定要刪除這位被照護者嗎？');"></button>
+        <!-- 圖片上傳按鈕 -->
+        <a href="#" class="bi bi-image" title="上傳照片" data-bs-toggle="modal"
+           data-bs-target="#uploadImageModal{{ item.patient.patient_id }}"></a>
+
+        <!-- 刪除按鈕 -->
+        <form action="{% url 'delete_patient' item.patient.patient_id %}" method="post" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" class="bi bi-trash" title="刪除" onclick="return confirm('確定要刪除這位被照護者嗎？');"></button>
+        </form>
+      </div>
+    </div>
+
+    <div class="patient-details">
+      <div><span>出生日期:</span> {{ item.patient.patient_birth }}</div>
+      <div><span>電話:</span> {{ item.patient.patient_number }}</div>
+      <div><span>身分證字號:</span> {{ item.patient.patient_idcard }}</div>
+      <div><span>創建時間:</span> {{ item.patient.created_time }}</div>
+    </div>
+  </div>
+
+  <!-- 圖片上傳與裁切 Modal -->
+  <div class="modal fade" id="uploadImageModal{{ item.patient.patient_id }}" tabindex="-1" aria-labelledby="uploadImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="uploadImageModalLabel">上傳照片 - {{ item.patient.patient_name }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- 圖片上傳與裁切表單 -->
+          <form id="uploadForm{{ item.patient.patient_id }}" enctype="multipart/form-data">
+            <div class="mb-3">
+              <label for="imageInput{{ item.patient.patient_id }}" class="form-label">上傳新圖片：</label>
+              <input type="file" id="imageInput{{ item.patient.patient_id }}" class="form-control" accept="image/*">
+            </div>
+
+            <!-- 圖片顯示與裁切區域 -->
+            <div class="img-container mt-3">
+              <!-- 如果有已保存的圖片，顯示已裁切的圖片，否則顯示上傳後裁切區域 -->
+              {% if item.patient.patient_image_path %}
+              <img id="image{{ item.patient.patient_id }}" src="{{ item.patient.patient_image_path.url }}" alt="裁切後圖片">
+              {% else %}
+              <img id="image{{ item.patient.patient_id }}" alt="請上傳圖片">
+              {% endif %}
+            </div>
+
+            <!-- 裁切按鈕 -->
+            <button type="button" class="btn btn-primary mt-3" id="cropButton{{ item.patient.patient_id }}">裁切並保存圖片</button>
+            <!-- 刪除圖片按鈕 -->
+            <button type="button" class="btn btn-danger mt-3" id="deleteImageButton{{ item.patient.patient_id }}">刪除圖片</button>
           </form>
         </div>
       </div>
-      <div class="patient-details">
-        <div><span>出生日期:</span> {{ item.patient.patient_birth }}</div>
-        <div><span>電話:</span> {{ item.patient.patient_number }}</div>
-        <div><span>身分證字號:</span> {{ item.patient.patient_idcard }}</div>
-        <div><span>創建時間:</span> {{ item.patient.created_time }}</div>
-      </div>
     </div>
-    {% include 'modal/edit_modal.html' with form=item.form item_id=item.patient.patient_id item_title='被照護者資料' url_name='edit_patient' %}
+  </div>
 
-{% endfor %}
+  {% include 'modal/edit_modal.html' with form=item.form item_id=item.patient.patient_id item_title='被照護者資料' url_name='edit_patient' %}
+
+  {% endfor %}
 
   <div class="pagination justify-content-center">
     {% if page_obj.has_previous %}
@@ -71,6 +138,7 @@
       &raquo;</a>
     {% endif %}
   </div>
+
   {% else %}
   <div class="no-results">
     查無此人
@@ -78,6 +146,111 @@
   {% endif %}
 </div>
 
-<script src="{% static 'js/modal.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var cropperInstances = {};  // 保存每個裁切器的實例
+
+   // 刪除圖片功能
+   document.querySelectorAll('[id^="deleteImageButton"]').forEach(function (deleteButton) {
+    var patientId = deleteButton.id.replace('deleteImageButton', '');  // 從按鈕的 id 中提取 patientId
+    deleteButton.addEventListener('click', function () {
+      if (confirm("確定要刪除這張圖片嗎？")) {
+        var deleteUrl = "{% url 'delete_patient_image' patient_id=0 %}".replace('0', patientId);
+
+        fetch(deleteUrl, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": "{{ csrf_token }}"
+          },
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            alert("圖片已刪除！");
+            location.reload();
+          } else {
+            alert("圖片刪除失敗！");
+          }
+        })
+        .catch(error => {
+          console.error("圖片刪除失敗:", error);
+        });
+      }
+    });
+  });
+
+  // 上傳與裁切功能
+  document.querySelectorAll('[id^="imageInput"]').forEach(function (inputElement) {
+    var patientId = inputElement.id.replace('imageInput', '');  // 從 input 元素的 id 中提取 patientId
+    var imageElement = document.getElementById('image' + patientId);
+    var cropButton = document.getElementById('cropButton' + patientId);
+
+    inputElement.addEventListener('change', function (e) {
+      var files = e.target.files;
+      if (files && files.length > 0) {
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          imageElement.src = event.target.result;
+
+          // 初始化 Cropper.js，或者銷毀舊實例後重新初始化
+          if (cropperInstances[patientId]) {
+            cropperInstances[patientId].destroy();  // 銷毀舊的裁切器
+          }
+
+          cropperInstances[patientId] = new Cropper(imageElement, {
+            aspectRatio: 3 / 4,  // 固定裁切比例
+            viewMode: 1,
+            dragMode: 'move',  // 可移動裁切框
+            responsive: true,
+            minContainerWidth: 400,  // 容器最小寬度
+            minContainerHeight: 400,  // 容器最小高度
+            maxContainerWidth: 400,   // 容器最大寬度
+            maxContainerHeight: 400,  // 容器最大高度
+            autoCropArea: 0.9,        // 自動裁切區域佔整個容器的比例
+          });
+        };
+        reader.readAsDataURL(files[0]);  // 讀取上傳的圖片
+      }
+    });
+
+    cropButton.addEventListener('click', function () {
+      if (cropperInstances[patientId]) {
+        var canvas = cropperInstances[patientId].getCroppedCanvas({
+          width: 400,
+          height: 300,
+        });
+
+        canvas.toBlob(function (blob) {
+          var formData = new FormData();
+          formData.append('croppedImage', blob, 'cropped_image.jpg');
+
+          var uploadUrl = "{% url 'upload_patient_image' patient_id=0 %}".replace('0', patientId);
+          fetch(uploadUrl, {
+            method: "POST",
+            headers: {
+              "X-CSRFToken": "{{ csrf_token }}"
+            },
+            body: formData,
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.url) {
+              alert("圖片裁切並保存成功！");
+              imageElement.src = data.url;  // 更新圖片顯示
+              location.reload();  // 重新加載頁面顯示新圖片
+            } else {
+              alert("圖片上傳失敗！");
+            }
+          })
+          .catch(error => {
+            console.error("圖片上傳失敗:", error);
+          });
+        });
+      }
+    });
+  });
+});
+
+</script>
 
 {% endblock %}
