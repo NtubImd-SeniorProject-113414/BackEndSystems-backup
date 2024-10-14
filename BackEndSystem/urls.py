@@ -9,6 +9,7 @@ from backendApp.login import login_view,logout_view
 from backendApp.views import userManagement, card, order_backend, medicine, rebot, robot_management
 from lineIntegrations.views import linebot, verify, order, medicament, notify
 
+
 urlpatterns = [
     path('', index),
     path('index', index, name='index'),
@@ -26,6 +27,8 @@ urlpatterns = [
     path('add_patient/', add_patient, name='add_patient'),
     path('edit_patient/<int:patient_id>/', edit_patient, name='edit_patient'),
     path('delete_patient/<int:patient_id>/', delete_patient, name='delete_patient'),
+    path('upload-image/<int:patient_id>/', upload_patient_image, name='upload_patient_image'),
+    path('delete_patient_image/<int:patient_id>/', delete_patient_image, name='delete_patient_image'),
 
     #供應商管理
     path('suppliers/', supplier_list, name='suppliers'),
@@ -120,5 +123,15 @@ urlpatterns = [
     path('robot_management/turn_point_manager/add', robot_management.add_turn_point, name='add_turn_point'),
     path('robot_management/turn_point_manager/edit/<int:turn_point_id>', robot_management.edit_turn_point, name='edit_turn_point'),
     path('robot_management/turn_point_manager/delete/<int:turn_point_id>', robot_management.delete_turn_point, name='delete_turn_point'),
+
+    #情緒管理
+    path('emotion/chatlogs', chatlogs_view, name='chatlogs'),
+    path('emotion', patient_emotion_view, name='patient_emotions'),
+    path('emotion/negative-chatlogs/', negative_chatlogs_view, name='negative_chatlogs'),
+    path('confirm-chatlog/<int:chatlog_id>/', confirm_chatlog, name='confirm_chatlog'),
+    path('emotion/confirmed/', confirmed_negative_logs_view, name='negative_confirmed_chatlogs'),
+    path('emotion/confirm-chatlog/<int:chatlog_id>/', confirm_chatlog, name='confirm_chatlog'),
+
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
