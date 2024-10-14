@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'model/bootstrap/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
+    <style>
+        /* 表單調整 */
+        .filter-form .form-group {
+            margin-right: 15px;
+        }
+
+        .filter-form {
+            margin-bottom: 20px;
+        }
+
+        .filter-form .form-control {
+            width: 200px;
+        }
+
+        /* 卡片美化 */
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+
+        .card-header {
+            background-color: #0bb3b8;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* 調整按鈕樣式 */
+        .btn-secondary, .btn-primary {
+            border-radius: 5px;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+        }
+
+        .btn-secondary:hover, .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        /* 表格樣式 */
+        .table {
+            margin-top: 20px;
+        }
+
+        .table th {
+            background-color: #17a2b8;
+            color: #fff;
+            text-align: center;
+        }
+
+        .table td {
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
+            background-color: #f8f9fa;
+        }
+
+        .table td, .table th {
+            border: 1px solid #dee2e6;
+        }
+
+        .table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        /* 分頁導航樣式 */
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #ffffff;
+            border-color: #007bff;
+        }
+
+        .pagination .page-item .page-link {
+            color: #007bff;
+            border-radius: 5px;
+        }
+
+        .pagination .page-item .page-link:hover {
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+    </style>
+</head>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex align-items-center justify-content-between">
+                <a class="btn btn-secondary" href="{% url 'patient_emotions' %}">← 返回</a>
+                <h1 class="text-center mb-0 flex-grow-1">情緒分析記錄</h1>
+            </div>
+        </div>
+        <div class="card-body">
+
+            <!-- 篩選表單 -->
+            <form method="GET" class="filter-form d-flex justify-content-between align-items-center">
+                <div class="form-group">
+                    <label for="start_date">開始日期:</label>
+                    <input type="date" name="start_date" id="start_date" class="form-control" value="{{ start_date }}">
+                </div>
+                <div class="form-group">
+                    <label for="end_date">結束日期:</label>
+                    <input type="date" name="end_date" id="end_date" class="form-control" value="{{ end_date }}">
+                </div>
+                <div class="form-group">
+                    <label for="patient_name">被照護者名稱:</label>
+                    <input type="text" name="patient_name" id="patient_name" class="form-control" value="{{ patient_name }}" placeholder="輸入名稱">
+                </div>
+                <div class="form-group">
+                    <label for="search">搜尋對話:</label>
+                    <input type="text" name="search" id="search" class="form-control" value="{{ search_query }}" placeholder="搜尋對話內容">
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top:25px">篩選</button>
+                <a href="{% url 'chatlogs' %}" class="btn btn-secondary " style="margin-top:25px">重置</a>
+            </form>
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col" style="width: 15%;">時間</th>
+                        <th scope="col" style="width: 15%;">被照護者名稱</th>
+                        <th scope="col" style="width: 40%;">對話內容</th>
+                        <th scope="col" style="width: 10%;">情緒分數</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in page_obj %}
+                    <tr>
+                        <td>{{ log.created_time }}</td>
+                        <td>{{ log.patient.patient_name }}</td>
+                        <td style="white-space: pre-wrap;">{{ log.patient_message }}</td>
+                        <td class="text-center">{{ log.emotion_score }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center">目前沒有被照護者情緒分析記錄</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- 分頁導航 -->
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+{% endblock %}

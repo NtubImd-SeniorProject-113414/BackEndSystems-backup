@@ -29,6 +29,7 @@ def function_menu(request):
             'mode': 'multi',
             'items': [
                 {'url': 'patient_manager', 'name': '被照護者管理', 'icon': 'fa-solid fa-hospital-user'},
+                {'url': 'patient_emotions', 'name': '被照護者情緒管理', 'icon': 'fa-solid fa-face-smile'},
                 {'url': 'card_manager', 'name': ' 卡片管理', 'icon': 'fa-solid fa-credit-card-alt'},
                 {'url': 'notify_manager', 'name': ' 通知管理', 'icon': 'fa-solid fa-volume-high'},
             ]
