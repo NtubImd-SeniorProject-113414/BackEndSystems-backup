@@ -4,56 +4,199 @@
 <head>
   <link rel="stylesheet" type="text/css" href="{% static 'css/order_delivery_management.css' %}">
   <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link href="{% static 'css/modal/base.css' %}" rel="stylesheet">
+  <style>
+    .selected-row {
+      background-color: #d1e7dd; /* 被選取時的背景顏色 */
+    }
+  </style>
 </head>
 
-<div class="container">
-  <div class="title">
+<div class="container mt-4">
+  <div class="title mb-4">
     <h2>配送餐點管理</h2>
-    <a href="{% url 'history' %}" class="btn btn-sm btn-info" style="font-size:15px; padding:0.5rem 1rem; color:rgb(234, 245, 245);">查詢歷史訂單</a>
+    <a href="{% url 'history' %}" class="btn btn-lg btn-info">查詢歷史訂單</a>
   </div>
 
   <h2 class="orderTime">點餐時段：
     {% if current_time_period %}
       {{ current_time_period.timeSlot_name }} ({{ current_time_period.startTime|date:"H:i" }} - {{ current_time_period.endTimes|date:"H:i" }})
+      <br><br>
+      <button type="button" class="btn btn-lg btn-success" id="deliverSelectedOrders">運送所選訂單</button>
+      <button type="button" class="btn btn-lg btn-danger" id="cancelSelectedOrders">取消所選訂單</button>
     {% else %}
       目前非點餐時段
     {% endif %}
   </h2>
-  <table class="table table-striped" class="table">
-    <thead>
-      <tr>
-        <th>號碼</th>
-        <th>餐點及數量</th>
-        <th>點餐時間</th>
-        <th>訂餐人</th>
-        <th>訂單狀態</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for order in page_obj %}
-      <tr>
-        <td>{{ order.order_id }}</td>
-        <td>{{ order.course.course_name }} x {{ order.order_quantity }}</td>
-        <td>{{ order.order_time }}</td>
-        <td>{{ order.patient.patient_name }}</td>
-        {% if order.order_state.order_state_code == 1 %}
-          <td><p class="un-delivery">{{ order.order_state.order_state_name }}</p></td>
-        {% elif order.order_state.order_state_code == 2 %}
-          <td><p class="delivering">{{ order.order_state.order_state_name }}</p></td>
-        {% endif %}
-        <td>
-          {% if order.order_state.order_state_code == 1 %}
-            <a href="#" class="btn btn-sm btn-success">送餐</a>
-            <a href="{% url 'cancel_order' order.order_id %}" class="btn btn-sm btn-danger" onclick="return confirm('確定要取消訂單嗎？');">取消</a>
-          {% elif order.order_state.order_state_code == 2 %}
-            <a href="#" class="btn btn-sm btn-success" style="background-color: #a9a9a9; border:none">送餐</a>
-            <a href="order_delivery_management" class="btn btn-sm btn-danger" onclick="return alert('配送中請勿取消訂單！');" style="background-color: darkgray; border:none">取消</a>
-          {% endif %}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+  <form id="orderForm">
+    <table class="table table-striped text-center">
+      <thead>
+        <tr>
+          <th>選擇</th>
+          <th>號碼</th>
+          <th>餐點及數量</th>
+          <th>點餐時間</th>
+          <th>訂餐人</th>
+          <th>訂單狀態</th>
+        </tr>
+      </thead>
+      <tbody id="order-tbody">
+        {% for order in page_obj %}
+        <tr class="order-row" data-order-id="{{ order.order_id }}">
+          <td>
+            {% if order.order_state.order_state_code == 1 %}
+              <input type="checkbox" name="orders[]" value="{{ order.order_id }}" class="order-checkbox"> <!-- 顯示 checkbox -->
+            {% else %}
+              <span></span>
+            {% endif %}
+          </td>
+          <td>{{ order.order_id }}</td>
+          <td>{{ order.course.course_name }} x {{ order.order_quantity }}</td>
+          <td>{{ order.order_time }}</td>
+          <td>{{ order.patient.patient_name }}</td>
+          <td>
+            {% if order.order_state.order_state_code == 1 %}
+              <p class="un-delivery">{{ order.order_state.order_state_name }}</p>
+            {% elif order.order_state.order_state_code == 2 %}
+              <p class="delivering">{{ order.order_state.order_state_name }}</p>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </form>
 </div>
+
+<!-- Robot Selection Modal (as a form) -->
+<div class="modal fade" id="robotModal" tabindex="-1" aria-labelledby="robotModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="robotModalLabel">配送機器人狀態</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <!-- Modal Body: Form -->
+      <form method="POST" action="{% url 'deliver_orders' %}">
+        {% csrf_token %}
+        <!-- Hidden field to store selected order IDs -->
+        <input type="hidden" name="orders" id="selectedOrdersInput">
+        <div class="modal-body">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>選擇</th>
+                <th>序號</th>
+                <th>名稱</th>
+                <th>狀態</th>
+              </tr>
+            </thead>
+            <tbody id="robot-table-body">
+              <!-- Robot data will be dynamically added here -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Modal Footer with Submit button -->
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">提交配送</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var selectedOrders = [];
+  var selectedRobotId = null; // 用來記錄選中的機器人 ID
+
+  // 點擊整列來選擇或取消選擇該行的訂單
+  $('.order-row').on('click', function() {
+      var checkbox = $(this).find('.order-checkbox');  // 找到該行的 checkbox
+
+      // 反轉 checkbox 的選擇狀態
+      checkbox.prop('checked', !checkbox.prop('checked'));
+
+      // 如果選中，給該行添加 selected-row 顏色，否則移除顏色
+      if (checkbox.prop('checked')) {
+          $(this).addClass('selected-row');
+      } else {
+          $(this).removeClass('selected-row');
+      }
+  });
+
+  // Fetch robot data from the server and update the modal table
+  function updateRobotTable(data) {
+      var tbody = $('#robot-table-body');
+      tbody.empty();
+      $.each(data.robots, function(index, robot) {
+          var row = '<tr class="robot-row" data-robot-id="' + robot.vehicle_id + '">' +
+              '<td><input type="radio" name="robot_id" value="' + robot.vehicle_id + '" required></td>' +
+              '<td>' + robot.vehicle_id + '</td>' +
+              '<td>' + robot.vehicle_name + '</td>' +
+              '<td>' + robot.vehicle_status + '</td>' +
+              '</tr>';
+          tbody.append(row);
+      });
+
+      // 如果之前有選中的機器人，恢復其選中狀態
+      if (selectedRobotId) {
+          $('input[name="robot_id"][value="' + selectedRobotId + '"]').prop('checked', true);
+          $('tr[data-robot-id="' + selectedRobotId + '"]').addClass('selected-row');
+      }
+
+      // 處理點擊機器人行的邏輯
+      $('.robot-row').on('click', function() {
+          var robotId = $(this).data('robot-id');
+
+          if (selectedRobotId === robotId) {
+              // 如果點擊的機器人已經是選中的，則取消選擇
+              selectedRobotId = null;
+              $(this).removeClass('selected-row');
+              $(this).find('input[type="radio"]').prop('checked', false);
+          } else {
+              // 選中新的機器人，並取消其他機器人的選擇
+              selectedRobotId = robotId;
+              $('.robot-row').removeClass('selected-row');
+              $(this).addClass('selected-row');
+              $(this).find('input[type="radio"]').prop('checked', true);
+          }
+      });
+  }
+
+  // Fetch robots data every 2 seconds and update the modal
+  function fetchRobotsData() {
+      $.ajax({
+          url: '{% url "get_robots_data" %}',
+          type: 'GET',
+          dataType: 'json',
+          success: function(response) {
+              updateRobotTable(response);
+          },
+          error: function(error) {
+              console.error('Error fetching robot data:', error);
+          }
+      });
+  }
+
+  setInterval(fetchRobotsData, 2000);  // Fetch data every 2 seconds
+
+  // Handle "運送所選訂單" button click
+  $('#deliverSelectedOrders').on('click', function() {
+      selectedOrders = [];  // 重置選擇
+      $('input[name="orders[]"]:checked').each(function() {  // 收集所有勾選的訂單
+          selectedOrders.push($(this).val());
+      });
+
+      if (selectedOrders.length > 0) {
+          $('#selectedOrdersInput').val(selectedOrders.join(','));  // 將選中的訂單存入隱藏欄位
+          $('#robotModal').modal('show');  // 顯示機器人選擇模態框
+      } else {
+          alert('請選擇至少一個訂單來配送！');
+      }
+  });
+</script>
+
 {% endblock %}
