@@ -13,6 +13,8 @@ from backendApp.module.sideStock import getSideStockBySidesId
 from backendApp.models import *
 from django.db.models import Avg,Q
 from django.utils.dateparse import parse_date
+from django.core.files.base import ContentFile
+
 
 #首頁
 @group_required('caregiver', 'admin', 'pharmacy')
@@ -70,6 +72,45 @@ def patient_manager(request):
         'add_form': PatientForm(),
         'patients_with_forms': patients_with_forms
     })
+
+# 上傳圖片視圖
+@login_required
+@group_required('caregiver')
+def upload_patient_image(request, patient_id):
+    patient = get_object_or_404(Patient, patient_id=patient_id)
+    
+    if request.method == 'POST' and request.FILES.get('croppedImage'):
+        # 獲取上傳的文件
+        myfile = request.FILES['croppedImage']
+
+        # 生成 UUID 作為文件名並保持原文件擴展名
+        ext = myfile.name.split('.')[-1]
+        new_filename = f"{uuid.uuid4()}.{ext}"
+
+        # 使用 ImageField 自動處理文件存儲，保存文件到 patient_image_path 字段
+        patient.patient_image_path.save(new_filename, ContentFile(myfile.read()), save=True)
+
+        # 獲取圖片 URL
+        file_url = patient.patient_image_path.url
+        
+        return JsonResponse({'url': file_url})
+    
+    return JsonResponse({'error': '圖片上傳失敗'}, status=400)
+
+# 刪除被照護者照片
+@login_required
+@group_required('caregiver')
+def delete_patient_image(request, patient_id):
+    if request.method == 'POST':
+        patient = get_object_or_404(Patient, patient_id=patient_id)
+
+        # 確認患者是否有圖片
+        if patient.patient_image_path:
+            # 刪除圖片文件
+            patient.patient_image_path.delete(save=True)
+            return JsonResponse({'status': 'success'})
+    
+    return JsonResponse({'status': 'fail'}, status=400)
 
 #新增被照護者
 @group_required('caregiver')
