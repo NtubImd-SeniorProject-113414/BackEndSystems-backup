@@ -454,6 +454,7 @@ header img {
 
 .btn-success:hover {
     background-color: #218838;
+    transform: translateY(-2px);
 }
 
 .btn-secondary {
@@ -506,10 +507,8 @@ select:focus {
     gap: 10px;
   }
 
-/* 編輯與刪除圖標顏色 */
 .action-buttons .bi-pencil-square {
   color: #007bff;
-  /* 藍色 */
 }
 
 .action-buttons .bi-pencil-square:hover {
@@ -518,7 +517,6 @@ select:focus {
 
 .action-buttons .bi-trash {
   color: #dc3545;
-  /* 紅色 */
 }
 
 .action-buttons .bi-trash:hover {
@@ -526,7 +524,8 @@ select:focus {
 }
 
 .btn-primary,
-.btn-danger {
+.btn-danger,
+.btn-success {
   border: none;
   border-radius: 25px;
   padding: 10px 20px;
