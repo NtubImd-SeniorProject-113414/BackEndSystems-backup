@@ -68,6 +68,7 @@ class Patient(models.Model):
     patient_idcard =models.CharField(max_length=10)
     line_notify = models.CharField(max_length=45, blank=True, null=True, unique=True)
     line_id = models.CharField(max_length=45, blank=True, null=True, unique=True)
+    patient_image_path = models.ImageField(upload_to='patients/', max_length=255, blank=True, null=True)
     created_time = models.DateTimeField(auto_now_add=False, default=timezone.now)
 
     def save(self, *args, **kwargs):
@@ -108,6 +109,7 @@ class Patient(models.Model):
             return {"status": False, "msg":"資料填寫錯誤"}
     def __str__(self):
         return self.patient_name
+
 
 #通知
 class Notify(models.Model):
