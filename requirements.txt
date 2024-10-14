@@ -14,3 +14,5 @@ edge_tts
 qrcode[pil]
 reportlab
 pydub
+apscheduler
+transformers
