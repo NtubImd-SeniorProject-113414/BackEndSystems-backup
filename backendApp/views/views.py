@@ -73,24 +73,28 @@ def patient_manager(request):
         'patients_with_forms': patients_with_forms
     })
 
-# 上傳圖片視圖
+# 上傳被照護者圖片視圖
 @login_required
 @group_required('caregiver')
 def upload_patient_image(request, patient_id):
     patient = get_object_or_404(Patient, patient_id=patient_id)
-    
+
     if request.method == 'POST' and request.FILES.get('croppedImage'):
-        # 獲取上傳的文件
+        # 如果已存在舊圖片，先刪除
+        if patient.patient_image_path:
+            patient.patient_image_path.delete(save=False)  # 刪除舊圖片，但不立即保存
+
+        # 獲取新上傳的文件
         myfile = request.FILES['croppedImage']
+        
+        # 生成 UUID 檔案名，並保留文件的副檔名
+        ext = myfile.name.split('.')[-1]  # 取得文件的副檔名
+        new_filename = f"{uuid.uuid4()}.{ext}"  # 生成唯一的 UUID 檔案名
 
-        # 生成 UUID 作為文件名並保持原文件擴展名
-        ext = myfile.name.split('.')[-1]
-        new_filename = f"{uuid.uuid4()}.{ext}"
-
-        # 使用 ImageField 自動處理文件存儲，保存文件到 patient_image_path 字段
+        # 使用 ImageField 保存新圖片，並使用 UUID 作為檔名
         patient.patient_image_path.save(new_filename, ContentFile(myfile.read()), save=True)
 
-        # 獲取圖片 URL
+        # 獲取圖片的 URL
         file_url = patient.patient_image_path.url
         
         return JsonResponse({'url': file_url})
