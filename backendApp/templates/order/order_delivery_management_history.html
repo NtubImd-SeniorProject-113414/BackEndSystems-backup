@@ -13,7 +13,8 @@
     <a href="{% url 'order_delivery_management' %}" class="btn btn-sm btn-info" style="font-size:15px; padding:0.5rem 1rem; color:rgb(234, 245, 245);">返回</a>
   </div>
 
-  <table class="table table-striped" class="table" style="margin-top: 10%;">
+  <!-- 保留表格欄位 -->
+  <table class="table table-striped" style="margin-top: 10%;">
     <thead>
       <tr>
         <th>序號</th>
@@ -24,19 +25,29 @@
       </tr>
     </thead>
     <tbody>
-      {% for order in page_obj %}
-      <tr>
-        <td>{{ forloop.counter }}</td>
-        <td>{{ order.course.course_name }} x {{ order.order_quantity }}</td>
-        <td>{{ order.order_time }}</td>
-        <td>{{ order.patient.patient_name }}</td>
-        {% if order.order_state.order_state_code == 3 %}
-          <td><p class="complete">{{ order.order_state.order_state_name }}</p></td>
-        {% elif order.order_state.order_state_code == 4 %}
-          <td><p class="cancel">{{ order.order_state.order_state_name }}</p></td>
-        {% endif %}
-      </tr>
-      {% endfor %}
+      <!-- 檢查是否有訂單 -->
+      {% if page_obj %}
+        {% for order in page_obj %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ order.course.course_name }} x {{ order.order_quantity }}</td>
+          <td>{{ order.order_time }}</td>
+          <td>{{ order.patient.patient_name }}</td>
+          {% if order.order_state.order_state_code == 3 %}
+            <td><p class="complete">{{ order.order_state.order_state_name }}</p></td>
+          {% elif order.order_state.order_state_code == 4 %}
+            <td><p class="cancel">{{ order.order_state.order_state_name }}</p></td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      {% else %}
+        <!-- 當沒有訂單時，在表格中顯示訊息 -->
+        <tr>
+          <td colspan="5" class="text-center">
+            <p>近期無歷史訂單。</p>
+          </td>
+        </tr>
+      {% endif %}
     </tbody>
   </table>
 </div>
