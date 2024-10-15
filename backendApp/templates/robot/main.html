@@ -78,8 +78,7 @@
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
             text-align: center;
-            font-size: 7rem;
-            width: 80%; /* 調整為70% */
+            width: 80%;
             opacity: 0;
             transition: opacity 0.5s, transform 0.5s, visibility 0.5s;
         }
@@ -91,8 +90,9 @@
         }
 
         .user-photo, .meal-photo {
-            width: 20vw; /* 調整大小 */
-            object-fit: cover;
+            width: 20vw;
+            height: 15vw;
+            object-fit: contain;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             margin-bottom: 10px;
@@ -131,7 +131,7 @@
         }
 
         .caption {
-            font-size: 3vh;
+            font-size: 4.5vh;
             font-weight: 600;
         }
 
@@ -156,11 +156,11 @@
         <div class="photos">
             <div>
                 <img class="user-photo" src="https://static-00.iconduck.com/assets.00/user-icon-2046x2048-9pwm22pp.png" alt="用戶頭像">
-                <p class="caption">用戶名</p>
+                <p class="caption">小李</p>
             </div>
             <div>
                 <img class="meal-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsXRvq8gNs1oeIphcQ6-xMJSDwzQTznZoVCw&s" alt="餐點圖片">
-                <p class="caption">餐點名稱</p>
+                <p class="caption">健康餐盒</p>
             </div>
         </div>
         <p id="message" class="timer">請於 <span id="time-left">30</span> 秒內完成取餐</p>
