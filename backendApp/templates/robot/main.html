@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Delivery Robot Face</title>
+    <title>Delivery Notification</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <!-- Animate.css -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.0.0/animate.min.css" rel="stylesheet">
     <style>
@@ -17,6 +19,7 @@
             justify-content: center;
             align-items: center;
             background-color: #000000; /* 背景設置為黑色 */
+            font-family: 'Poppins', sans-serif;
         }
         .face-container {
             display: flex;
@@ -27,7 +30,7 @@
         .eyes {
             display: flex;
             justify-content: space-between;
-            width: 70%; /* 控制眼睛之間的距離 */
+            width: 70%;
         }
         .eye {
             width: 30vh;
@@ -37,8 +40,8 @@
             position: relative;
             margin: 8vh 5vh; /* 眼睛之間的間距 */
             box-shadow: 0 0 20px rgba(125, 201, 245, 0.8), 0 0 40px rgba(125, 201, 245, 0.6); /* 光暈效果 */
-            overflow: hidden; /* 用於眨眼動畫 */
-            animation: blink 4.5s infinite; /* 添加眨眼動畫 */
+            overflow: hidden;
+            animation: blink 4.5s infinite;
         }
         .eye::before {
             content: '';
@@ -47,10 +50,10 @@
             left: 50%;
             width: 15vh;
             height: 15vh;
-            background-color: #ffffff; /* 白色小圓形 */
+            background-color: #ffffff;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8); /* 內部光暈效果 */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
         }
 
         @keyframes blink {
@@ -62,22 +65,21 @@
             }
         }
 
-        /* 統一選單樣式 */
+        /* 彈跳視窗設計 */
         .notification {
-            visibility: hidden; /* 預設隱藏 */
-            position: fixed; /* 使其固定在視窗中 */
+            visibility: hidden;
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.5);
-            background-color: rgba(255, 255, 255, 0.9); /* 白色且略透明 */
+            background-color: rgba(255, 255, 255, 0.9);
             color: #000;
-            padding: 50px; /* 增加 padding 來讓框框更大 */
+            padding: 40px;
             border-radius: 10px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
             text-align: center;
-            font-size: 4vh;
-            width: 90%; /* 增加寬度 */
-            max-width: 800px; /* 增加最大寬度 */
+            font-size: 7rem;
+            width: 80%; /* 調整為70% */
             opacity: 0;
             transition: opacity 0.5s, transform 0.5s, visibility 0.5s;
         }
@@ -88,27 +90,57 @@
             transform: translate(-50%, -50%) scale(1);
         }
 
-        .notification img {
-            max-width: 100%;
-            max-height: 35vh; /* 增加圖片的最大高度 */
-            margin-bottom: 20px;
+        .user-photo, .meal-photo {
+            width: 20vw; /* 調整大小 */
+            object-fit: cover;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .photos {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 30px;
         }
 
         .notification button {
             margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 3vh;
+            padding: 10px;
+            width: 60%;
+            font-size: 3.5rem;
+            font-weight: 600;
             border: none;
-            background-color: #007bff;
+            background-color: #3cb442;
             color: #fff;
             border-radius: 5px;
             cursor: pointer;
         }
 
         .notification button:hover {
-            background-color: #0056b3;
+            background-color: #7aae7d;
+        }
+
+        .timer {
+            font-size: 3rem;
+            font-weight: 600;
+            color: #ff0000; /* 倒數計時紅色 */
+            margin-top: 20px;
+        }
+
+        .caption {
+            font-size: 3vh;
+            font-weight: 600;
+        }
+
+        /* 新增標題設計 */
+        .notification h2 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #007bff; /* 標題顏色 */
+            margin-bottom: 50px;
         }
     </style>
 </head>
@@ -120,16 +152,28 @@
         <div class="eye right" id="right-eye"></div>
     </div>
     <div class="notification" id="notification">
-        <img src="https://img.shoplineapp.com/media/image_clips/63aedde0447b0100238cd034/original.jpg?1672404448" alt="餐點圖片">
-        <p>餐點某某某 已送達</p>
-        <button onclick="confirmDelivery()">確認取餐</button>
+        <h2>《餐點已送達》</h2> <!-- 新增標題 -->
+        <div class="photos">
+            <div>
+                <img class="user-photo" src="https://static-00.iconduck.com/assets.00/user-icon-2046x2048-9pwm22pp.png" alt="用戶頭像">
+                <p class="caption">用戶名</p>
+            </div>
+            <div>
+                <img class="meal-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsXRvq8gNs1oeIphcQ6-xMJSDwzQTznZoVCw&s" alt="餐點圖片">
+                <p class="caption">餐點名稱</p>
+            </div>
+        </div>
+        <p id="message" class="timer">請於 <span id="time-left">30</span> 秒內完成取餐</p>
+        <button onclick="confirmDelivery()">完成取餐</button>
     </div>
 </div>
 
 <!-- Bootstrap JS and dependencies -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script>
-    // 定義一個函數來顯示通知並暫停眨眼動畫
+    let countdown; // 用於存儲計時器
+
+    // 顯示通知並暫停眨眼動畫
     function showNotification() {
         var notification = document.getElementById('notification');
         notification.classList.add('show');
@@ -137,10 +181,24 @@
         // 暫停眨眼動畫
         document.getElementById('left-eye').style.animation = 'none';
         document.getElementById('right-eye').style.animation = 'none';
+
+        // 開始倒數30秒並顯示在彈跳視窗中
+        let timeLeft = 30;
+        const timeLeftElement = document.getElementById('time-left');
+        timeLeftElement.textContent = timeLeft;
+
+        countdown = setInterval(function() {
+            timeLeft--;
+            timeLeftElement.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                closeNotification(); // 自動關閉視窗
+            }
+        }, 1000); // 每1秒更新一次
     }
 
-    // 定義確認取餐的函數
-    function confirmDelivery() {
+    // 關閉通知並恢復眨眼動畫
+    function closeNotification() {
         var notification = document.getElementById('notification');
         notification.classList.remove('show');
 
@@ -148,13 +206,22 @@
         setTimeout(function() {
             document.getElementById('left-eye').style.animation = 'blink 4.5s infinite';
             document.getElementById('right-eye').style.animation = 'blink 4.5s infinite';
-        }, 500); // 等待動畫完成後再恢復眨眼動畫
+        }, 500);
 
         // 執行其他動作
+        alert('彈跳視窗已自動關閉！');
+    }
+
+    // 確認取餐的函數
+    function confirmDelivery() {
+        clearInterval(countdown); // 停止倒數
+        closeNotification(); // 手動關閉彈跳視窗
+
+        // 顯示取餐確認
         alert('取餐已確認！');
     }
 
-    // 模擬自動觸發通知（例如頁面加載後3秒觸發）
+    // 自動觸發通知（例如頁面加載後3秒觸發）
     setTimeout(showNotification, 3000);
 </script>
 </body>
