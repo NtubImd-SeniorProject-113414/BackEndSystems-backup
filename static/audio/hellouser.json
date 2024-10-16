@@ -1,0 +1,29 @@
+{
+  "metadata": {
+    "soundFile": "C:\\Users\\Mr.Tsai\\git\\school\\graduate project\\BackEndSystems\\static\\audio\\hellouser.wav",
+    "duration": 4.41
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.15, "value": "X" },
+    { "start": 0.15, "end": 0.84, "value": "B" },
+    { "start": 0.84, "end": 1.12, "value": "D" },
+    { "start": 1.12, "end": 1.19, "value": "B" },
+    { "start": 1.19, "end": 1.74, "value": "X" },
+    { "start": 1.74, "end": 1.78, "value": "B" },
+    { "start": 1.78, "end": 1.82, "value": "G" },
+    { "start": 1.82, "end": 1.89, "value": "B" },
+    { "start": 1.89, "end": 2.01, "value": "A" },
+    { "start": 2.01, "end": 2.09, "value": "C" },
+    { "start": 2.09, "end": 2.72, "value": "B" },
+    { "start": 2.72, "end": 2.86, "value": "C" },
+    { "start": 2.86, "end": 3.07, "value": "B" },
+    { "start": 3.07, "end": 3.09, "value": "A" },
+    { "start": 3.09, "end": 3.17, "value": "E" },
+    { "start": 3.17, "end": 3.25, "value": "A" },
+    { "start": 3.25, "end": 3.39, "value": "D" },
+    { "start": 3.39, "end": 3.67, "value": "F" },
+    { "start": 3.67, "end": 3.74, "value": "C" },
+    { "start": 3.74, "end": 3.88, "value": "E" },
+    { "start": 3.88, "end": 4.41, "value": "X" }
+  ]
+}
