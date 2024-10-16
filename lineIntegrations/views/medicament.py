@@ -44,7 +44,7 @@ async def sendMessageToOpenAi(request, *args, **kwargs):
         data = json.loads(request.body)
         patient_name = data['userName']
         transcript = data['transcript']
-        location = data['location']
+        location = data['charactor']
         chat_logs = await get_today_chat_logs(patient_name)
         
         history = [
