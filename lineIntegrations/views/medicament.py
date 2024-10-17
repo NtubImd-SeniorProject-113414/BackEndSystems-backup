@@ -14,10 +14,11 @@ from lineIntegrations.module.lineVerify import getLineUserUidByToken
 from pydub import AudioSegment
 from asgiref.sync import sync_to_async
 from django.utils import timezone
+from decouple import config
 
 charactors = ['/male1', '/male2', '/female1', '/female2']
 voice_param = ["zh-TW-YunJheNeural", "zh-TW-YunJheNeural", "zh-TW-HsiaoChenNeural", "zh-TW-HsiaoYuNeural"]
-openai.api_key = ''
+openai.api_key = config('OPENAI_API_KEY')
 
 @csrf_exempt
 def setSessionByToken(request):
