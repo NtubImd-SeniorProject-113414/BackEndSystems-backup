@@ -4,14 +4,17 @@ from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 from linebot.models import *
 from backendApp.models import *
+from decouple import config
 
 
-line_bot_api = LineBotApi('WPKuz6JHpaA3ezn2yM4rQXacGz4IQBCyEZWAt2qdSzCGrwr/dfscWGauXmr4AKJIuN0Nqhm+/kFfIqz9pvmZ0mCe13sVUAOdgDEnY3wAjol5KU18d5xSq05kTevosHuMWGZ4cfnXdeAN933yV8t2RwdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('0f60e5abbb4548dd078f9df4d370582a')
+# Line Bot API 的 Token 和 Secret
+line_bot_api = LineBotApi(config('LINE_CHANNEL_ACCESS_TOKEN'))
+handler = WebhookHandler(config('LINE_CHANNEL_SECRET'))
 
-registerMenuToken = "richmenu-96223bed4ba0357176fd33bfa194511b"
-infoMenuToken = "richmenu-834767c03de7c789ef8264cdc55bea7b"
-serviceMenuToken = "richmenu-e7c520ec9b8096e1e0a137d1899ae04a"
+# richmenu tokens
+registerMenuToken = config('REGISTER_MENU_TOKEN')
+infoMenuToken = config('INFO_MENU_TOKEN')
+serviceMenuToken = config('SERVICE_MENU_TOKEN')
 
 @csrf_exempt
 def line_bot_webhook(request):
