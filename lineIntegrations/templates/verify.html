@@ -41,12 +41,15 @@
 </html>
 <script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script type="text/javascript">
+    window.register_liff_id = "{{ register_liff_id }}";
+</script>    
 <script src="{% static 'lineIntegrations/js/line.js' %}"></script>
 
 
 <script>
     function sendLine(){
-    liff.init({ liffId: '2005031361-7zzGb4xR', withLoginOnExternalBrowser: true})
+    liff.init({ liffId: '{{ register_liff_id }}', withLoginOnExternalBrowser: true})
     .then(async () => {
         if (liff.isLoggedIn()) {
             liff.sendMessages([

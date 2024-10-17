@@ -1,6 +1,5 @@
-liffToken = '2005031361-7zzGb4xR'
 function getLineInfo(){
-    liff.init({ liffId: liffToken})
+    liff.init({ liffId: window.register_liff_id})
     .then(async () => {
         if (liff.isLoggedIn()) {
             liff.getProfile().then(profile => {
