@@ -1,3 +1,6 @@
+from django.conf import settings
+
+
 def function_menu(request):
     function_menu = [
         {
@@ -85,3 +88,6 @@ def function_menu(request):
         }
     ]
     return {'function_menu': function_menu}
+
+def env_datas(request):
+    return {'websocket_url': settings.WEBSOCKET_URL}

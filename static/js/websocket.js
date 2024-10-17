@@ -1,4 +1,4 @@
-const socket = new WebSocket('ws://' + window.location.host + '/ws/image/');
+const socket = new WebSocket(window.websocketUrl +'/ws/image/');
 socket.binaryType = 'arraybuffer';
 
 socket.onopen = function(event) {

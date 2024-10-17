@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,10 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-)=(hzjf$06hdk+@$vj#q+zm$liz@4oq$vg208rf*itfk+0*#3w'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
+WEBSOCKET_URL = config('WEBSOCKET_URL', default='ws://localhost/ws/image/')
 
 ALLOWED_HOSTS = ["*"]
+
 
 
 # Application definition
@@ -86,6 +89,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'backendApp.context_processors.function_menu',
+                'backendApp.context_processors.env_datas',
             ],
         },
     },
@@ -103,11 +107,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 DATABASES = {
     'default': {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "113-pharmacist",
-        "USER": "root414",
-        "PASSWORD": "@Access123",
-        "HOST": "140.131.114.242",
-        "PORT": "3306",
+        "NAME": config('DB_NAME'),
+        "USER": config('DB_USER'),
+        "PASSWORD": config('DB_PASSWORD'),
+        "HOST": config('DB_HOST'),
+        "PORT": config('DB_PORT', default='3306'),
     }
 }
 

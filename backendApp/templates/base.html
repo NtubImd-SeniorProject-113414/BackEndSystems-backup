@@ -146,6 +146,9 @@
             {% endblock %}
         </main>
     </div>
+    <script type="text/javascript">
+        window.websocketUrl = "{{ websocket_url }}";
+    </script>    
     <script src="{% static 'js/websocket.js' %}"></script>
 </body>
 
