@@ -104,6 +104,7 @@ urlpatterns = [
     path('order_delivery_management/history', order_backend.order_list_history, name='history'),
     path('order_deliver_management/deliver_orders', order_backend.deliver_orders, name='deliver_orders'),
     path('order_deliver_management/cancel/<int:order_id>', order_backend.cancel_order, name='cancel_order'),
+    path('order_delivery_management/cancel_orders', order_backend.cancel_orders, name='cancel_orders'),
     # for nodeRed
     
     path('medicine_order_management_review/', medicine.medicine_review_list, name='medicine_order_management_review'), 

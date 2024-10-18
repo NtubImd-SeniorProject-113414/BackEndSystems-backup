@@ -1,3 +1,4 @@
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import render, redirect, get_object_or_404
 from backendApp.decorator import group_required
 from backendApp.middleware import login_required
@@ -6,7 +7,6 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime
-
 from ..models import Order, MealOrderTimeSlot, OrderState, Vehicle, DeliveryAssignment, DeliveryStatus
 from ..module import mqtt
 
@@ -15,7 +15,7 @@ from ..module import mqtt
 def order_list(request):
     current_time = datetime.now().strftime('%H:%M')
     date = timezone.now().date()
-
+    
     mealTime = MealOrderTimeSlot.find_time_slot(current_time)
     orders = Order.objects.filter(
         (Q(order_state__order_state_code=1) | Q(order_state__order_state_code=2)) &
@@ -84,10 +84,26 @@ def deliver_orders(request):
     return redirect('order_delivery_management')
 
 @login_required
+def cancel_orders(request):
+    if request.method == "GET":
+        order_ids = request.GET.getlist('orders[]')  # 透過 GET 請求取得訂單列表
+        
+        if not order_ids:
+            return redirect('order_delivery_management')  # 如果沒有選擇訂單，重定向回管理頁面
+
+        canceled_state = get_object_or_404(OrderState, order_state_name="已取消")  # 假設已取消的狀態名為“已取消”
+
+        for order_id in order_ids:
+            order = get_object_or_404(Order, pk=order_id)
+            order.order_state = canceled_state
+            order.save()
+
+        return redirect('order_delivery_management')  # 完成後重定向回配送餐點管理頁面
+
+@login_required
 def cancel_order(request, order_id):
     order = get_object_or_404(Order, pk=order_id)
     canceled_state = get_object_or_404(OrderState, pk=4)
     order.order_state = canceled_state
     order.save()
     return redirect('order_delivery_management')
-
