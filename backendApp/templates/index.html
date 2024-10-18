@@ -365,11 +365,10 @@ function updateDashboard(showAllOrders = false, showAllVehicles = false) {
     }
 
     $(document).ready(function() {
-        updateDashboard();
-            // 自动每 30 秒刷新一次数据
+
         setInterval(function() {
             updateDashboard(); // 定时调用刷新函数
-        }, 30000); // 30秒 = 30000毫秒
+        }, 2000); 
     });
 
     function displayCurrentTime() {
