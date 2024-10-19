@@ -498,8 +498,7 @@ def patient_emotion_view(request):
 @group_required('caregiver')
 @login_required
 def negative_chatlogs_view(request):
-    # 過濾出情緒分數 ≤ 2 且未處理的聊天記錄
-    negative_logs = ChatLogs.objects.filter(emotion_score__lte=2, is_confirmed=False).order_by('-created_time')
+    negative_logs = ChatLogs.objects.filter(emotion_score__lte=1, is_confirmed=False).order_by('-created_time')
 
     # 每頁顯示 15 條記錄
     paginator = Paginator(negative_logs, 15)  
