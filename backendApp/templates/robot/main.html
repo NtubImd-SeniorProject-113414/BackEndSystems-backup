@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -155,12 +157,12 @@
         <h2>《餐點已送達》</h2> <!-- 新增標題 -->
         <div class="photos">
             <div>
-                <img class="user-photo" src="https://static-00.iconduck.com/assets.00/user-icon-2046x2048-9pwm22pp.png" alt="用戶頭像">
-                <p class="caption">小李</p>
+                <img id="patient_img" class="user-photo" alt="用戶頭像">
+                <p class="caption" id="patient_name">小李</p>
             </div>
             <div>
-                <img class="meal-photo" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsXRvq8gNs1oeIphcQ6-xMJSDwzQTznZoVCw&s" alt="餐點圖片">
-                <p class="caption">健康餐盒</p>
+                <img class="meal-photo" id="meal_img" alt="餐點圖片">
+                <p class="caption" id="course_name">健康餐盒</p>
             </div>
         </div>
         <p id="message" class="timer">請於 <span id="time-left">30</span> 秒內完成取餐</p>
@@ -169,60 +171,10 @@
 </div>
 
 <!-- Bootstrap JS and dependencies -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script>
-    let countdown; // 用於存儲計時器
-
-    // 顯示通知並暫停眨眼動畫
-    function showNotification() {
-        var notification = document.getElementById('notification');
-        notification.classList.add('show');
-
-        // 暫停眨眼動畫
-        document.getElementById('left-eye').style.animation = 'none';
-        document.getElementById('right-eye').style.animation = 'none';
-
-        // 開始倒數30秒並顯示在彈跳視窗中
-        let timeLeft = 30;
-        const timeLeftElement = document.getElementById('time-left');
-        timeLeftElement.textContent = timeLeft;
-
-        countdown = setInterval(function() {
-            timeLeft--;
-            timeLeftElement.textContent = timeLeft;
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                closeNotification(); // 自動關閉視窗
-            }
-        }, 1000); // 每1秒更新一次
-    }
-
-    // 關閉通知並恢復眨眼動畫
-    function closeNotification() {
-        var notification = document.getElementById('notification');
-        notification.classList.remove('show');
-
-        // 恢復眨眼動畫
-        setTimeout(function() {
-            document.getElementById('left-eye').style.animation = 'blink 4.5s infinite';
-            document.getElementById('right-eye').style.animation = 'blink 4.5s infinite';
-        }, 500);
-
-        // 執行其他動作
-        alert('彈跳視窗已自動關閉！');
-    }
-
-    // 確認取餐的函數
-    function confirmDelivery() {
-        clearInterval(countdown); // 停止倒數
-        closeNotification(); // 手動關閉彈跳視窗
-
-        // 顯示取餐確認
-        alert('取餐已確認！');
-    }
-
-    // 自動觸發通知（例如頁面加載後3秒觸發）
-    setTimeout(showNotification, 3000);
+<script src="{% static 'model/jquery-3.6.4.min.js' %}"></script>
+<script type="text/javascript">
+    window.websocketUrl = "{{ websocket_url }}";
 </script>
+<script src="{% static 'js/order_arrived.js' %}"></script>
 </body>
 </html>

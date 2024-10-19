@@ -10,9 +10,9 @@ socket.onmessage = function(event) {
 
     if (typeof event.data === 'string') {
         try {
-            const parsedData = JSON.parse(event.data);  // 解析 JSON 資料
+            const parsedData = JSON.parse(event.data);
             if (parsedData.title) {
-                receivedTitle = parsedData.title;  // 儲存 title 資訊
+                receivedTitle = parsedData.title;
                 showalarm(receivedTitle, false);
             }
         } catch (error) {
