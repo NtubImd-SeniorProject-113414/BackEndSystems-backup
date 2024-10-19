@@ -87,21 +87,6 @@
         .pagination {
             margin-top: 20px;
         }
-
-        .pagination .page-item.active .page-link {
-            background-color: #ffffff;
-            border-color: #007bff;
-        }
-
-        .pagination .page-item .page-link {
-            color: #007bff;
-            border-radius: 5px;
-        }
-
-        .pagination .page-item .page-link:hover {
-            background-color: #f8f9fa;
-            color: #007bff;
-        }
     </style>
 </head>
 
@@ -161,41 +146,60 @@
                     {% endfor %}
                 </tbody>
             </table>
-
-            <!-- 分頁導航 -->
             <nav>
                 <ul class="pagination justify-content-center">
                     {% if page_obj.has_previous %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
+                        <a class="page-link"
+                           href="{% url 'chatlogs' %}?page=1{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if patient_name %}&patient_name={{ patient_name }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+                           aria-label="First">
+                            最前頁
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="{% url 'chatlogs' %}?page={{ page_obj.previous_page_number }}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if patient_name %}&patient_name={{ patient_name }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+                           aria-label="Previous">
+                            上一頁
                         </a>
                     </li>
                     {% else %}
                     <li class="page-item disabled">
-                        <a class="page-link" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
+                        <a class="page-link">最前頁</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link">上一頁</a>
                     </li>
                     {% endif %}
-
-                    {% for num in page_obj.paginator.page_range %}
-                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
-                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            
+                    <!-- 顯示當前頁 -->
+                    <li class="page-item active">
+                        <a class="page-link">
+                            第 {{ page_obj.number }} 頁 / 共 {{ page_obj.paginator.num_pages }} 頁
+                        </a>
                     </li>
-                    {% endfor %}
-
+            
                     {% if page_obj.has_next %}
                     <li class="page-item">
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
+                        <a class="page-link"
+                           href="{% url 'chatlogs' %}?page={{ page_obj.next_page_number }}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if patient_name %}&patient_name={{ patient_name }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+                           aria-label="Next">
+                            下一頁
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="{% url 'chatlogs' %}?page={{ page_obj.paginator.num_pages }}{% if start_date %}&start_date={{ start_date }}{% endif %}{% if end_date %}&end_date={{ end_date }}{% endif %}{% if patient_name %}&patient_name={{ patient_name }}{% endif %}{% if search_query %}&search={{ search_query }}{% endif %}"
+                           aria-label="Last">
+                            最後頁
                         </a>
                     </li>
                     {% else %}
                     <li class="page-item disabled">
-                        <a class="page-link" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
+                        <a class="page-link">下一頁</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link">最後頁</a>
                     </li>
                     {% endif %}
                 </ul>
