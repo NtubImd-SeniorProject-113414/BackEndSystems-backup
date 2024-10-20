@@ -73,8 +73,8 @@ urlpatterns = [
     path('linebot/notify', notify.getWebPage),
     path('linebot/api/readNotify', notify.userReadNotify, name='userReadNotify'),
     path('linebot/api/notifyList', notify.getPatientNotifyList, name='userNotifyList'),
-
     path('linebot/medicament', medicament.getVerifyPage),
+    
     path('medicament/api/verify', medicament.setSessionByToken),
     path('medicament/api/chatWithOpenAi', medicament.sendMessageToOpenAi),
     path('medicament/api/hellouser', medicament.helloUserInfoAndVideo),
