@@ -30,7 +30,8 @@
     {% endif %}
   </h2>
 
-  <form id="orderForm">
+  <form id="orderForm"  method="POST">
+    {% csrf_token %}
     <table class="table table-striped text-center">
       <thead>
         <tr>
@@ -183,20 +184,19 @@
 
   setInterval(fetchRobotsData, 2000);  // Fetch data every 2 seconds
 
-  // Handle "運送所選訂單" button click
-  $('#deliverSelectedOrders').on('click', function() {
-      selectedOrders = [];  // 重置選擇
-      $('input[name="orders[]"]:checked').each(function() {  // 收集所有勾選的訂單
-          selectedOrders.push($(this).val());
-      });
+  $('#cancelSelectedOrders').on('click', function() {
+    selectedOrders = [];  // 重置選擇
+    $('input[name="orders[]"]:checked').each(function() {  // 收集所有勾選的訂單
+        selectedOrders.push($(this).val());
+    });
 
-      if (selectedOrders.length > 0) {
-          $('#selectedOrdersInput').val(selectedOrders.join(','));  // 將選中的訂單存入隱藏欄位
-          $('#robotModal').modal('show');  // 顯示機器人選擇模態框
-      } else {
-          alert('請選擇至少一個訂單來配送！');
-      }
-  });
+    if (selectedOrders.length > 0) {
+        var queryString = selectedOrders.map(id => `orders[]=${id}`).join('&');  // 將選中的訂單 ID 轉成查詢字串
+        window.location.href = '{% url "cancel_orders" %}?' + queryString;  // 使用 GET 請求發送訂單 ID
+    } else {
+        alert('請選擇至少一個訂單來取消！');
+    }
+});
 </script>
 
 {% endblock %}
