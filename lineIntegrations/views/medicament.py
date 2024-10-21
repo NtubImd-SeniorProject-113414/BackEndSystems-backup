@@ -7,12 +7,10 @@ import asyncio
 import uuid
 import os
 
-
 from decouple import config
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.http import JsonResponse
-from backendApp.middleware import line_verify_2
 from backendApp.models import ChatLogs, Patient, MedicineDemand, MedicineDemandState
 from lineIntegrations.module.lineVerify import getLineUserUidByToken
 from pydub import AudioSegment
@@ -142,8 +140,11 @@ def helloUserInfoAndVideo(request, *args, **kwargs):
         unique_filename = str(uuid.uuid4())
         audio_path = f"static/audio/hello/{unique_filename}.mp3"
         voice_param = get_voice_param_by_location(location)
-
-        audioWithJsonData = asyncio.run(generate_video_lipsync_convert_file(text, audio_path, voice_param))
+        
+        if location == '/female2':
+            audioWithJsonData = asyncio.run(generate_video_lipsync_convert_file(text=text, audio_path=audio_path, voice_param=voice_param, rate="+40%"))
+        else:
+            audioWithJsonData = asyncio.run(generate_video_lipsync_convert_file(text=text, audio_path=audio_path, voice_param=voice_param))
         
         data = {
             'text': text,
@@ -225,8 +226,8 @@ def sendUncomfortableMessage(request, *args, **kwargs):
         return JsonResponse({'error': 'Unsupported HTTP method'}, status=405)
 
 # 異步函數來處理 lipsync 和音訊生成
-async def generate_video_lipsync_convert_file(text, audio_path, voice_param):
-    communicate = edge_tts.Communicate(text=text, voice=voice_param)
+async def generate_video_lipsync_convert_file(text, audio_path, voice_param, rate="+0%"):
+    communicate = edge_tts.Communicate(text=text, voice=voice_param, rate=rate)
     await communicate.save(audio_path)
 
     wav_path = audio_path.replace('mp3', 'wav')
