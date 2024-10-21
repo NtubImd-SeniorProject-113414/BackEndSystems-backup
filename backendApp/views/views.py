@@ -418,7 +418,6 @@ def sides_create(request):
     return render(request, 'MealManagement/add_sides.html', {'form': form})
 
 
-#情緒管理所有情緒紀錄
 @group_required('caregiver')
 @login_required
 def chatlogs_view(request):
@@ -436,10 +435,14 @@ def chatlogs_view(request):
         chatlogs_list = chatlogs_list.filter(patient__patient_name__icontains=patient_name)
 
     if start_date:
-        chatlogs_list = chatlogs_list.filter(created_time__date__gte=parse_date(start_date))
+        parsed_start_date = parse_date(start_date)
+        if parsed_start_date:
+            chatlogs_list = chatlogs_list.filter(created_time__date__gte=parsed_start_date)
     
     if end_date:
-        chatlogs_list = chatlogs_list.filter(created_time__date__lte=parse_date(end_date))
+        parsed_end_date = parse_date(end_date)
+        if parsed_end_date:
+            chatlogs_list = chatlogs_list.filter(created_time__date__lte=parsed_end_date)
 
     if search_query:
         chatlogs_list = chatlogs_list.filter(patient_message__icontains=search_query)
