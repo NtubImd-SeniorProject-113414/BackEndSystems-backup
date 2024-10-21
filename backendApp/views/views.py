@@ -15,7 +15,6 @@ from django.db.models import Avg,Q
 from django.utils.dateparse import parse_date
 from django.core.files.base import ContentFile
 
-
 #首頁
 @group_required('caregiver', 'admin', 'pharmacy')
 @login_required
@@ -547,7 +546,7 @@ def dashboard_data(request):
     vehicles = Vehicle.objects.filter(~Q(vehicle_status__vehicle_status_name='offline'))[:3]
 
     # Only show orders that have not been completed
-    orders = Order.objects.filter(order_state__order_state_name='pending').order_by('-order_time')[:3]
+    orders = Order.objects.filter(order_state__order_state_name='待出餐').order_by('-order_time')[:3]
 
     # Existing logic for notifications and patients
     notifications = ChatLogs.objects.filter(emotion_score=1, is_confirmed=False).order_by('-created_time')[:5]
