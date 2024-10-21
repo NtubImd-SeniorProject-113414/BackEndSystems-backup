@@ -538,3 +538,51 @@ def confirmed_negative_logs_view(request):
 
     return render(request, 'emotion/confirmed_negative_chatlogs.html', {'page_obj': page_obj})
 
+@group_required('caregiver')
+@login_required
+def dashboard_data(request):
+    # Only show vehicles that are not 'offline'
+    vehicles = Vehicle.objects.filter(~Q(vehicle_status__vehicle_status_name='offline'))[:3]
+
+    # Only show orders that have not been completed
+    orders = Order.objects.filter(order_state__order_state_name='pending').order_by('-order_time')[:3]
+
+    # Existing logic for notifications and patients
+    notifications = ChatLogs.objects.filter(emotion_score=1, is_confirmed=False).order_by('-created_time')[:5]
+    patients = Patient.objects.annotate(avg_emotion_score=Avg('chatlogs__emotion_score')).order_by('-avg_emotion_score')[:3]
+    patient_count = Patient.objects.count()
+
+    data = {
+        'vehicles': [
+            {
+                'name': v.vehicle_name,
+                'status': v.vehicle_status.vehicle_state_html_style
+            } for v in vehicles
+        ],
+        'orders': [
+            {
+                'id': o.order_id,
+                'patient': o.patient.patient_name,
+                'course': o.course.course_name,
+                'quantity': o.order_quantity,
+                'time': o.order_time.strftime('%Y-%m-%d %H:%M:%S'),
+                'state': o.order_state.order_state_name
+            } for o in orders
+        ],
+        'notifications': [
+            {
+                'patient': n.patient.patient_name,
+                'emotion_score': n.emotion_score,
+                'is_confirmed': n.is_confirmed
+            } for n in notifications
+        ],
+        'patients': [
+            {
+                'name': p.patient_name,
+                'avg_emotion_score': p.avg_emotion_score or 0
+            } for p in patients
+        ],
+        'patient_count': patient_count
+    }
+
+    return JsonResponse(data)

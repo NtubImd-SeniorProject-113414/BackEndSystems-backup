@@ -21,6 +21,7 @@ urlpatterns = [
     path('user_manager/create', userManagement.create_user, name='add_user'),
     path('user_manager/edit/<int:user_id>/', userManagement.edit_user, name='edit_user'),
     path('edit_profile/', edit_profile, name='edit_profile'),
+    path('dashboard-data/', dashboard_data, name='dashboard_data'),
 
     #被照護者管理
     path('patient_manager/', patient_manager, name='patient_manager'),
