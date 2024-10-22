@@ -309,7 +309,7 @@ class OrderState(models.Model):
 class Order(models.Model):
     order_id = models.AutoField(primary_key=True)
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
-    course = models.ForeignKey(MainCourse, on_delete=models.CASCADE, db_column='course_id')
+    course = models.ForeignKey(MainCourse, on_delete=models.SET_NULL, db_column='course_id', null=True)
     order_state = models.ForeignKey(OrderState, on_delete=models.CASCADE, db_column='order_state_code')
     order_quantity = models.IntegerField()
     order_time = models.DateTimeField(auto_now_add=True)
