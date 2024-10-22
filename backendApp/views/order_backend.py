@@ -7,7 +7,8 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime
-from ..models import Order, MealOrderTimeSlot, OrderState, Vehicle, DeliveryAssignment, DeliveryStatus
+
+from ..models import Order, MealOrderTimeSlot, OrderState, Vehicle, DeliveryAssignment, DeliveryStatus, VehicleStatus
 from ..module import mqtt
 
 @login_required
@@ -18,7 +19,7 @@ def order_list(request):
     
     mealTime = MealOrderTimeSlot.find_time_slot(current_time)
     orders = Order.objects.filter(
-        (Q(order_state__order_state_code=1) | Q(order_state__order_state_code=2)) &
+        (Q(order_state__order_state_code=1) | Q(order_state__order_state_code=2) | Q(order_state__order_state_code=5)) &
         Q(order_time__date=date)
     )
     
@@ -55,7 +56,7 @@ def order_list_history(request):
 def deliver_orders(request):
     if request.method == 'POST':
         robot_id = request.POST.get('robot_id')
-        order_ids = request.POST.getlist('orders')
+        order_ids = request.POST.get('orders').split(",")
         s_count = 0
         vehicle = get_object_or_404(Vehicle, vehicle_id=robot_id)
         if vehicle==None or vehicle.vehicle_status.vehicle_status_code != 2:
@@ -63,7 +64,7 @@ def deliver_orders(request):
         else:
             for order_id in order_ids:
                 order = get_object_or_404(Order, order_id=order_id)
-                if order != None and order.order_state.order_state_code == 1:
+                if order != None and (order.order_state.order_state_code == 1 or order.order_state.order_state_code == 5):
                     current_location = order.patient.patient_qr_point
                     delivery_status = get_object_or_404(DeliveryStatus, delivery_status_code=1)
                     DeliveryAssignment.objects.create(
@@ -79,6 +80,8 @@ def deliver_orders(request):
                 else:
                     messages.error(request, f'「{order_id}號」訂單狀態無效，無法運送 !')
             if s_count > 0:
+                vehicle.vehicle_status = get_object_or_404(VehicleStatus, vehicle_status_code=3)
+                vehicle.save()
                 mqtt.send_mqtt_message('forward', topic='robot/control')
 
     return redirect('order_delivery_management')

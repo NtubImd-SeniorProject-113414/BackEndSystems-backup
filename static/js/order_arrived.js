@@ -44,6 +44,11 @@ function showNotification() {
         if (timeLeft <= 0) {
             clearInterval(countdown);
             closeNotification();
+            fetch('https://node-red.medimate.tw/order_timeout', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({})
+            });
         }
     }, 1000);
 }
@@ -62,5 +67,10 @@ function closeNotification() {
 function confirmDelivery() {
     clearInterval(countdown);
     closeNotification();
+    fetch('https://node-red.medimate.tw/order_ok', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+    });
     alert('取餐已確認！');
 }

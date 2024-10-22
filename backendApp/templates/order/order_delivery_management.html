@@ -47,7 +47,7 @@
         {% for order in page_obj %}
         <tr class="order-row" data-order-id="{{ order.order_id }}">
           <td>
-            {% if order.order_state.order_state_code == 1 %}
+            {% if order.order_state.order_state_code == 1 or order.order_state.order_state_code == 5 %}
               <input type="checkbox" name="orders[]" value="{{ order.order_id }}" class="order-checkbox"> <!-- 顯示 checkbox -->
             {% else %}
               <span></span>
@@ -62,6 +62,8 @@
               <p class="un-delivery">{{ order.order_state.order_state_name }}</p>
             {% elif order.order_state.order_state_code == 2 %}
               <p class="delivering">{{ order.order_state.order_state_name }}</p>
+            {% elif order.order_state.order_state_code == 5 %}
+              <p class="un-delivery">{{ order.order_state.order_state_name }}</p>
             {% endif %}
           </td>
         </tr>
@@ -71,19 +73,15 @@
   </form>
 </div>
 
-<!-- Robot Selection Modal (as a form) -->
 <div class="modal fade" id="robotModal" tabindex="-1" aria-labelledby="robotModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-      <!-- Modal Header -->
       <div class="modal-header">
         <h5 class="modal-title" id="robotModalLabel">配送機器人狀態</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <!-- Modal Body: Form -->
       <form method="POST" action="{% url 'deliver_orders' %}">
         {% csrf_token %}
-        <!-- Hidden field to store selected order IDs -->
         <input type="hidden" name="orders" id="selectedOrdersInput">
         <div class="modal-body">
           <table class="table table-striped">
@@ -96,11 +94,9 @@
               </tr>
             </thead>
             <tbody id="robot-table-body">
-              <!-- Robot data will be dynamically added here -->
             </tbody>
           </table>
         </div>
-        <!-- Modal Footer with Submit button -->
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">提交配送</button>
         </div>
