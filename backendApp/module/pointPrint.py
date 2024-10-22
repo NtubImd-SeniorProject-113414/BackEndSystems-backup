@@ -46,12 +46,12 @@ def create_point_pdf(text_image_pairs):
             text_2, image_2 = "", ""
         
         row_data.append([Paragraph(text_1, styleN), Paragraph(text_2, styleN)])
-        row_data.append([Image(image_1, width=1.5*inch, height=1.5*inch), 
-                         Image(image_2, width=1.5*inch, height=1.5*inch) if image_2 else ""])
+        row_data.append([Image(image_1, width=2*inch, height=2*inch), 
+                         Image(image_2, width=2*inch, height=2*inch) if image_2 else ""])
         row_count += 1
 
         if row_count == 3:
-            table = Table(row_data, colWidths=[2.5*inch]*2, rowHeights=[0.5*inch, 2*inch]*3)
+            table = Table(row_data, colWidths=[2.5*inch]*2, rowHeights=[0.7*inch, 2*inch]*3)
             table.setStyle(TableStyle([
                 ('GRID', (0, 0), (-1, -1), 1, colors.black),
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -63,7 +63,7 @@ def create_point_pdf(text_image_pairs):
             row_count = 0
     
     if row_data:
-        row_heights = [0.5*inch if i % 2 == 0 else 2*inch for i in range(len(row_data))]
+        row_heights = [0.7 *inch if i % 2 == 0 else 2*inch for i in range(len(row_data))]
         table = Table(row_data, colWidths=[2.5*inch]*2, rowHeights=row_heights)
         table.setStyle(TableStyle([
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
