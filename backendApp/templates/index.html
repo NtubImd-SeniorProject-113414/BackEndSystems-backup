@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load custom_filters %}
 {% block content %}
+
 
 <head>
     <script src="{% static 'model/bootstrap/bootstrap.bundle.min.js' %}"></script>
@@ -212,6 +214,9 @@
                 ！</h1>
             <p>您的目前的身分為：<strong>{% for group in user.groups.all %} {{ group.display }}  {% endfor %}</strong></p>
         </div>
+
+        
+
         <div class="col-md-5">
             <div class="status-box">
                 <span class="status">被照護者人數：<span id="patientCount"></span></span>
@@ -220,12 +225,13 @@
         </div>
     </div>
 
+    {% if request.user|has_group:"caregiver" %}
     <div class="row">
         <div class="col-md-6">
             <div class="section-header">IP Camera即時影像</div>
             <img src="https://via.placeholder.com/640x480.png?text=Camera+Feed" alt="Camera Feed" class="camera-feed">
         </div>
-
+    
         <div class="col-md-3">
             <div class="section-header">負面情緒即時通知 <i class="bi bi-chevron-down toggle-arrow" id="toggleNegativeEmotion"></i></div>
             <div id="negativeEmotionContainer" class="show-content"></div>
@@ -233,7 +239,7 @@
                 <a href="{% url 'negative_chatlogs' %}" class="view-more-link">查看更多負面情緒通知</a>
             </div>
         </div>
-
+    
         <div class="col-md-3">
             <div class="section-header">情緒平均分數 <i class="bi bi-chevron-down toggle-arrow" id="toggleEmotionScore"></i></div>
             <div id="memberContainer" class="show-content"></div>
@@ -242,7 +248,7 @@
             </div>
         </div>
     </div>
-
+    
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="section-header">即時訂單 <i class="bi bi-chevron-down toggle-arrow" id="toggleOrders"></i></div>
@@ -251,7 +257,7 @@
                 <a href="{% url 'order_delivery_management' %}" class="view-more-link">查看更多訂單</a>
             </div>
         </div>
-
+    
         <div class="col-md-6">
             <div class="section-header">車輛狀態 <i class="bi bi-chevron-down toggle-arrow" id="toggleVehicles"></i></div>
             <div id="vehicleContainer" class="show-content"></div>
@@ -260,6 +266,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 
 <script>
@@ -358,11 +365,10 @@ function updateDashboard(showAllOrders = false, showAllVehicles = false) {
     }
 
     $(document).ready(function() {
-        updateDashboard();
-            // 自动每 30 秒刷新一次数据
+
         setInterval(function() {
             updateDashboard(); // 定时调用刷新函数
-        }, 30000); // 30秒 = 30000毫秒
+        }, 2000); 
     });
 
     function displayCurrentTime() {

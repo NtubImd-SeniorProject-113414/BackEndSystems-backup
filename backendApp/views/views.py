@@ -15,7 +15,6 @@ from django.db.models import Avg,Q
 from django.utils.dateparse import parse_date
 from django.core.files.base import ContentFile
 
-
 #首頁
 @group_required('caregiver', 'admin', 'pharmacy')
 @login_required
@@ -418,7 +417,6 @@ def sides_create(request):
     return render(request, 'MealManagement/add_sides.html', {'form': form})
 
 
-#情緒管理所有情緒紀錄
 @group_required('caregiver')
 @login_required
 def chatlogs_view(request):
@@ -436,10 +434,14 @@ def chatlogs_view(request):
         chatlogs_list = chatlogs_list.filter(patient__patient_name__icontains=patient_name)
 
     if start_date:
-        chatlogs_list = chatlogs_list.filter(created_time__date__gte=parse_date(start_date))
+        parsed_start_date = parse_date(start_date)
+        if parsed_start_date:
+            chatlogs_list = chatlogs_list.filter(created_time__date__gte=parsed_start_date)
     
     if end_date:
-        chatlogs_list = chatlogs_list.filter(created_time__date__lte=parse_date(end_date))
+        parsed_end_date = parse_date(end_date)
+        if parsed_end_date:
+            chatlogs_list = chatlogs_list.filter(created_time__date__lte=parsed_end_date)
 
     if search_query:
         chatlogs_list = chatlogs_list.filter(patient_message__icontains=search_query)
@@ -498,8 +500,7 @@ def patient_emotion_view(request):
 @group_required('caregiver')
 @login_required
 def negative_chatlogs_view(request):
-    # 過濾出情緒分數 ≤ 2 且未處理的聊天記錄
-    negative_logs = ChatLogs.objects.filter(emotion_score__lte=2, is_confirmed=False).order_by('-created_time')
+    negative_logs = ChatLogs.objects.filter(emotion_score__lte=1, is_confirmed=False).order_by('-created_time')
 
     # 每頁顯示 15 條記錄
     paginator = Paginator(negative_logs, 15)  
@@ -545,7 +546,7 @@ def dashboard_data(request):
     vehicles = Vehicle.objects.filter(~Q(vehicle_status__vehicle_status_name='offline'))[:3]
 
     # Only show orders that have not been completed
-    orders = Order.objects.filter(order_state__order_state_name='pending').order_by('-order_time')[:3]
+    orders = Order.objects.filter(order_state__order_state_name='待出餐').order_by('-order_time')[:3]
 
     # Existing logic for notifications and patients
     notifications = ChatLogs.objects.filter(emotion_score=1, is_confirmed=False).order_by('-created_time')[:5]
